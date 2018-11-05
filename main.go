@@ -4,56 +4,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"ticketBackend/sessionHandler"
 )
-
-func getUserName(request *http.Request) (userName string) {
-	if cookie, err := request.Cookie("session"); err == nil {
-		userName = cookie.Name
-	}
-
-	return userName
-}
-
-func setSession(userName string, response http.ResponseWriter) {
-	cookie := &http.Cookie{
-		Name:  "session",
-		Value: userName,
-		Path:  "/",
-	}
-
-	http.SetCookie(response, cookie)
-}
-
-func clearSession(response http.ResponseWriter) {
-	cookie := &http.Cookie{
-		Name:   "session",
-		Value:  "",
-		Path:   "/",
-		MaxAge: -1,
-	}
-
-	http.SetCookie(response, cookie)
-}
-
-// login handler
-func loginHandler(response http.ResponseWriter, request *http.Request) {
-	name := request.FormValue("name")
-	pass := request.FormValue("password")
-	redirectTarget := "/"
-
-	if name != "" && pass != "" {
-		setSession(name, response)
-		redirectTarget = "/internal"
-	}
-
-	http.Redirect(response, request, redirectTarget, 302)
-}
-
-// logout handler
-func logoutHandler(response http.ResponseWriter, request *http.Request) {
-	clearSession(response)
-	http.Redirect(response, request, "/", 302)
-}
 
 // index page
 const indexPage = `
@@ -82,7 +34,7 @@ const internalPage = `
 `
 
 func internalPageHandler(response http.ResponseWriter, request *http.Request) {
-	userName := getUserName(request)
+	userName := sessionHandler.GetUserName(request)
 
 	if userName != "" {
 		fmt.Fprintf(response, internalPage, userName)
@@ -102,8 +54,8 @@ func main() {
 	mux = make(map[string]func(http.ResponseWriter, *http.Request))
 	mux["/"] = indexPageHandler
 	mux["/internal"] = internalPageHandler
-	mux["/login"] = loginHandler
-	mux["/logout"] = logoutHandler
+	mux["/login"] = sessionHandler.LoginHandler
+	mux["/logout"] = sessionHandler.LogoutHandler
 
 	server.ListenAndServe()
 }
