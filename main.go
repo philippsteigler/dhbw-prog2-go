@@ -19,10 +19,6 @@ const indexPage = `
 </form>
 `
 
-func indexPageHandler(response http.ResponseWriter, request *http.Request) {
-	fmt.Fprintf(response, indexPage)
-}
-
 // internal page
 const internalPage = `
 <h1>Internal</h1>
@@ -32,6 +28,16 @@ const internalPage = `
     <button type="submit">Logout</button>
 </form>
 `
+
+func indexPageHandler(response http.ResponseWriter, request *http.Request) {
+	userName := sessionHandler.GetUserName(request)
+
+	if userName != "" {
+		http.Redirect(response, request, "/internal", 302)
+	} else {
+		fmt.Fprintf(response, indexPage)
+	}
+}
 
 func internalPageHandler(response http.ResponseWriter, request *http.Request) {
 	userName := sessionHandler.GetUserName(request)

@@ -3,7 +3,7 @@ package sessionHandler
 import "net/http"
 
 func GetUserName(request *http.Request) (userName string) {
-	if cookie, err := request.Cookie("sessionHandler"); err == nil {
+	if cookie, err := request.Cookie("session"); err == nil {
 		userName = cookie.Value
 	}
 
@@ -12,7 +12,7 @@ func GetUserName(request *http.Request) (userName string) {
 
 func setSession(userName string, response http.ResponseWriter) {
 	cookie := &http.Cookie{
-		Name:  "sessionHandler",
+		Name:  "session",
 		Value: userName,
 		Path:  "/",
 	}
@@ -22,7 +22,7 @@ func setSession(userName string, response http.ResponseWriter) {
 
 func clearSession(response http.ResponseWriter) {
 	cookie := &http.Cookie{
-		Name:   "sessionHandler",
+		Name:   "session",
 		Value:  "",
 		Path:   "/",
 		MaxAge: -1,
