@@ -13,6 +13,7 @@ type UserAccounts struct {
 }
 
 type User struct {
+	ID       int    `json:"id"`
 	Username string `json:"username"`
 	Password string `json:"password"`
 }
@@ -55,21 +56,23 @@ func LoginHandler(response http.ResponseWriter, request *http.Request) {
 	sessionPassword := request.FormValue("password")
 	redirectTarget := "/"
 
-	accountData, err := os.Open("assets/users.json")
-	if err != nil {
-		fmt.Println(err)
-	}
-	defer accountData.Close()
+	if sessionUsername != "" && sessionPassword != "" {
+		accountData, err := os.Open("assets/users.json")
+		if err != nil {
+			fmt.Println(err)
+		}
+		defer accountData.Close()
 
-	byteValue, _ := ioutil.ReadAll(accountData)
+		byteValue, _ := ioutil.ReadAll(accountData)
 
-	var users UserAccounts
-	json.Unmarshal(byteValue, &users)
+		var users UserAccounts
+		json.Unmarshal(byteValue, &users)
 
-	for i := 0; i < len(users.Users); i++ {
-		if sessionUsername == users.Users[i].Username && sessionPassword == users.Users[i].Password {
-			setSession(sessionUsername, response)
-			redirectTarget = "/internal"
+		for i := 0; i < len(users.Users); i++ {
+			if sessionUsername == users.Users[i].Username && sessionPassword == users.Users[i].Password {
+				setSession(sessionUsername, response)
+				redirectTarget = "/internal"
+			}
 		}
 	}
 
