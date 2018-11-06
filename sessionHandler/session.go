@@ -56,16 +56,23 @@ func LoginHandler(response http.ResponseWriter, request *http.Request) {
 	redirectTarget := "/"
 
 	if sessionUsername != "" && sessionPassword != "" {
-		userData, err := ioutil.ReadFile("./assets/users.json")
 		var users UserAccounts
+		aesKey := getKey()
+
+		// Read data for registered user accounts
+		userData, err := ioutil.ReadFile("./assets/users.json")
+		if err != nil {
+			fmt.Print(err)
+		}
 
 		err = json.Unmarshal(userData, &users)
 		if err != nil {
-			fmt.Println(err)
+			fmt.Print(err)
 		}
 
 		for i := 0; i < len(users.Users); i++ {
-			if sessionUsername == users.Users[i].Username && sessionPassword == users.Users[i].Password {
+			tmp, _ := decryptString(users.Users[i].Password, aesKey)
+			if sessionUsername == users.Users[i].Username && sessionPassword == tmp {
 				setSession(sessionUsername, response)
 				redirectTarget = "/internal"
 			}
