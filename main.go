@@ -1,10 +1,10 @@
 package main
 
 import (
+	"./sessionHandler"
 	"fmt"
 	"io"
 	"net/http"
-	"ticketBackend/sessionHandler"
 )
 
 // index page
@@ -30,9 +30,9 @@ const internalPage = `
 `
 
 func indexPageHandler(response http.ResponseWriter, request *http.Request) {
-	userName := sessionHandler.GetUserName(request)
+	username := sessionHandler.GetSessionUser(request)
 
-	if userName != "" {
+	if username != "" {
 		http.Redirect(response, request, "/internal", 302)
 	} else {
 		fmt.Fprintf(response, indexPage)
@@ -40,10 +40,10 @@ func indexPageHandler(response http.ResponseWriter, request *http.Request) {
 }
 
 func internalPageHandler(response http.ResponseWriter, request *http.Request) {
-	userName := sessionHandler.GetUserName(request)
+	username := sessionHandler.GetSessionUser(request)
 
-	if userName != "" {
-		fmt.Fprintf(response, internalPage, userName)
+	if username != "" {
+		fmt.Fprintf(response, internalPage, username)
 	} else {
 		http.Redirect(response, request, "/", 302)
 	}

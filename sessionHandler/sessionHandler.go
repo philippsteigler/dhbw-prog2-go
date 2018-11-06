@@ -1,19 +1,29 @@
 package sessionHandler
 
-import "net/http"
+import (
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	"net/http"
+	"os"
+)
+
+type UserAccounts struct {
+	Users []User `json:"users"`
+}
 
 type User struct {
-	username string `json:"username"`
-	password string `json:"password"`
+	Username string `json:"username"`
+	Password string `json:"password"`
 }
 
 // Read cookie and extract the value (user name)
-func GetUserName(request *http.Request) (userName string) {
+func GetSessionUser(request *http.Request) (username string) {
 	if cookie, err := request.Cookie("sessionUser"); err == nil {
-		userName = cookie.Value
+		username = cookie.Value
 	}
 
-	return userName
+	return username
 }
 
 // Deploy cookie to save the active user session
@@ -41,13 +51,26 @@ func clearSession(response http.ResponseWriter) {
 
 // Process user input from login action and start a new session
 func LoginHandler(response http.ResponseWriter, request *http.Request) {
-	// TODO: save credentials to .json file
-	sessionUser := User{request.FormValue("username"), request.FormValue("password")}
+	sessionUsername := request.FormValue("username")
+	sessionPassword := request.FormValue("password")
 	redirectTarget := "/"
 
-	if sessionUser.username != "" && sessionUser.password != "" {
-		setSession(sessionUser.username, response)
-		redirectTarget = "/internal"
+	accountData, err := os.Open("assets/users.json")
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer accountData.Close()
+
+	byteValue, _ := ioutil.ReadAll(accountData)
+
+	var users UserAccounts
+	json.Unmarshal(byteValue, &users)
+
+	for i := 0; i < len(users.Users); i++ {
+		if sessionUsername == users.Users[i].Username && sessionPassword == users.Users[i].Password {
+			setSession(sessionUsername, response)
+			redirectTarget = "/internal"
+		}
 	}
 
 	http.Redirect(response, request, redirectTarget, 302)
