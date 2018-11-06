@@ -8,8 +8,9 @@ import (
 	"encoding/base64"
 	"fmt"
 	"io"
-	"io/ioutil"
 )
+
+const key = "rRTNx^29L2.^?6mC94Cu%W?8wBwKaHoz]zFT7[wB"
 
 func hashTo32Bytes(input string) []byte {
 	data := sha256.Sum256([]byte(input))
@@ -17,13 +18,37 @@ func hashTo32Bytes(input string) []byte {
 }
 
 func getKey() string {
-	keyData, err := ioutil.ReadFile("./assets/key")
+	return key
+}
+
+func encryptString(plainText string, keyString string) (cipherTextString string, err error) {
+	key := hashTo32Bytes(keyString)
+	encrypted, err := encryptAES(key, []byte(plainText))
 	if err != nil {
-		fmt.Print(err)
+		return "", err
 	}
 
-	key := string(keyData)
-	return key
+	return base64.URLEncoding.EncodeToString(encrypted), nil
+}
+
+func encryptAES(key, data []byte) ([]byte, error) {
+	block, err := aes.NewCipher(key)
+	if err != nil {
+		return nil, err
+	}
+
+	output := make([]byte, aes.BlockSize+len(data))
+	iv := output[:aes.BlockSize]
+	encrypted := output[aes.BlockSize:]
+
+	if _, err = io.ReadFull(rand.Reader, iv); err != nil {
+		return nil, err
+	}
+
+	stream := cipher.NewCFBEncrypter(block, iv)
+
+	stream.XORKeyStream(encrypted, data)
+	return output, nil
 }
 
 func decryptString(cryptoText string, keyString string) (plainTextString string, err error) {
@@ -55,34 +80,4 @@ func decryptAES(key, data []byte) ([]byte, error) {
 
 	stream.XORKeyStream(data, data)
 	return data, nil
-}
-
-func encryptString(plainText string, keyString string) (cipherTextString string, err error) {
-	key := hashTo32Bytes(keyString)
-	encrypted, err := encryptAES(key, []byte(plainText))
-	if err != nil {
-		return "", err
-	}
-
-	return base64.URLEncoding.EncodeToString(encrypted), nil
-}
-
-func encryptAES(key, data []byte) ([]byte, error) {
-	block, err := aes.NewCipher(key)
-	if err != nil {
-		return nil, err
-	}
-
-	output := make([]byte, aes.BlockSize+len(data))
-	iv := output[:aes.BlockSize]
-	encrypted := output[aes.BlockSize:]
-
-	if _, err = io.ReadFull(rand.Reader, iv); err != nil {
-		return nil, err
-	}
-
-	stream := cipher.NewCFBEncrypter(block, iv)
-
-	stream.XORKeyStream(encrypted, data)
-	return output, nil
 }

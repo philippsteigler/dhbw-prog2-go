@@ -57,7 +57,6 @@ func LoginHandler(response http.ResponseWriter, request *http.Request) {
 	// Only authenticate user if input has been submitted
 	if sessionUsername != "" && sessionPassword != "" {
 		var users UserAccounts
-		aesKey := getKey()
 
 		// Read data for registered users
 		userData, err := ioutil.ReadFile("./assets/users.json")
@@ -72,7 +71,7 @@ func LoginHandler(response http.ResponseWriter, request *http.Request) {
 
 		// Search claimed user and evaluate password from user input
 		for i := 0; i < len(users.Users); i++ {
-			tmp, err := decryptString(users.Users[i].Password, aesKey)
+			tmp, err := decryptString(users.Users[i].Password, getKey())
 			if err != nil {
 				fmt.Print(err)
 			}
