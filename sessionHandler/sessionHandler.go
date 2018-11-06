@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"os"
 )
 
 type UserAccounts struct {
@@ -57,16 +56,13 @@ func LoginHandler(response http.ResponseWriter, request *http.Request) {
 	redirectTarget := "/"
 
 	if sessionUsername != "" && sessionPassword != "" {
-		accountData, err := os.Open("assets/users.json")
+		userData, err := ioutil.ReadFile("./assets/users.json")
+		var users UserAccounts
+
+		err = json.Unmarshal(userData, &users)
 		if err != nil {
 			fmt.Println(err)
 		}
-		defer accountData.Close()
-
-		byteValue, _ := ioutil.ReadAll(accountData)
-
-		var users UserAccounts
-		json.Unmarshal(byteValue, &users)
 
 		for i := 0; i < len(users.Users); i++ {
 			if sessionUsername == users.Users[i].Username && sessionPassword == users.Users[i].Password {
