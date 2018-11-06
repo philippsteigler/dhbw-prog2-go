@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"os"
 )
 
 type UserAccounts struct {
@@ -17,7 +16,7 @@ type User struct {
 	Password string `json:"password"`
 }
 
-// Read cookie and extract the value (user name)
+// Read cookie and extract the value as username
 func GetSessionUser(request *http.Request) (username string) {
 	if cookie, err := request.Cookie("sessionUser"); err == nil {
 		username = cookie.Value
@@ -26,7 +25,7 @@ func GetSessionUser(request *http.Request) (username string) {
 	return username
 }
 
-// Deploy cookie to save the active user session
+// Deploy cookie to save active user session
 func setSession(username string, response http.ResponseWriter) {
 	cookie := &http.Cookie{
 		Name:  "sessionUser",
@@ -37,7 +36,7 @@ func setSession(username string, response http.ResponseWriter) {
 	http.SetCookie(response, cookie)
 }
 
-// Delete cookie to end an active session
+// Delete cookie to end active session
 func clearSession(response http.ResponseWriter) {
 	cookie := &http.Cookie{
 		Name:   "sessionUser",
@@ -49,34 +48,46 @@ func clearSession(response http.ResponseWriter) {
 	http.SetCookie(response, cookie)
 }
 
-// Process user input from login action and start a new session
+// Process user input from login action and start new session
 func LoginHandler(response http.ResponseWriter, request *http.Request) {
 	sessionUsername := request.FormValue("username")
 	sessionPassword := request.FormValue("password")
 	redirectTarget := "/"
 
-	accountData, err := os.Open("assets/users.json")
-	if err != nil {
-		fmt.Println(err)
-	}
-	defer accountData.Close()
+	// Only authenticate user if input has been submitted
+	if sessionUsername != "" && sessionPassword != "" {
+		var users UserAccounts
+		aesKey := getKey()
 
-	byteValue, _ := ioutil.ReadAll(accountData)
+		// Read data for registered users
+		userData, err := ioutil.ReadFile("./assets/users.json")
+		if err != nil {
+			fmt.Print(err)
+		}
 
-	var users UserAccounts
-	json.Unmarshal(byteValue, &users)
+		err = json.Unmarshal(userData, &users)
+		if err != nil {
+			fmt.Print(err)
+		}
 
-	for i := 0; i < len(users.Users); i++ {
-		if sessionUsername == users.Users[i].Username && sessionPassword == users.Users[i].Password {
-			setSession(sessionUsername, response)
-			redirectTarget = "/internal"
+		// Search claimed user and evaluate password from user input
+		for i := 0; i < len(users.Users); i++ {
+			tmp, err := decryptString(users.Users[i].Password, aesKey)
+			if err != nil {
+				fmt.Print(err)
+			}
+
+			if sessionUsername == users.Users[i].Username && sessionPassword == tmp {
+				setSession(sessionUsername, response)
+				redirectTarget = "/internal"
+			}
 		}
 	}
 
 	http.Redirect(response, request, redirectTarget, 302)
 }
 
-// Stop active session and redirect the user
+// Stop active session and redirect user to front page
 func LogoutHandler(response http.ResponseWriter, request *http.Request) {
 	clearSession(response)
 	http.Redirect(response, request, "/", 302)
