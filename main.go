@@ -2,6 +2,7 @@ package main
 
 import (
 	"./sessionHandler"
+	"./ticketPage"
 	"fmt"
 	"io"
 	"net/http"
@@ -28,6 +29,11 @@ const internalPage = `
     <button type="submit">Logout</button>
 </form>
 `
+
+type Page struct {
+	Title string
+	Body  []byte
+}
 
 func indexPageHandler(response http.ResponseWriter, request *http.Request) {
 	username := sessionHandler.GetSessionUser(request)
@@ -62,6 +68,8 @@ func main() {
 	mux["/internal"] = internalPageHandler
 	mux["/login"] = sessionHandler.LoginHandler
 	mux["/logout"] = sessionHandler.LogoutHandler
+	mux["/ticket"] = ticketPage.TicketPageHandler
+	mux["/saveTicket"] = ticketPage.SaveTicketHandler
 
 	fmt.Println("[Server]: STARTING...")
 	server.ListenAndServe()
