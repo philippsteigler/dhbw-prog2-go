@@ -63,6 +63,7 @@ func main() {
 	mux["/login"] = sessionHandler.LoginHandler
 	mux["/logout"] = sessionHandler.LogoutHandler
 
+	fmt.Println("[Server]: STARTING...")
 	server.ListenAndServe()
 }
 

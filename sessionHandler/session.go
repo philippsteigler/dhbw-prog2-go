@@ -12,17 +12,21 @@ type UserAccounts struct {
 }
 
 type User struct {
+	ID       int    `json:"id"`
 	Username string `json:"username"`
 	Password string `json:"password"`
+	Salt     string `json:"salt"`
 }
 
 // Read cookie and extract the value as username
 func GetSessionUser(request *http.Request) (username string) {
 	if cookie, err := request.Cookie("sessionUser"); err == nil {
 		username = cookie.Value
+		return
+	} else {
+		username = ""
+		return
 	}
-
-	return username
 }
 
 // Deploy cookie to save active user session
@@ -50,14 +54,13 @@ func clearSession(response http.ResponseWriter) {
 
 // Process user input from login action and start new session
 func LoginHandler(response http.ResponseWriter, request *http.Request) {
-	sessionUsername := request.FormValue("username")
-	sessionPassword := request.FormValue("password")
+	inputUsername := request.FormValue("username")
+	inputPassword := request.FormValue("password")
 	redirectTarget := "/"
 
 	// Only authenticate user if input has been submitted
-	if sessionUsername != "" && sessionPassword != "" {
+	if inputUsername != "" && inputPassword != "" {
 		var users UserAccounts
-		aesKey := getKey()
 
 		// Read data for registered users
 		userData, err := ioutil.ReadFile("./assets/users.json")
@@ -72,14 +75,11 @@ func LoginHandler(response http.ResponseWriter, request *http.Request) {
 
 		// Search claimed user and evaluate password from user input
 		for i := 0; i < len(users.Users); i++ {
-			tmp, err := decryptString(users.Users[i].Password, aesKey)
-			if err != nil {
-				fmt.Print(err)
-			}
-
-			if sessionUsername == users.Users[i].Username && sessionPassword == tmp {
-				setSession(sessionUsername, response)
-				redirectTarget = "/internal"
+			if users.Users[i].Username == inputUsername {
+				if GetHash(inputPassword, users.Users[i].Salt) == users.Users[i].Password {
+					setSession(inputUsername, response)
+					redirectTarget = "/internal"
+				}
 			}
 		}
 	}
