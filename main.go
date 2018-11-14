@@ -1,53 +1,12 @@
 package main
 
 import (
+	"./pageHandler"
 	"./sessionHandler"
 	"fmt"
 	"io"
 	"net/http"
 )
-
-// index page
-const indexPage = `
-<h1>Login</h1>
-<form method="post" action="/login">
-    <label for="username">User name</label>
-    <input type="text" id="username" name="username">
-    <label for="password">Password</label>
-    <input type="password" id="password" name="password">
-    <button type="submit">Login</button>
-</form>
-`
-
-// internal page
-const internalPage = `
-<h1>Internal</h1>
-<hr>
-<small>User: %s</small>
-<form method="post" action="/logout">
-    <button type="submit">Logout</button>
-</form>
-`
-
-func indexPageHandler(response http.ResponseWriter, request *http.Request) {
-	username := sessionHandler.GetSessionUser(request)
-
-	if username != "" {
-		http.Redirect(response, request, "/internal", 302)
-	} else {
-		fmt.Fprintf(response, indexPage)
-	}
-}
-
-func internalPageHandler(response http.ResponseWriter, request *http.Request) {
-	username := sessionHandler.GetSessionUser(request)
-
-	if username != "" {
-		fmt.Fprintf(response, internalPage, username)
-	} else {
-		http.Redirect(response, request, "/", 302)
-	}
-}
 
 var mux map[string]func(http.ResponseWriter, *http.Request)
 
@@ -58,10 +17,12 @@ func main() {
 	}
 
 	mux = make(map[string]func(http.ResponseWriter, *http.Request))
-	mux["/"] = indexPageHandler
-	mux["/internal"] = internalPageHandler
+	mux["/"] = pageHandler.IndexPageHandler
+	mux["/internal"] = pageHandler.InternalPageHandler
 	mux["/login"] = sessionHandler.LoginHandler
 	mux["/logout"] = sessionHandler.LogoutHandler
+	mux["/ticket"] = pageHandler.TicketPageHandler
+	mux["/saveTicket"] = pageHandler.SaveTicketHandler
 
 	fmt.Println("[Server]: STARTING...")
 	server.ListenAndServe()
