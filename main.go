@@ -27,6 +27,8 @@ func main() {
 
 	fmt.Println("[Server]: Listening on http://localhost:8000/")
 	server.ListenAndServe()
+
+	//ticket.NewTicket(<string1>, []ticket.Entry{ticket.NewEntry(<string>, <string>)})
 }
 
 type myHandler struct{}
