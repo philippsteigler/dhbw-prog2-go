@@ -1,10 +1,10 @@
 package pageHandler
 
 import (
+	"../sessionHandler"
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"ticketBackend/sessionHandler"
 )
 
 func IndexPageHandler(response http.ResponseWriter, request *http.Request) {
