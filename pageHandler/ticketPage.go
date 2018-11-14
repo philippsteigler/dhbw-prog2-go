@@ -7,20 +7,18 @@ import (
 	"net/http"
 )
 
-//localhost:.../ticket
-//läd den html code für die Textareas und zeigt ihn an
+// localhost:.../ticket
+// läd den html code für die Textareas und zeigt ihn an
 func TicketPageHandler(response http.ResponseWriter, request *http.Request) {
-	username := sessionHandler.GetSessionUser(request)
-
-	if username != "" {
-		//Einlesen der .html Datei
+	if sessionHandler.IsUserLoggedIn(request) {
+		// Einlesen der .html Datei
 		file, err := ioutil.ReadFile("./assets/html/ticket.html")
 		if err != nil {
 			fmt.Print(err)
 		}
 
-		//Anzeigen der .html
-		//Format Print Formatiert dach dem responseWriter => html
+		// Anzeigen der .html
+		// Format Print Formatiert dach dem responseWriter => html
 		fmt.Fprintf(response, string(file))
 
 	} else {
@@ -28,21 +26,19 @@ func TicketPageHandler(response http.ResponseWriter, request *http.Request) {
 	}
 }
 
-//localhost:.../saveTicket
-//Speichert den Text aus den Textareas in mail, subject, text
+// localhost:.../saveTicket
+// Speichert den Text aus den Textareas in mail, subject, text
 func SaveTicketHandler(response http.ResponseWriter, request *http.Request) {
-	username := sessionHandler.GetSessionUser(request)
-
-	if username != "" {
+	if sessionHandler.IsUserLoggedIn(request) {
 		mail := request.FormValue("ticketMail")
 		subject := request.FormValue("ticketSubject")
 		text := request.FormValue("ticketText")
 
-		//Testdatei für die Eingabe
+		// Testdatei für die Eingabe
 		inputTest := string("Mail\n" + mail + "\n\nSubject\n" + subject + "\n\nText\n" + text)
 		ioutil.WriteFile("./assets/TicketTest", []byte(inputTest), 0600)
 
-		//Zurück zu der Ticketseite
+		// Zurück zu der Ticketseite
 		http.Redirect(response, request, "/ticket", http.StatusFound)
 
 	} else {
