@@ -1,4 +1,4 @@
-package ticketPage
+package pageHandler
 
 import (
 	"../sessionHandler"
@@ -14,7 +14,7 @@ func TicketPageHandler(response http.ResponseWriter, request *http.Request) {
 
 	if username != "" {
 		//Einlesen der .html Datei
-		file, err := ioutil.ReadFile("./assets/page/ticket.html")
+		file, err := ioutil.ReadFile("./assets/html/ticket.html")
 		if err != nil {
 			fmt.Print(err)
 		}
@@ -40,7 +40,7 @@ func SaveTicketHandler(response http.ResponseWriter, request *http.Request) {
 
 		//Testdatei für die Eingabe
 		inputTest := string("Mail\n" + mail + "\n\nSubject\n" + subject + "\n\nText\n" + text)
-		ioutil.WriteFile("Testdatei für das Ticket", []byte(inputTest), 0600)
+		ioutil.WriteFile("./assets/TicketTest", []byte(inputTest), 0600)
 
 		//Zurück zu der Ticketseite
 		http.Redirect(response, request, "/ticket", http.StatusFound)
