@@ -3,12 +3,14 @@
     {
       "id": 0,
       "username": "admin",
-      "password": "6slyV0vZAO3kM1watZGdgjSaWDXlMGo="
+      "password": "ukLe9fbgmmkFfV7QzbhWwU96d75HtD1enuK201SQQsQ=",
+      "salt": "ZjwDTxlMEaVKvrnn"
     },
     {
       "id": 1,
       "username": "philipp",
-      "password": "eb8DsVI14jwp4IzLz0vIyOnXw5--lA6QUw=="
+      "password": "wKt3ErMv_qrtrhrBVTsQize6lwoYI1KkvePb4JEn5NA=",
+      "salt" : "JqNjDW48W9fovmFY"
     }
   ]
 }
