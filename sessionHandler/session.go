@@ -29,6 +29,14 @@ func GetSessionUser(request *http.Request) (username string) {
 	}
 }
 
+func IsUserLoggedIn(request *http.Request) bool {
+	if GetSessionUser(request) != "" {
+		return true
+	}
+
+	return false
+}
+
 // Deploy cookie to save active user session
 func setSession(username string, response http.ResponseWriter) {
 	cookie := &http.Cookie{

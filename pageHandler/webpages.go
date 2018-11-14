@@ -8,9 +8,7 @@ import (
 )
 
 func IndexPageHandler(response http.ResponseWriter, request *http.Request) {
-	username := sessionHandler.GetSessionUser(request)
-
-	if username != "" {
+	if sessionHandler.IsUserLoggedIn(request) {
 		http.Redirect(response, request, "/internal", 302)
 	} else {
 		file, err := ioutil.ReadFile("./assets/html/index.html")
@@ -23,14 +21,12 @@ func IndexPageHandler(response http.ResponseWriter, request *http.Request) {
 }
 
 func InternalPageHandler(response http.ResponseWriter, request *http.Request) {
-	username := sessionHandler.GetSessionUser(request)
-
-	if username != "" {
+	if sessionHandler.IsUserLoggedIn(request) {
 		file, err := ioutil.ReadFile("./assets/html/internal.html")
 		if err != nil {
 			fmt.Print(err)
 		}
-		fmt.Fprintf(response, string(file), username)
+		fmt.Fprintf(response, string(file), sessionHandler.GetSessionUser(request))
 	} else {
 		http.Redirect(response, request, "/", 302)
 	}
