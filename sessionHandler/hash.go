@@ -34,8 +34,8 @@ func HashString(text string) (string, string) {
 	tmp := []string{text, salt}
 	saltedString := strings.Join(tmp, "")
 
-	sha256 := sha256.Sum256([]byte(saltedString))
-	hashedString := base64.URLEncoding.EncodeToString(sha256[:])
+	bytes := sha256.Sum256([]byte(saltedString))
+	hashedString := base64.URLEncoding.EncodeToString(bytes[:])
 
 	return hashedString, salt
 }
@@ -46,8 +46,8 @@ func GetHash(text, salt string) string {
 	tmp := []string{text, salt}
 	saltedString := strings.Join(tmp, "")
 
-	sha256 := sha256.Sum256([]byte(saltedString))
-	hashedString := base64.URLEncoding.EncodeToString(sha256[:])
+	bytes := sha256.Sum256([]byte(saltedString))
+	hashedString := base64.URLEncoding.EncodeToString(bytes[:])
 
 	return hashedString
 }

@@ -11,6 +11,7 @@ import (
 var mux map[string]func(http.ResponseWriter, *http.Request)
 
 func main() {
+	fmt.Println("[Server]: STARTING...")
 	server := http.Server{
 		Addr:    ":8000",
 		Handler: &myHandler{},
@@ -24,7 +25,7 @@ func main() {
 	mux["/ticket"] = pageHandler.TicketPageHandler
 	mux["/saveTicket"] = pageHandler.SaveTicketHandler
 
-	fmt.Println("[Server]: STARTING...")
+	fmt.Println("[Server]: Listening on http://localhost:8000/")
 	server.ListenAndServe()
 }
 
