@@ -15,6 +15,14 @@ func errorCheck(err error) {
 	}
 }
 
+// TODO: Umwandeln in init() --> Funktion soll flags empfangen und verarbeiten
+func createDirIfNotExist(folder string) {
+	if _, err := os.Stat(folder); os.IsNotExist(err) {
+		err = os.MkdirAll(folder, 0755)
+		errorCheck(err)
+	}
+}
+
 func indexPageHandler(response http.ResponseWriter, request *http.Request) {
 	if sessionHandler.IsUserLoggedIn(request) {
 		http.Redirect(response, request, "/internal", 302)
@@ -39,21 +47,14 @@ func ticketPageHandler(response http.ResponseWriter, request *http.Request) {
 	}
 }
 
-func createDirIfNotExist(folder string) {
-	if _, err := os.Stat(folder); os.IsNotExist(err) {
-		err = os.MkdirAll(folder, 0755)
-		errorCheck(err)
-	}
-}
-
 // Golang webserver example:
 // https://github.com/jimmahoney/golang-webserver/blob/master/webserver.go
 func main() {
 	createDirIfNotExist("./assets/tickets")
 	port := 8000
 	portstring := strconv.Itoa(port)
-
 	mux := http.NewServeMux()
+
 	// Webpages
 	mux.Handle("/", http.HandlerFunc(indexPageHandler))
 	mux.Handle("/internal", http.HandlerFunc(internalPageHandler))
