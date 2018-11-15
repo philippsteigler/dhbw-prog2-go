@@ -20,7 +20,6 @@ func TicketPageHandler(response http.ResponseWriter, request *http.Request) {
 		// Anzeigen der .html
 		// Format Print Formatiert dach dem responseWriter => html
 		fmt.Fprintf(response, string(file))
-
 	} else {
 		http.Redirect(response, request, "/", 302)
 	}
