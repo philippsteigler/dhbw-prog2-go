@@ -1,44 +1,58 @@
 package main
 
 import (
-	"./pageHandler"
 	"./sessionHandler"
-	"fmt"
-	"io"
+	"log"
 	"net/http"
+	"strconv"
+	"ticketBackend/pageHandler"
+	sessionHandler2 "ticketBackend/sessionHandler"
 )
 
-var mux map[string]func(http.ResponseWriter, *http.Request)
-
-func main() {
-	fmt.Println("[Server]: STARTING...")
-	server := http.Server{
-		Addr:    ":8000",
-		Handler: &myHandler{},
-	}
-
-	mux = make(map[string]func(http.ResponseWriter, *http.Request))
-	mux["/"] = pageHandler.IndexPageHandler
-	mux["/internal"] = pageHandler.InternalPageHandler
-	mux["/login"] = sessionHandler.LoginHandler
-	mux["/logout"] = sessionHandler.LogoutHandler
-	mux["/ticket"] = pageHandler.TicketPageHandler
-	mux["/saveTicket"] = pageHandler.SaveTicketHandler
-
-	fmt.Printf("[Server]: Listening on https://localhost%v/", server.Addr)
-	err := server.ListenAndServeTLS("./assets/certificates/server.crt", "./assets/certificates/server.key")
-	if err != nil {
-		fmt.Print(err)
+func indexPageHandler(response http.ResponseWriter, request *http.Request) {
+	if sessionHandler2.IsUserLoggedIn(request) {
+		http.Redirect(response, request, "/internal", 302)
+	} else {
+		http.ServeFile(response, request, "./assets/html/index.html")
 	}
 }
 
-type myHandler struct{}
-
-func (*myHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	if h, ok := mux[r.URL.String()]; ok {
-		h(w, r)
-		return
+func internalPageHandler(response http.ResponseWriter, request *http.Request) {
+	if sessionHandler2.IsUserLoggedIn(request) {
+		http.ServeFile(response, request, "./assets/html/internal.html")
+	} else {
+		http.Redirect(response, request, "/", 302)
 	}
+}
 
-	io.WriteString(w, "Not found: "+r.URL.String())
+func ticketPageHandler(response http.ResponseWriter, request *http.Request) {
+	if sessionHandler.IsUserLoggedIn(request) {
+		http.ServeFile(response, request, "./assets/html/ticket.html")
+	} else {
+		http.Redirect(response, request, "/", 302)
+	}
+}
+
+// Golang webserver example:
+// https://github.com/jimmahoney/golang-webserver/blob/master/webserver.go
+func main() {
+	port := 8000
+	portstring := strconv.Itoa(port)
+
+	mux := http.NewServeMux()
+	// Webpages
+	mux.Handle("/", http.HandlerFunc(indexPageHandler))
+	mux.Handle("/internal", http.HandlerFunc(internalPageHandler))
+	mux.Handle("/ticket", http.HandlerFunc(ticketPageHandler))
+
+	// Interactions
+	mux.Handle("/login", http.HandlerFunc(sessionHandler.LoginHandler))
+	mux.Handle("/logout", http.HandlerFunc(sessionHandler.LogoutHandler))
+	mux.Handle("/saveTicket", http.HandlerFunc(pageHandler.SaveTicketHandler))
+
+	log.Print("Listening on port " + portstring + " ... ")
+	err := http.ListenAndServeTLS(":"+portstring, "./assets/certificates/server.crt", "./assets/certificates/server.key", mux)
+	if err != nil {
+		log.Fatal("ListenAndServe error: ", err)
+	}
 }
