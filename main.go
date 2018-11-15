@@ -1,16 +1,15 @@
 package main
 
 import (
-	"./sessionHandler"
 	"log"
 	"net/http"
 	"strconv"
 	"ticketBackend/pageHandler"
-	sessionHandler2 "ticketBackend/sessionHandler"
+	"ticketBackend/sessionHandler"
 )
 
 func indexPageHandler(response http.ResponseWriter, request *http.Request) {
-	if sessionHandler2.IsUserLoggedIn(request) {
+	if sessionHandler.IsUserLoggedIn(request) {
 		http.Redirect(response, request, "/internal", 302)
 	} else {
 		http.ServeFile(response, request, "./assets/html/index.html")
@@ -18,7 +17,7 @@ func indexPageHandler(response http.ResponseWriter, request *http.Request) {
 }
 
 func internalPageHandler(response http.ResponseWriter, request *http.Request) {
-	if sessionHandler2.IsUserLoggedIn(request) {
+	if sessionHandler.IsUserLoggedIn(request) {
 		http.ServeFile(response, request, "./assets/html/internal.html")
 	} else {
 		http.Redirect(response, request, "/", 302)
