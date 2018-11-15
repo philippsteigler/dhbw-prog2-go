@@ -26,7 +26,10 @@ func main() {
 	mux["/saveTicket"] = pageHandler.SaveTicketHandler
 
 	fmt.Println("[Server]: Listening on http://localhost:8000/")
-	server.ListenAndServe()
+	err := server.ListenAndServeTLS("./assets/certificates/server.crt", "./assets/certificates/server.key")
+	if err != nil {
+		fmt.Print(err)
+	}
 }
 
 type myHandler struct{}
