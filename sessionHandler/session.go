@@ -34,7 +34,7 @@ func refreshUserData() {
 	}
 }
 
-// Deploy cookie to save active user session
+// Deploy cookie to save user ID and user name as session identifier
 func setSession(id int, username string, response http.ResponseWriter) {
 	cookieUserID := &http.Cookie{
 		Name:  "sessionUserID",
@@ -86,10 +86,8 @@ func GetSessionUserID(request *http.Request) int {
 		if err != nil {
 			fmt.Print(err)
 		}
-
 		return i
 	}
-
 	return 0
 }
 
@@ -97,7 +95,6 @@ func IsUserLoggedIn(request *http.Request) bool {
 	if GetSessionUserID(request) != 0 && GetSessionUserName(request) != "" {
 		return true
 	}
-
 	return false
 }
 

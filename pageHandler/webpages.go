@@ -26,6 +26,7 @@ func InternalPageHandler(response http.ResponseWriter, request *http.Request) {
 		if err != nil {
 			fmt.Print(err)
 		}
+
 		fmt.Fprintf(response, string(file), sessionHandler.GetSessionUserName(request))
 	} else {
 		http.Redirect(response, request, "/", 302)
