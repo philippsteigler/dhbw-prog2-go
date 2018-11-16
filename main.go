@@ -52,7 +52,13 @@ func ticketPageHandler(response http.ResponseWriter, request *http.Request) {
 //
 // Die Startfunktion initialisiert die Anwendung und startet anschließend den Server.
 // Eingehende HTTP-Anfragen auf Webseiten werden hier geroutet.
-// https://github.com/jimmahoney/golang-webserver/blob/master/webserver.go
+//
+//
+// A-11.3:
+// Die Anwendung soll zwar HTTPS und die entsprechenden erforderlichen Zertifikate unterstützen,
+// es kann jedoch davon ausgegangen werden, dass geeig- nete Zertifikate gestellt werden.
+//
+// Self-signed Zertifikate sind standardmäßig vorhanden und unter ./assets/certificates gespeichert
 func main() {
 	createDirIfNotExist("./assets/tickets")
 	port := 8000
