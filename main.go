@@ -58,7 +58,7 @@ func ticketPageHandler(response http.ResponseWriter, request *http.Request) {
 // Die Anwendung soll zwar HTTPS und die entsprechenden erforderlichen Zertifikate unterstützen,
 // es kann jedoch davon ausgegangen werden, dass geeig- nete Zertifikate gestellt werden.
 //
-// Self-signed Zertifikate sind standardmäßig vorhanden und unter ./assets/certificates gespeichert
+// Self-signed Zertifikate sind default vorhanden und unter ./assets/certificates gespeichert.
 func main() {
 	createDirIfNotExist("./assets/tickets")
 	port := 8000
