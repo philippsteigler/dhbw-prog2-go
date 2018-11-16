@@ -18,8 +18,8 @@ func TestNewTicket(t *testing.T) {
 	ticketsCount := countTickets()
 	assert.Equal(t, 2, ticketsCount)
 
-	ticket1 := readTicket(1)
-	ticket2 := readTicket(2)
+	ticket1 := ReadTicket(1)
+	ticket2 := ReadTicket(2)
 
 	assert.NotEqual(t, ticket1, ticket2)
 
@@ -44,7 +44,7 @@ func TestNewEntry(t *testing.T) {
 
 func TestReadTicket(t *testing.T) {
 	NewTicket("Test", "Bob", "Test")
-	ticket := readTicket(1)
+	ticket := ReadTicket(1)
 	assert.IsType(t, Ticket{}, ticket)
 	DeleteTicket(1)
 	Reset()
@@ -64,7 +64,7 @@ func TestWriteTicket(t *testing.T) {
 func TestAppendEntry(t *testing.T) {
 	NewTicket("Test", "Bob", "Test")
 
-	ticket := readTicket(1)
+	ticket := ReadTicket(1)
 
 	assert.Equal(t, 1, len(ticket.Entries))
 
@@ -72,7 +72,7 @@ func TestAppendEntry(t *testing.T) {
 	AppendEntry(1, "Petra", "Test")
 	AppendEntry(1, "Bob", "Test")
 
-	ticket = readTicket(1)
+	ticket = ReadTicket(1)
 	assert.Equal(t, 4, len(ticket.Entries))
 	DeleteTicket(1)
 	Reset()
@@ -81,12 +81,12 @@ func TestAppendEntry(t *testing.T) {
 func TestTakeTicket(t *testing.T) {
 	NewTicket("Test", "Bob", "Test")
 
-	ticket := readTicket(1)
+	ticket := ReadTicket(1)
 	assert.Equal(t, Open, ticket.Status)
 	assert.Equal(t, 0, ticket.EditorId)
 
 	TakeTicket(1, 7)
-	ticket = readTicket(1)
+	ticket = ReadTicket(1)
 	assert.Equal(t, InProcess, ticket.Status)
 	assert.Equal(t, 7, ticket.EditorId)
 	DeleteTicket(1)
