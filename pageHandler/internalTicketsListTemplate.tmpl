@@ -1,8 +1,9 @@
 {{define "inner"}}
     <div>
-        <form action="/internal/ticket/information/" method="POST">
+        <form action="/internal/ticket/information" method="POST">
         <input type="submit" value="Select">
         <h2 style="display: inline">Ticket Nr. {{.Id}}</h2>
+        <div style="display:none"><input name="TicketID" type="Text" value="{{.Id}}"></input></div>
         </form>
     </div>
 

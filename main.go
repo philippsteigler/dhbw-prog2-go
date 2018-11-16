@@ -10,7 +10,6 @@ import (
 	"net/http"
 	"os"
 	"strconv"
-	"time"
 )
 
 type Status string
@@ -52,24 +51,22 @@ func indexPageHandler(response http.ResponseWriter, request *http.Request) {
 func internalTickets(response http.ResponseWriter, request *http.Request) {
 	if sessionHandler.IsUserLoggedIn(request) {
 
-		tEntry := Entry{Date: time.Now().Local().Format("2006-01-02T15:04:05Z07:00"),
-			Creator: "jamaijarno",
-			Content: "auf die druffe du sack"}
+		id := request.FormValue("TicketID")
 
-		tTicket := Ticket{Id: 1,
-			Subject:  "Test",
-			Status:   Open,
-			EditorId: 420,
-			Entries:  []Entry{tEntry}}
+		intId, err := strconv.Atoi(id)
+
+		if err != nil {
+			fmt.Println(err)
+		}
 
 		internal, err := template.ParseFiles("./pageHandler/internalTemplate.tmpl")
 		if err != nil {
 			fmt.Println(err)
 		}
 
-		internal.ExecuteTemplate(response, "internal", tTicket)
+		internal.ExecuteTemplate(response, "internal", ticket.ReadTicket(intId))
 
-		internal.Execute(response, tTicket)
+		internal.Execute(response, nil)
 
 	} else {
 		http.ServeFile(response, request, "./assets/html/index.html")

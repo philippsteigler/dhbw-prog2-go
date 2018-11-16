@@ -58,7 +58,7 @@ func countTickets() int {
 }
 
 //Erw. Funktion: Für xxx Json wird eingelesen
-func readTicket(id int) Ticket {
+func ReadTicket(id int) Ticket {
 	filename := "./assets/tickets/" + strconv.Itoa(id) + ".json"
 	encodedTicket, errRead := ioutil.ReadFile(filename)
 	errorCheck(errRead)
@@ -77,14 +77,14 @@ func writeTicket(ticket Ticket) {
 
 //Funktion: NeN Hinzufügen von Einträgen
 func AppendEntry(id int, creator string, content string) {
-	ticket = readTicket(id)
+	ticket = ReadTicket(id)
 	ticket.Entries = append(ticket.Entries, NewEntry(creator, content))
 	writeTicket(ticket)
 }
 
 //Funktion: 8.2 Bearbeiter soll ein Ticket übernehmen können
 func TakeTicket(id int, userId int) {
-	ticket = readTicket(id)
+	ticket = ReadTicket(id)
 	ticket.Status = InProcess
 	ticket.EditorId = userId
 	writeTicket(ticket)
@@ -98,7 +98,7 @@ func GetOpenTickets() (openTickets []int) {
 	var id int
 	for _, file := range files {
 		id = parseFilename(file.Name())
-		ticket = readTicket(id)
+		ticket = ReadTicket(id)
 		if ticket.Status == Open {
 			openTickets = append(openTickets, ticket.Id)
 		}
@@ -116,7 +116,7 @@ func parseFilename(filename string) int {
 
 //Funktion: 8.4 Tickets nach Übernahme freigeben
 func UnhandTicket(id int) {
-	ticket = readTicket(id)
+	ticket = ReadTicket(id)
 	ticket.Status = Open
 	ticket.EditorId = 0
 	writeTicket(ticket)
@@ -124,7 +124,7 @@ func UnhandTicket(id int) {
 
 //Funktion: 8.5 Ticket jmd anderem zuteilen
 func delegateTicket(id int, editorId int) {
-	ticket = readTicket(id)
+	ticket = ReadTicket(id)
 	ticket.Status = InProcess
 	ticket.EditorId = editorId
 	writeTicket(ticket)
@@ -132,8 +132,8 @@ func delegateTicket(id int, editorId int) {
 
 //Funktion: 12 Zusammenführen von Tickets
 func mergeTickets(dest int, source int) {
-	ticket = readTicket(dest)
-	sourceTicket := readTicket(source)
+	ticket = ReadTicket(dest)
+	sourceTicket := ReadTicket(source)
 	for _, entry := range sourceTicket.Entries {
 		ticket.Entries = append(ticket.Entries, entry)
 	}
