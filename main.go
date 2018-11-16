@@ -56,7 +56,7 @@ func ticketPageHandler(response http.ResponseWriter, request *http.Request) {
 //
 // A-11.3:
 // Die Anwendung soll zwar HTTPS und die entsprechenden erforderlichen Zertifikate unterstützen,
-// es kann jedoch davon ausgegangen werden, dass geeig- nete Zertifikate gestellt werden.
+// es kann jedoch davon ausgegangen werden, dass geeignete Zertifikate gestellt werden.
 //
 // Self-signed Zertifikate sind default vorhanden und unter ./assets/certificates gespeichert.
 func main() {
