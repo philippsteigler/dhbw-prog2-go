@@ -3,6 +3,7 @@ package main
 import (
 	"./pageHandler"
 	"./sessionHandler"
+	"./ticket"
 	"fmt"
 	"html/template"
 	"log"
@@ -48,7 +49,7 @@ func indexPageHandler(response http.ResponseWriter, request *http.Request) {
 	}
 }
 
-func internalPageHandler(response http.ResponseWriter, request *http.Request) {
+func internalTickets(response http.ResponseWriter, request *http.Request) {
 	if sessionHandler.IsUserLoggedIn(request) {
 
 		tEntry := Entry{Date: time.Now().Local().Format("2006-01-02T15:04:05Z07:00"),
@@ -69,6 +70,33 @@ func internalPageHandler(response http.ResponseWriter, request *http.Request) {
 		internal.ExecuteTemplate(response, "internal", tTicket)
 
 		internal.Execute(response, tTicket)
+
+	} else {
+		http.ServeFile(response, request, "./assets/html/index.html")
+	}
+}
+
+func internalPageHandler(response http.ResponseWriter, request *http.Request) {
+	if sessionHandler.IsUserLoggedIn(request) {
+
+		var templateFiles []string
+		templateFiles = append(templateFiles, "./pageHandler/internalTicketsTemplate.tmpl")
+		templateFiles = append(templateFiles, "./pageHandler/internalTicketsListTemplate.tmpl")
+
+		templates, err := template.ParseFiles(templateFiles...)
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		templates.ExecuteTemplate(response, "outer", nil)
+
+		for i := 2; i <= len(ticket.GetOpenTickets())+1; i++ {
+			//tmp2 := templates.Lookup("internalTicketsListTemplate.tmpl")
+			//tmp2.ExecuteTemplate(response, "inner", ticket.ReadTicket(i))
+			templates.ExecuteTemplate(response, "inner", ticket.ReadTicket(i))
+		}
+
+		templates.Execute(response, nil)
 
 	} else {
 		http.Redirect(response, request, "/", 302)
@@ -101,6 +129,7 @@ func main() {
 	// Webpages
 	mux.Handle("/", http.HandlerFunc(indexPageHandler))
 	mux.Handle("/internal", http.HandlerFunc(internalPageHandler))
+	mux.Handle("/internal/ticket/information", http.HandlerFunc(internalTickets))
 	mux.Handle("/ticket", http.HandlerFunc(ticketPageHandler))
 
 	// Interactions
