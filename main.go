@@ -1,13 +1,38 @@
 package main
 
 import (
+	"./pageHandler"
+	"./sessionHandler"
+	"fmt"
+	"html/template"
 	"log"
 	"net/http"
 	"os"
 	"strconv"
-	"ticketBackend/pageHandler"
-	"ticketBackend/sessionHandler"
+	"time"
 )
+
+type Status string
+
+const (
+	Open      Status = "offen"
+	InProcess Status = "in Bearbeitung"
+	Closed    Status = "geschlossen"
+)
+
+type Ticket struct {
+	Id       int     `json:"id"`
+	Subject  string  `json:"subject"`
+	Status   Status  `json:"status"`
+	EditorId int     `json:"editorId"`
+	Entries  []Entry `json:"entries"`
+}
+
+type Entry struct {
+	Date    string `json:"date"`
+	Creator string `json:"creator"`
+	Content string `json:"content"`
+}
 
 func errorCheck(err error) {
 	if err != nil {
@@ -25,7 +50,26 @@ func indexPageHandler(response http.ResponseWriter, request *http.Request) {
 
 func internalPageHandler(response http.ResponseWriter, request *http.Request) {
 	if sessionHandler.IsUserLoggedIn(request) {
-		http.ServeFile(response, request, "./assets/html/internal.html")
+
+		tEntry := Entry{Date: time.Now().Local().Format("2006-01-02T15:04:05Z07:00"),
+			Creator: "jamaijarno",
+			Content: "auf die druffe du sack"}
+
+		tTicket := Ticket{Id: 1,
+			Subject:  "Test",
+			Status:   Open,
+			EditorId: 420,
+			Entries:  []Entry{tEntry}}
+
+		internal, err := template.ParseFiles("./pageHandler/internalTemplate.tmpl")
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		internal.ExecuteTemplate(response, "internal", tTicket)
+
+		internal.Execute(response, tTicket)
+
 	} else {
 		http.Redirect(response, request, "/", 302)
 	}
