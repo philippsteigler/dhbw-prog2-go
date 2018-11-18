@@ -14,7 +14,7 @@ var id Id
 //Gibt eine einzigartige, gültige ID zurück
 func NewId() int {
 	//Hier befindet sich die gültige ID und wird ausgelesen
-	filename := "../assets/idGenerator_resource.json"
+	filename := "./assets/idGenerator_resource.json"
 	encodedId, errRead := ioutil.ReadFile(filename)
 	errorCheck(errRead)
 	err := json.Unmarshal(encodedId, &id)
@@ -35,7 +35,7 @@ func NewId() int {
 //in der Datei "idGenerator_resource.json" benötigt wird
 func Reset() {
 	id = Id{1}
-	filename := "../assets/idGenerator_resource.json"
+	filename := "./assets/idGenerator_resource.json"
 	encodedId, errEnc := json.Marshal(id)
 	errorCheck(errEnc)
 	errWrite := ioutil.WriteFile(filename, encodedId, 0600)

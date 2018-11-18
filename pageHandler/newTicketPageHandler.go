@@ -10,10 +10,11 @@ type Handler interface {
 	ServeHTTP(http.Response, *http.Request)
 }
 
-//NewTicketViewPageHandler
+// localhost:.../newTicketView
+//anzeigen der neues Ticket Seite
 func NewTicketViewPageHandler(response http.ResponseWriter, request *http.Request) {
 	if sessionHandler.IsUserLoggedIn(request) {
-		http.ServeFile(response, request, "./assets/html/newTicketView.html")
+		http.ServeFile(response, request, "./assets/html/newTicketViewTemplate.html")
 	} else {
 		http.Redirect(response, request, "/", 302)
 	}

@@ -2,6 +2,7 @@ package pageHandler
 
 import (
 	"../sessionHandler"
+	"../ticket"
 	"fmt"
 	"html/template"
 	"net/http"
@@ -19,12 +20,12 @@ func TicketInsightPageHandler(response http.ResponseWriter, request *http.Reques
 			fmt.Println(err)
 		}
 
-		internal, err := template.ParseFiles("./pageHandler/ticketInsightView.html")
+		internal, err := template.ParseFiles("./assets/html/ticketInsightViewTemplate.html")
 		if err != nil {
 			fmt.Println(err)
 		}
 
-		internal.ExecuteTemplate(response, "internal", ticket.ReadTicket(intId))
+		internal.ExecuteTemplate(response, "internal", ticket.GetTicket(intId))
 
 		internal.Execute(response, nil)
 

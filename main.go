@@ -35,7 +35,8 @@ func main() {
 	mux.Handle("/", http.HandlerFunc(pageHandler.IndexPageHandler))
 	mux.Handle("/ticketsView", http.HandlerFunc(pageHandler.TicketsViewPageHandler))
 	mux.Handle("/ticketInsightView", http.HandlerFunc(pageHandler.TicketInsightPageHandler))
-	mux.Handle("/NewTicketView", http.HandlerFunc(pageHandler.NewTicketViewPageHandler))
+	mux.Handle("/newTicketView", http.HandlerFunc(pageHandler.NewTicketViewPageHandler))
+	mux.Handle("/dashboard", http.HandlerFunc(pageHandler.DashboardViewPageHandler))
 
 	// Interactions
 	mux.Handle("/login", http.HandlerFunc(sessionHandler.LoginHandler))

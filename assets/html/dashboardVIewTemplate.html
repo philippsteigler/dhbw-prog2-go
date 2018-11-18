@@ -1,0 +1,24 @@
+{{define "outer"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+</head>
+<body>
+
+<form action="/logout" mehtod="POST" style="display: inline">
+    <input type="submit" value="Logout">
+</form>
+
+<form action="/ticketsView" mehtod="POST" style="display: inline">
+    <input type="submit" value="Tickets Anzeigen">
+</form>
+
+<div>
+    <h1>Dashboard</h1>
+</div>
+
+</body>
+</html>
+{{end}}

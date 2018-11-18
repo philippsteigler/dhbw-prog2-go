@@ -8,11 +8,12 @@ import (
 	"net/http"
 )
 
-func TicketsViewPageHandler(response http.ResponseWriter, request *http.Request) {
+//anzeigen der Dashboard Seite
+func DashboardViewPageHandler(response http.ResponseWriter, request *http.Request) {
 	if sessionHandler.IsUserLoggedIn(request) {
 
 		var templateFiles []string
-		templateFiles = append(templateFiles, "./assets/html/ticketsViewTemplate.html")
+		templateFiles = append(templateFiles, "./assets/html/dashboardViewTemplate.html")
 		templateFiles = append(templateFiles, "./assets/html/ticketListTemplate.html")
 
 		templates, err := template.ParseFiles(templateFiles...)
