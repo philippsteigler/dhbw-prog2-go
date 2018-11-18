@@ -3,108 +3,15 @@ package main
 import (
 	"./pageHandler"
 	"./sessionHandler"
-	"./ticket"
-	"fmt"
-	"html/template"
 	"log"
 	"net/http"
 	"os"
 	"strconv"
 )
 
-type Status string
-
-const (
-	Open      Status = "offen"
-	InProcess Status = "in Bearbeitung"
-	Closed    Status = "geschlossen"
-)
-
-type Ticket struct {
-	Id       int     `json:"id"`
-	Subject  string  `json:"subject"`
-	Status   Status  `json:"status"`
-	EditorId int     `json:"editorId"`
-	Entries  []Entry `json:"entries"`
-}
-
-type Entry struct {
-	Date    string `json:"date"`
-	Creator string `json:"creator"`
-	Content string `json:"content"`
-}
-
 func errorCheck(err error) {
 	if err != nil {
 		panic(err)
-	}
-}
-
-func indexPageHandler(response http.ResponseWriter, request *http.Request) {
-	if sessionHandler.IsUserLoggedIn(request) {
-		http.Redirect(response, request, "/internal", 302)
-	} else {
-		http.ServeFile(response, request, "./assets/html/index.html")
-	}
-}
-
-func internalTickets(response http.ResponseWriter, request *http.Request) {
-	if sessionHandler.IsUserLoggedIn(request) {
-
-		id := request.FormValue("TicketID")
-
-		intId, err := strconv.Atoi(id)
-
-		if err != nil {
-			fmt.Println(err)
-		}
-
-		internal, err := template.ParseFiles("./pageHandler/internalTemplate.tmpl")
-		if err != nil {
-			fmt.Println(err)
-		}
-
-		internal.ExecuteTemplate(response, "internal", ticket.ReadTicket(intId))
-
-		internal.Execute(response, nil)
-
-	} else {
-		http.ServeFile(response, request, "./assets/html/index.html")
-	}
-}
-
-func internalPageHandler(response http.ResponseWriter, request *http.Request) {
-	if sessionHandler.IsUserLoggedIn(request) {
-
-		var templateFiles []string
-		templateFiles = append(templateFiles, "./pageHandler/internalTicketsTemplate.tmpl")
-		templateFiles = append(templateFiles, "./pageHandler/internalTicketsListTemplate.tmpl")
-
-		templates, err := template.ParseFiles(templateFiles...)
-		if err != nil {
-			fmt.Println(err)
-		}
-
-		templates.ExecuteTemplate(response, "outer", nil)
-
-		for i := 2; i <= len(ticket.GetOpenTickets())+1; i++ {
-			//tmp2 := templates.Lookup("internalTicketsListTemplate.tmpl")
-			//tmp2.ExecuteTemplate(response, "inner", ticket.ReadTicket(i))
-			templates.ExecuteTemplate(response, "inner", ticket.ReadTicket(i))
-		}
-
-		templates.Execute(response, nil)
-
-	} else {
-		http.Redirect(response, request, "/", 302)
-	}
-}
-
-func ticketPageHandler(response http.ResponseWriter, request *http.Request) {
-	if sessionHandler.IsUserLoggedIn(request) {
-		http.ServeFile(response, request, "./assets/html/ticket.html")
-	} else {
-		http.Redirect(response, request, "/", 302)
 	}
 }
 
@@ -123,16 +30,21 @@ func main() {
 	portstring := strconv.Itoa(port)
 
 	mux := http.NewServeMux()
+
 	// Webpages
-	mux.Handle("/", http.HandlerFunc(indexPageHandler))
-	mux.Handle("/internal", http.HandlerFunc(internalPageHandler))
-	mux.Handle("/internal/ticket/information", http.HandlerFunc(internalTickets))
-	mux.Handle("/ticket", http.HandlerFunc(ticketPageHandler))
+	mux.Handle("/", http.HandlerFunc(pageHandler.IndexPageHandler))
+	mux.Handle("/ticketsView", http.HandlerFunc(pageHandler.TicketsViewPageHandler))
+	mux.Handle("/ticketInsightView", http.HandlerFunc(pageHandler.TicketInsightPageHandler))
+	mux.Handle("/NewTicketView", http.HandlerFunc(pageHandler.NewTicketViewPageHandler))
 
 	// Interactions
 	mux.Handle("/login", http.HandlerFunc(sessionHandler.LoginHandler))
 	mux.Handle("/logout", http.HandlerFunc(sessionHandler.LogoutHandler))
-	mux.Handle("/saveTicket", http.HandlerFunc(pageHandler.SaveTicketHandler))
+	mux.Handle("/ticketSafe", http.HandlerFunc(pageHandler.TicketSafeHandler))
+	mux.Handle("/ticketTake", http.HandlerFunc(pageHandler.TicketTakeHandler))
+	mux.Handle("/ticketSubmit", http.HandlerFunc(pageHandler.TicketSubmitHandler))
+	mux.Handle("/ticketDelegate", http.HandlerFunc(pageHandler.TicketDelegateHandler))
+	mux.Handle("/ticketNewEntry", http.HandlerFunc(pageHandler.TicketNewEntryHandler))
 
 	log.Print("Listening on port " + portstring + " ... ")
 	err := http.ListenAndServeTLS(":"+portstring, "./assets/certificates/server.crt", "./assets/certificates/server.key", mux)

@@ -2,27 +2,18 @@ package pageHandler
 
 import (
 	"../sessionHandler"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 )
 
 type Handler interface {
-	ServeHTTP(http.Response,*http.Request)
+	ServeHTTP(http.Response, *http.Request)
 }
 
-// localhost:.../ticket
-// läd den html code für die Textareas und zeigt ihn an
-func TicketPageHandler(response http.ResponseWriter, request *http.Request) {
+//NewTicketViewPageHandler
+func NewTicketViewPageHandler(response http.ResponseWriter, request *http.Request) {
 	if sessionHandler.IsUserLoggedIn(request) {
-
-		html, _ := ioutil.ReadFile("./assets/html/ticket.html")
-
-		fmt.Fprint(response, string(html))
-
-		//http.ServeFile(response,request,"./assets/html/ticket.html")
-		//http.ServeFile(response,request,"./assets/html/style/ticketStyle.css")
-
+		http.ServeFile(response, request, "./assets/html/newTicketView.html")
 	} else {
 		http.Redirect(response, request, "/", 302)
 	}
@@ -30,7 +21,7 @@ func TicketPageHandler(response http.ResponseWriter, request *http.Request) {
 
 // localhost:.../saveTicket
 // Speichert den Text aus den Textareas in mail, subject, text
-func SaveTicketHandler(response http.ResponseWriter, request *http.Request) {
+func TicketSafeHandler(response http.ResponseWriter, request *http.Request) {
 	if sessionHandler.IsUserLoggedIn(request) {
 		mail := request.FormValue("ticketMail")
 		subject := request.FormValue("ticketSubject")
