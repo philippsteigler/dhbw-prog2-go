@@ -21,7 +21,7 @@ type User struct {
 
 var users UserAccounts
 
-// Read data for registered users
+// Lies users.json und importiere alle Benutzerdaten nach &users.
 func refreshUserData() {
 	userData, err := ioutil.ReadFile("./assets/users.json")
 	if err != nil {
@@ -34,7 +34,7 @@ func refreshUserData() {
 	}
 }
 
-// Deploy cookie to save user ID and user name as session identifier
+// Speichern einer Sitzung in Form von 2 Cookies: UserID und UserName.
 func setSession(id int, username string, response http.ResponseWriter) {
 	cookieUserID := &http.Cookie{
 		Name:  "sessionUserID",
@@ -51,7 +51,7 @@ func setSession(id int, username string, response http.ResponseWriter) {
 	http.SetCookie(response, cookieUserName)
 }
 
-// Delete cookie to end active session
+// Beim Beenden einer Sitzung werden alle Cookies gelöscht (mit nil überschrieben).
 func clearSession(response http.ResponseWriter) {
 	cookieUserID := &http.Cookie{
 		Name:   "sessionUserID",
@@ -70,16 +70,15 @@ func clearSession(response http.ResponseWriter) {
 	http.SetCookie(response, cookieUserName)
 }
 
-// Read cookie and extract the value as username
+// Lies den Namen des aktiven Nutzers aus dem Session-Cookie.
 func GetSessionUserName(request *http.Request) string {
 	if cookie, err := request.Cookie("sessionUserName"); err == nil {
 		return cookie.Value
 	}
-
 	return ""
 }
 
-// Read cookie and extract the value as user ID
+// Lies die ID des aktiven Nutzers aus dem Session-Cookie.
 func GetSessionUserID(request *http.Request) int {
 	if cookie, err := request.Cookie("sessionUserID"); err == nil {
 		i, err := strconv.Atoi(cookie.Value)
@@ -91,6 +90,11 @@ func GetSessionUserID(request *http.Request) int {
 	return 0
 }
 
+// A-3.2:
+// Der Zugang für die Bearbeiter soll durch Benutzernamen und Passwort geschützt sein.
+//
+// Überprüfe anhand der Session-Cookies, ob ein Benutzer eingeloggt ist.
+// Benutzer eingeloggt = true; Benutzer ist nicht eingeloggt = false.
 func IsUserLoggedIn(request *http.Request) bool {
 	if GetSessionUserID(request) != 0 && GetSessionUserName(request) != "" {
 		return true
@@ -98,19 +102,26 @@ func IsUserLoggedIn(request *http.Request) bool {
 	return false
 }
 
-// Process user input from login action and start new session
+// A-3.2:
+// Der Zugang für die Bearbeiter soll durch Benutzernamen und Passwort geschützt sein.
+//
+// Authentifizierung des Benutzers.
+// Die Eingaben des Nutzers werden mit gespeicherten Credentials abgeglichen.
 func LoginHandler(response http.ResponseWriter, request *http.Request) {
 	inputUsername := request.FormValue("username")
 	inputPassword := request.FormValue("password")
 	redirectTarget := "/"
 
-	// Only authenticate user if input has been submitted
 	if inputUsername != "" && inputPassword != "" {
+		// Lade die aktuellen Daten für registrierte Nutzer.
 		refreshUserData()
 
-		// Search claimed user and evaluate password from user input
+		// Überprüfe, ob der Benutzer registriert ist und prüfe dann das Passwort.
 		for i := 0; i < len(users.Users); i++ {
 			if users.Users[i].Username == inputUsername {
+
+				// Berechne den Hashwert des Input-Passworts mit dem Salt-Wert, der zum verifizerten Benutzer gehört.
+				// Die Authentifizerung war erfolgreich, wenn dieser Hashwert mit dem Gespeicherten übereinstimmt.
 				if GetHash(inputPassword, users.Users[i].Salt) == users.Users[i].Password {
 					setSession(users.Users[i].ID, users.Users[i].Username, response)
 					redirectTarget = "/internal"
@@ -122,18 +133,28 @@ func LoginHandler(response http.ResponseWriter, request *http.Request) {
 	http.Redirect(response, request, redirectTarget, 302)
 }
 
-// Stop active session and redirect user to front html
+// A-3.2:
+// Der Zugang für die Bearbeiter soll durch Benutzernamen und Passwort geschützt sein.
+//
+// Beenden einer Sitzung und ausloggen des Benutzers durch löschen der Session-Cookies.
 func LogoutHandler(response http.ResponseWriter, request *http.Request) {
 	clearSession(response)
 	http.Redirect(response, request, "/", 302)
 }
 
-// Generate user credentials and append user to users.json
+// Registrieren und speichern eines neuen Benutzers in users.json.
+// Dabei wird der Hashwert des Passworts mit einem persönlichen Salt-Wert verschleiert.
+// Der Salt-Wert wird für spätere Abgleiche beider Hashwerte benötigt und folglich gespeichert.
 func RegistrationHandler(response http.ResponseWriter, request *http.Request) {
 	hash, salt := HashString(request.FormValue("password"))
 	refreshUserData()
 
-	users.Users = append(users.Users, User{ID: len(users.Users), Username: request.FormValue("username"), Password: hash, Salt: salt})
+	users.Users = append(users.Users, User{
+		ID:       len(users.Users),
+		Username: request.FormValue("username"),
+		Password: hash,
+		Salt:     salt,
+	})
 
 	usersJson, _ := json.Marshal(users)
 	err := ioutil.WriteFile("./assets/users.json", usersJson, 0644)
