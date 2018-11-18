@@ -9,6 +9,8 @@ import (
 	"strconv"
 )
 
+// localhost:.../ticketInsight
+//anzeigen der Detailansicht Seite
 func TicketInsightPageHandler(response http.ResponseWriter, request *http.Request) {
 	if sessionHandler.IsUserLoggedIn(request) {
 
@@ -34,18 +36,26 @@ func TicketInsightPageHandler(response http.ResponseWriter, request *http.Reques
 	}
 }
 
+// localhost:.../ticketTake
+//Funktion ticket nehmnen
 func TicketTakeHandler(response http.ResponseWriter, request *http.Request) {
 
 }
 
+// localhost:.../ticketSubmit
+//Funktion ticket abgeben
 func TicketSubmitHandler(response http.ResponseWriter, request *http.Request) {
 
 }
 
+// localhost:.../ticketDelegate
+//Funktion ticket Delegieren
 func TicketDelegateHandler(response http.ResponseWriter, request *http.Request) {
 
 }
 
+// localhost:.../ticketNewEntry
+//Funktion ticket Eintrag hinzufügen
 func TicketNewEntryHandler(response http.ResponseWriter, request *http.Request) {
 
 }

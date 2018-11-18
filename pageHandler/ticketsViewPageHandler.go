@@ -8,6 +8,8 @@ import (
 	"net/http"
 )
 
+// localhost:.../ticketsView
+//anzeigen der Tickets des Users
 func TicketsViewPageHandler(response http.ResponseWriter, request *http.Request) {
 	if sessionHandler.IsUserLoggedIn(request) {
 
