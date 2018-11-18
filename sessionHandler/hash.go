@@ -14,7 +14,10 @@ func init() {
 	rand.Seed(time.Now().UnixNano())
 }
 
-// How to generate a random string as salt:
+// A-3.4:
+// Es soll "salting" eingesetzt werden.
+//
+// Generiere einen 16-Byte langen String aus zufälligen Zeichen als Salt-Wert.
 // https://stackoverflow.com/questions/22892120/how-to-generate-a-random-string-of-a-fixed-length-in-go
 func generateSalt() string {
 	salt := make([]byte, 16)
@@ -26,11 +29,15 @@ func generateSalt() string {
 	return string(salt)
 }
 
-// HashString() returns the passwords's SHA256 hash sum and the salt that has first been added
-// This function is used to hash the password for a new user
+// A-3.3:
+// Die Passwörter dürfen nicht im Klartext gespeichert werden.
+//
+// Berechne den Hashwert eines Passworts unter Verwendung von salting.
 func HashString(text string) (string, string) {
 	salt := generateSalt()
 
+	// Der Salt-Wert wird an das Passwort im Klartext angehängt.
+	// Dieser wird später als Schlüssel zur Berechnung des passenden Hashwerts benötigt.
 	tmp := []string{text, salt}
 	saltedString := strings.Join(tmp, "")
 
@@ -40,8 +47,11 @@ func HashString(text string) (string, string) {
 	return hashedString, salt
 }
 
-// GetHash() returns the passwords's SHA256 hash sum
-// This function is used to calculate the hash sum of a password using a specific salt value
+// A-3.3:
+// Die Passwörter dürfen nicht im Klartext gespeichert werden.
+//
+// Berechne den Hashwert eines Strings unter Verwendung eines spezifischen Salt-Wertes.
+// Diese Funktion wird beim Abgleich mit gespeicherten Passwort-Hashes verwendet.
 func GetHash(text, salt string) string {
 	tmp := []string{text, salt}
 	saltedString := strings.Join(tmp, "")

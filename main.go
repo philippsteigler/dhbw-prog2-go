@@ -15,6 +15,14 @@ func errorCheck(err error) {
 	}
 }
 
+// TODO: Umwandeln in init() --> Funktion soll flags empfangen und verarbeiten
+func createDirIfNotExist(folder string) {
+	if _, err := os.Stat(folder); os.IsNotExist(err) {
+		err = os.MkdirAll(folder, 0755)
+		errorCheck(err)
+	}
+}
+
 func indexPageHandler(response http.ResponseWriter, request *http.Request) {
 	if sessionHandler.IsUserLoggedIn(request) {
 		http.Redirect(response, request, "/internal", 302)
@@ -39,33 +47,36 @@ func ticketPageHandler(response http.ResponseWriter, request *http.Request) {
 	}
 }
 
-func createDirIfNotExist(folder string) {
-	if _, err := os.Stat(folder); os.IsNotExist(err) {
-		err = os.MkdirAll(folder, 0755)
-		errorCheck(err)
-	}
-}
-
-// Golang webserver example:
-// https://github.com/jimmahoney/golang-webserver/blob/master/webserver.go
+// A-3.1:
+// Die Web-Seite soll nur per HTTPS erreichbar sein.
+//
+// Die Startfunktion initialisiert die Anwendung und startet anschließend den Server.
+// Eingehende HTTP-Anfragen auf Webseiten werden hier geroutet.
+//
+//
+// A-11.3:
+// Die Anwendung soll zwar HTTPS und die entsprechenden erforderlichen Zertifikate unterstützen,
+// es kann jedoch davon ausgegangen werden, dass geeignete Zertifikate gestellt werden.
+//
+// Self-signed Zertifikate sind default vorhanden und unter ./assets/certificates gespeichert.
 func main() {
 	createDirIfNotExist("./assets/tickets")
 	port := 8000
-	portstring := strconv.Itoa(port)
-
+	portString := strconv.Itoa(port)
 	mux := http.NewServeMux()
-	// Webpages
+
+	// Webseiten routen
 	mux.Handle("/", http.HandlerFunc(indexPageHandler))
 	mux.Handle("/internal", http.HandlerFunc(internalPageHandler))
 	mux.Handle("/ticket", http.HandlerFunc(ticketPageHandler))
 
-	// Interactions
+	// Interaktionen verarbeiten (z.B. Buttons, ...)
 	mux.Handle("/login", http.HandlerFunc(sessionHandler.LoginHandler))
 	mux.Handle("/logout", http.HandlerFunc(sessionHandler.LogoutHandler))
 	mux.Handle("/saveTicket", http.HandlerFunc(pageHandler.SaveTicketHandler))
 
-	log.Print("Listening on port " + portstring + " ... ")
-	err := http.ListenAndServeTLS(":"+portstring, "./assets/certificates/server.crt", "./assets/certificates/server.key", mux)
+	log.Print("Listening on port " + portString + " ... ")
+	err := http.ListenAndServeTLS(":"+portString, "./assets/certificates/server.crt", "./assets/certificates/server.key", mux)
 	if err != nil {
 		log.Fatal("ListenAndServe error: ", err)
 	}
