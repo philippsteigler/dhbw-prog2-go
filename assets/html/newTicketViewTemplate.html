@@ -1,7 +1,10 @@
+{{define "newTicket"}}
+<!DOCTYPE html>
+<html>
+<body>
 <h1>Erstellen Sie ihr Ticket</h1>
 
 <form action="/saveTicket" method="POST">
-
     <div>Mail</div>
     <div><textarea id="ticketMail" name="ticketMail" height="10px" rows="1" cols="80" required style="resize: none;"></textarea></div>
 
@@ -13,3 +16,7 @@
 
     <div><input type="submit" value="Save"></div>
 </form>
+
+</body>
+</html>
+        {{end}}

@@ -9,8 +9,14 @@ import (
 	"strconv"
 )
 
-// localhost:.../ticketInsight
-//anzeigen der Detailansicht Seite
+//TODO: Nur
+
+// A-8.3
+// Bearbeiter sollen alle Tickets einsehen k¨onnen, welche noch kein Bearbeiter
+// übernommen hat.
+//
+// https://localhost:8000/ticketInsightView
+// Detailansicht des Tickets
 func TicketInsightPageHandler(response http.ResponseWriter, request *http.Request) {
 	if sessionHandler.IsUserLoggedIn(request) {
 
@@ -36,20 +42,33 @@ func TicketInsightPageHandler(response http.ResponseWriter, request *http.Reques
 	}
 }
 
-// localhost:.../ticketTake
-//Funktion ticket nehmnen
+// A-8.2
+// Bearbeiter sollen ein Ticket übernehmen können.
+//
+// https://localhost:8000/ticketTake
+// Ticket übernehmen, Web Interaction
 func TicketTakeHandler(response http.ResponseWriter, request *http.Request) {
 
 }
 
 // localhost:.../ticketSubmit
 //Funktion ticket abgeben
+
+// A-8.4
+// Bearbeiter sollen Tickets nach der Übernahme auch freigeben können, so das
+// diese eine anderer Bearbeiter übernehmen kann.
+//
+// https://localhost:8000/ticketSubmit
+// Ticket abgeben, Web Interaction
 func TicketSubmitHandler(response http.ResponseWriter, request *http.Request) {
 
 }
 
-// localhost:.../ticketDelegate
-//Funktion ticket Delegieren
+// A-8.5
+// Ein Bearbeiter soll ein Ticket einem anderen Bearbeiter zuteilen können
+//
+// https://localhost:8000/ticketDelegate
+// Ticket delegieren, Web Interaction
 func TicketDelegateHandler(response http.ResponseWriter, request *http.Request) {
 
 }

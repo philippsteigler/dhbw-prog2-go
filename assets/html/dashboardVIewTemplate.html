@@ -36,8 +36,15 @@
             top: 15px;
         }
 
+        .user{
+            font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+            left: 165px;
+            position: relative;
+            top: 7px;
+        }
+
         .right {
-            left: 89%;
+            right: 165px;
             top: 15px;
         }
 
@@ -108,18 +115,19 @@
 <div>
 <div class="dashboard">
     <div class="middle">
-        <h1>Dashboard von {{.}}</h1>
+        <h1>Dashboard</h1>
         </div>
 
     <div class="left">
         <form action="/logout" mehtod="POST">
             <button class="button" type="submit">Logout</button>
+            <div class="user">User: {{.}}</div>
         </form>
     </div>
 
     <div class="right">
         <form action="/ticketsView" mehtod="POST">
-            <button class="button" type="submit">Tickets Anzeigen</button>
+            <button class="button" type="submit">Offene Tickets</button>
             </form>
         </div>
 </div>

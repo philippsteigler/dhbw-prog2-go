@@ -15,7 +15,7 @@ func TicketsViewPageHandler(response http.ResponseWriter, request *http.Request)
 
 		var templateFiles []string
 		templateFiles = append(templateFiles, "./assets/html/ticketsViewTemplate.html")
-		templateFiles = append(templateFiles, "./assets/html/ticketListTemplate.html")
+		templateFiles = append(templateFiles, "./assets/html/ticketListAlleAnzeigenTemplate.html")
 
 		templates, err := template.ParseFiles(templateFiles...)
 		if err != nil {
