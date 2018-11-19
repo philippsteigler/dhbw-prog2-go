@@ -7,9 +7,8 @@ import (
 
 func TestGenerateSalt(t *testing.T) {
 	salt := generateSalt()
+	assert.Len(t, salt, 16, "Length should be 16 Byte.")
 
-	length := len(salt)
-	assert.Equal(t, 16, length, "Length should be 16.")
 }
 
 func TestHashString(t *testing.T) {
