@@ -1,21 +1,27 @@
 {{define "inner"}}
-<div>
-    <form action="/ticketInsightView" method="POST" style="display: inline">
-        <input type="submit" value="Select">
-        <h3 style="display: inline">Ticket Nr. {{.Id}}</h3>
-        <div style="display:none"><input name="TicketID" type="Text" value="{{.Id}}"></input></div>
-    </form>
+<html>
+<body>
+<div id="table">
+       <table>
+        <tr>
+            <th>
+                <form action="/ticketInsightView" method="POST" style="display: inline">
+                    <input type="submit" value="Select">
+                    <div style="display:none"><input name="TicketID" type="Text" value="{{.Id}}"></input></div>
+                </form>
+            </th>
+            <th>Status</th>
+            <th>Editor</th>
+            <th>Ticket Nr. {{.Id}}</th>
+        </tr>
+        <tr>
+            <td></td>
+            <td>{{.Status}}</td>
+            <td>{{.EditorId}}</td>
+            <td class="subject">{{.Subject}}</td>
+        </tr>
+        </table>
 </div>
-<table>
-    <tr>
-        <th>Subject</th>
-        <th>Status</th>
-        <th>Editor</th>
-    </tr>
-    <tr>
-        <td>{{.Subject}}</td>
-        <td>{{.Status}}</td>
-        <td>{{.EditorId}}</td>
-    </tr>
-</table>
+</body>
+</html>
 {{end}}

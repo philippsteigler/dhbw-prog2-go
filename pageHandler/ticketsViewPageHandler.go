@@ -24,8 +24,10 @@ func TicketsViewPageHandler(response http.ResponseWriter, request *http.Request)
 
 		templates.ExecuteTemplate(response, "outer", nil)
 
-		for i := 2; i <= len(*ticket.GetTickets(ticket.Open))+1; i++ {
-			templates.ExecuteTemplate(response, "inner", ticket.GetTicket(i))
+		pTickets := *ticket.GetTickets(ticket.Open)
+
+		for i := 0; i < len(pTickets); i++ {
+			templates.ExecuteTemplate(response, "inner", pTickets[i])
 		}
 
 		templates.Execute(response, nil)
