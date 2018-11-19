@@ -45,7 +45,7 @@ func errorCheck(err error) {
 
 //Zählt, wie viele Tickets sich im Ordner "../assets/tickets" befinden
 func countTickets() int {
-	tickets, err := ioutil.ReadDir("../assets/tickets")
+	tickets, err := ioutil.ReadDir("./assets/tickets")
 	errorCheck(err)
 	return len(tickets)
 }
@@ -69,7 +69,7 @@ func NewEntry(creator string, content string) *Entry {
 //Liest das Ticket mit der ID "id" aus der entsprechenden .json Datei
 //und gibt die Referenz auf das entsprechende Ticket zurück
 func readTicket(id int) *Ticket {
-	filename := "../assets/tickets/" + strconv.Itoa(id) + ".json"
+	filename := "./assets/tickets/" + strconv.Itoa(id) + ".json"
 	encodedTicket, errRead := ioutil.ReadFile(filename)
 	errorCheck(errRead)
 	err := json.Unmarshal(encodedTicket, &ticket)
@@ -81,7 +81,7 @@ func readTicket(id int) *Ticket {
 func writeTicket(ticket *Ticket) {
 	encodedTicket, errEnc := json.Marshal(ticket)
 	errorCheck(errEnc)
-	filename := "../assets/tickets/" + strconv.Itoa(ticket.Id) + ".json"
+	filename := "./assets/tickets/" + strconv.Itoa(ticket.Id) + ".json"
 	err := ioutil.WriteFile(filename, encodedTicket, 0600)
 	errorCheck(err)
 }
@@ -118,7 +118,7 @@ func GetTickets(status ...Status) *[]Ticket {
 	}
 
 	orderedTickets = []Ticket{}
-	files, err := ioutil.ReadDir("../assets/tickets")
+	files, err := ioutil.ReadDir("./assets/tickets")
 	errorCheck(err)
 	var id int
 
@@ -193,7 +193,7 @@ func MergeTickets(dest int, source int) {
 
 //Löscht die .json Datei des angegebenen Tickets
 func DeleteTicket(id int) {
-	filename := "../assets/tickets/" + strconv.Itoa(id) + ".json"
+	filename := "./assets/tickets/" + strconv.Itoa(id) + ".json"
 	err := os.Remove(filename)
 	errorCheck(err)
 }
