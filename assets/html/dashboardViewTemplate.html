@@ -37,7 +37,7 @@
         }
 
         .right {
-            left: 89%;
+            right: 165px;
             top: 15px;
         }
 
@@ -105,26 +105,27 @@
     </style>
 </head>
 <body>
-<div>
-<div class="dashboard">
-    <div class="middle">
-        <h1>Dashboard von {{.}}</h1>
-        </div>
+    <div>
+        <div class="dashboard">
+            <div class="middle">
+                <h1>Dashboard von {{.}}</h1>
+                </div>
 
-    <div class="left">
-        <form action="/logout" mehtod="POST">
-            <button class="button" type="submit">Logout</button>
-        </form>
+            <div class="left">
+                <form action="/logout" mehtod="POST">
+                    <button class="button" type="submit">Logout</button>
+                </form>
+            </div>
+
+            <div class="right">
+                <form action="/ticketsView" mehtod="POST">
+                    <button class="button" type="submit">Tickets Anzeigen</button>
+                </form>
+            </div>
+        </div>
     </div>
 
-    <div class="right">
-        <form action="/ticketsView" mehtod="POST">
-            <button class="button" type="submit">Tickets Anzeigen</button>
-            </form>
-        </div>
-</div>
-</div>
-<div class="innerContainer">
+    <div class="innerContainer">
 </body>
 </html>
 {{end}}
