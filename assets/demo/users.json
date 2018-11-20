@@ -1,0 +1,10 @@
+{
+  "users": [
+    {
+      "id":1,
+      "username":"root",
+      "password":"dvL-1rYj-rZ5LeIRPb9ltPf36stfV6a7xxysJqzHEVs=",
+      "salt":"XwX5IzxpLN2mZ3g2"
+    }
+  ]
+}
