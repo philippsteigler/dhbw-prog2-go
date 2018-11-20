@@ -6,9 +6,15 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"syscall"
 	"ticketBackend/pageHandler"
 	"ticketBackend/sessionHandler"
 )
+
+func resetData() {
+	err := syscall.Rmdir(sessionHandler.GetAssetsDir() + "tickets")
+	sessionHandler.HandleError(err)
+}
 
 // TODO: Umwandeln in init() --> Funktion soll flags empfangen und verarbeiten
 func createDirIfNotExist(folder string) {
@@ -38,8 +44,14 @@ func createDirIfNotExist(folder string) {
 //
 // Self-signed Zertifikate sind default vorhanden und unter ./assets/certificates gespeichert.
 func main() {
-	port := flag.Int("port", 8000, "")
+	port := flag.Int("port", 8000, "Port for webserver.")
+	reset := flag.Bool("reset", false, "Delete all ticket and user data.")
+	//demo := flag.Bool("demo", false, "Install example data for tickets and users.")
 	flag.Parse()
+
+	if *reset == true {
+		resetData()
+	}
 
 	createDirIfNotExist("./assets/tickets")
 	mux := http.NewServeMux()
