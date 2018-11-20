@@ -7,9 +7,9 @@ import (
 	"testing"
 )
 
-func TestGetPathForUserData(t *testing.T) {
-	path := getPathForUserData()
-	assert.Equal(t, "../assets/users.json", path, "Wrong path to file 'users.json")
+func TestGetAssetsDir(t *testing.T) {
+	path := GetAssetsDir()
+	assert.Equal(t, "../assets/", path, "Wrong path to file 'users.json")
 }
 
 func TestLoadUserData(t *testing.T) {

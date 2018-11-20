@@ -23,25 +23,21 @@ type User struct {
 
 var users UserAccounts
 
-// Berechne den korrekten Pfad für users.json zur Laufzeit.
-func getPathForUserData() string {
+// Gib den relativen Pfad zum Ressourcen-Verzeichnis zur Laufzeit zurück.
+func GetAssetsDir() string {
 	path, _ := os.Getwd()
 
-	// Fallunterscheidung für Aufruf von main.go oder session_test.go aus.
-	if filepath.Base(path) == "sessionHandler" {
-		path = "../assets/users.json"
-	} else if filepath.Base(path) == "ticketBackend" {
-		path = "./assets/users.json"
+	// Fallunterscheidung für Aufruf über main.go oder *_test.go aus Unterverzeichnissen.
+	if filepath.Base(path) == "ticketBackend" {
+		return "./assets/"
 	} else {
-		path = ""
+		return "../assets/"
 	}
-
-	return path
 }
 
 // Lies users.json und importiere alle Benutzerdaten nach &users.
 func loadUserData() {
-	userData, err := ioutil.ReadFile(getPathForUserData())
+	userData, err := ioutil.ReadFile(GetAssetsDir() + "users.json")
 	if err != nil {
 		fmt.Print(err)
 	}

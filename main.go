@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"log"
 	"net/http"
 	"os"
@@ -30,15 +31,23 @@ func createDirIfNotExist(folder string) {
 // Eingehende HTTP-Anfragen auf Webseiten werden hier geroutet.
 //
 //
+// A-10.2:
+// Der Port muss sich über ein Flag festlegen lassen.
+//
+// Der Anwender kann beim Starten über die Kommandozeile mit -port=X den Port des Servers bestimmen.
+// Der Default-Wert ist Port :8000.
+//
+//
 // A-11.3:
 // Die Anwendung soll zwar HTTPS und die entsprechenden erforderlichen Zertifikate unterstützen,
 // es kann jedoch davon ausgegangen werden, dass geeignete Zertifikate gestellt werden.
 //
 // Self-signed Zertifikate sind default vorhanden und unter ./assets/certificates gespeichert.
 func main() {
+	port := flag.Int("port", 8000, "")
+	flag.Parse()
+
 	createDirIfNotExist("./assets/tickets")
-	port := 8000
-	portString := strconv.Itoa(port)
 	mux := http.NewServeMux()
 
 	// Webpages
@@ -57,8 +66,13 @@ func main() {
 	mux.Handle("/ticketDelegate", http.HandlerFunc(pageHandler.TicketDelegateHandler))
 	mux.Handle("/ticketNewEntry", http.HandlerFunc(pageHandler.TicketNewEntryHandler))
 
-	log.Print("Listening on port " + portString + " ... ")
-	err := http.ListenAndServeTLS(":"+portString, "./assets/certificates/server.crt", "./assets/certificates/server.key", mux)
+	log.Print("Listening on port " + strconv.Itoa(*port) + " ... ")
+	err := http.ListenAndServeTLS(
+		":"+strconv.Itoa(*port),
+		sessionHandler.GetAssetsDir()+"certificates/server.crt",
+		sessionHandler.GetAssetsDir()+"certificates/server.key",
+		mux,
+	)
 
 	if err != nil {
 		log.Fatal("ListenAndServe error: ", err)
