@@ -1,16 +1,40 @@
 package ticket
 
 import (
+	"encoding/json"
 	"github.com/stretchr/testify/assert"
+	"io/ioutil"
+	"os"
 	"testing"
+	"ticketBackend/sessionHandler"
 	"time"
 )
+
+func CreateDefaultEnv() {
+	//Alle Tickets aus dem Ordner "tickets" Löschen
+	ticketFiles, err := ioutil.ReadDir(sessionHandler.GetAssetsDir() + "tickets")
+	errorCheck(err)
+
+	for _, file := range ticketFiles {
+		err := os.Remove(sessionHandler.GetAssetsDir() + "tickets/" + file.Name())
+		errorCheck(err)
+	}
+
+	//Setzt die Datei ticketId_resource.json in default Zustand
+	id = Id{1}
+	filename := sessionHandler.GetAssetsDir() + "ticketId_resource.json"
+	encodedId, errEnc := json.Marshal(id)
+	errorCheck(errEnc)
+	errWrite := ioutil.WriteFile(filename, encodedId, 0600)
+	errorCheck(errWrite)
+}
 
 func TestCountTickets(t *testing.T) {
 	assert.Equal(t, 0, countTickets())
 }
 
 func TestNewTicket(t *testing.T) {
+	CreateDefaultEnv()
 	NewTicket("Test", "Bob", "Test")
 	NewTicket("Test", "Bob", "Test")
 
@@ -19,16 +43,15 @@ func TestNewTicket(t *testing.T) {
 
 	assert.NotEqual(t, ticket1, ticket2)
 
-	DeleteTicket(1)
-	DeleteTicket(2)
-	Reset()
+	CreateDefaultEnv()
 }
 
 func TestDeleteTicket(t *testing.T) {
+	CreateDefaultEnv()
 	NewTicket("Test", "Bob", "Test")
 	DeleteTicket(1)
 	assert.Equal(t, 0, countTickets())
-	Reset()
+	CreateDefaultEnv()
 }
 
 func TestNewEntry(t *testing.T) {
@@ -38,22 +61,23 @@ func TestNewEntry(t *testing.T) {
 }
 
 func TestReadTicket(t *testing.T) {
+	CreateDefaultEnv()
 	NewTicket("Test", "Bob", "Test")
 	readTicket(1)
 	assert.IsType(t, Ticket{}, ticket)
-	DeleteTicket(1)
-	Reset()
+	CreateDefaultEnv()
 }
 
 func TestWriteTicket(t *testing.T) {
+	CreateDefaultEnv()
 	NewTicket("Test", "Bob", "Test")
 	writeTicket(&ticket)
 	assert.Equal(t, 1, countTickets())
-	DeleteTicket(1)
-	Reset()
+	CreateDefaultEnv()
 }
 
 func TestAppendEntry(t *testing.T) {
+	CreateDefaultEnv()
 	NewTicket("Test", "Bob", "Test")
 	readTicket(1)
 
@@ -63,21 +87,21 @@ func TestAppendEntry(t *testing.T) {
 
 	readTicket(1)
 	assert.Equal(t, 4, len(ticket.Entries))
-	DeleteTicket(1)
-	Reset()
+	CreateDefaultEnv()
 }
 
 func TestTakeTicket(t *testing.T) {
+	CreateDefaultEnv()
 	NewTicket("Test", "Bob", "Test")
 	TakeTicket(1, 7)
 	readTicket(1)
 	assert.Equal(t, InProcess, ticket.Status)
 	assert.Equal(t, 7, ticket.EditorId)
-	DeleteTicket(1)
-	Reset()
+	CreateDefaultEnv()
 }
 
 func TestGetTickets(t *testing.T) {
+	CreateDefaultEnv()
 	NewTicket("Test", "Bob", "Test")
 	NewTicket("Test", "Bob", "Test")
 	NewTicket("Test", "Bob", "Test")
@@ -91,11 +115,7 @@ func TestGetTickets(t *testing.T) {
 
 	orderedTickets = *GetTickets()
 	assert.Equal(t, 3, len(orderedTickets))
-
-	DeleteTicket(1)
-	DeleteTicket(2)
-	DeleteTicket(3)
-	Reset()
+	CreateDefaultEnv()
 }
 
 func TestParseFilename(t *testing.T) {
@@ -105,40 +125,40 @@ func TestParseFilename(t *testing.T) {
 }
 
 func TestUnhandTicket(t *testing.T) {
+	CreateDefaultEnv()
 	NewTicket("Test", "Bob", "Test")
 	TakeTicket(1, 7)
 
 	UnhandTicket(1)
 	assert.Equal(t, Open, ticket.Status)
 	assert.Equal(t, 0, ticket.EditorId)
-	DeleteTicket(1)
-	Reset()
+	CreateDefaultEnv()
 }
 
 func TestDelegateTicket(t *testing.T) {
+	CreateDefaultEnv()
 	NewTicket("Test", "Bob", "Test")
 	DelegateTicket(1, 4)
 	assert.Equal(t, InProcess, ticket.Status)
 	assert.Equal(t, 4, ticket.EditorId)
-	DeleteTicket(1)
-	Reset()
+	CreateDefaultEnv()
 }
 
 func TestMergeTickets(t *testing.T) {
+	CreateDefaultEnv()
 	NewTicket("Test", "Bob", "Test")
 	NewTicket("Test", "Bob", "Test")
 
 	MergeTickets(1, 2)
 	readTicket(1)
 	assert.Equal(t, 2, len(ticket.Entries))
-	DeleteTicket(1)
-	Reset()
+	CreateDefaultEnv()
 }
 
-func TestGetTicket(t *testing.T) {
-	NewTicket("Test", "Bob", "Test")
-	ticket = *GetTicket(1)
-	assert.IsType(t, Ticket{}, ticket)
-	DeleteTicket(1)
-	Reset()
+func TestNewId(t *testing.T) {
+	CreateDefaultEnv()
+	newId := newId()
+	assert.Equal(t, 1, newId)
+	assert.Equal(t, 2, id.FreeId)
+	CreateDefaultEnv()
 }
