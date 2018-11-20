@@ -1,0 +1,123 @@
+{{define "outer"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+    <style>
+
+        .font {
+            font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+        }
+
+        .dashboard {
+            background-color: #7bb489;
+            height: 60px;
+            width: 100%;
+            left: 0px;
+            top: 0px;
+            z-index: 1;
+            position: fixed;
+        }
+
+        .left, .middle, .right{
+            position: absolute;
+            z-index: 2;
+            display: inline;
+        }
+
+        .left {
+            left: 15px;
+            top: 15px;
+        }
+
+        .user{
+            left: 165px;
+            position: relative;
+            top: 7px;
+        }
+
+        .middle {
+            text-align: center;
+            width: 40%;
+            left: 30%;
+            top: 10px;
+            top: -10px;
+        }
+
+        .right {
+            right: 165px;
+            top: 15px;
+        }
+
+        .topButton {
+            font-size: 14px;
+            background-color: white;
+            color: black;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            text-align: center;
+            width: 150px;
+            height: 30px;
+            position: absolute;
+        }
+
+        .topButton:hover{
+            background-color: black;
+            color: white;
+        }
+
+        .innerContainer {
+            position: absolute;
+            padding: 80px 0 0 0;
+            height: 80%;
+            width: 100%;
+            left: 0;
+            top: 0;
+        }
+
+        .details{
+            padding: 2px 0 2px 10%;
+            width: 80%;
+            position: relative;
+        }
+
+        .footer{
+            position: relative;
+            margin: 20px 0 0 0;
+            bottom: 0px;
+            background-color: #f2f2f2;
+            border-top: 2px solid #b4ffcc;
+        }
+
+    </style>
+</head>
+<body class="font">
+<div>
+    <div class="dashboard">
+        <div class="middle">
+            <h1>Ticket Details</h1>
+        </div>
+
+        <div class="left">
+            <form action="/logout" mehtod="POST">
+                <button class="topButton" type="submit">Logout</button>
+                <div class="user">User: {{.}}</div>
+            </form>
+        </div>
+
+        <div class="right">
+            <form action="/dashboard" mehtod="POST" >
+                <button class="topButton" type="submit">Dashboard</button>
+                </form>
+            <form action="/ticketsView" mehtod="POST" style="position: relative; right: 165px">
+                <button class="topButton" type="submit">Offene Tickets</button>
+                </form>
+        </div>
+    </div>
+</div>
+<div class="innerContainer">
+</body>
+</html>
+{{end}}

@@ -26,14 +26,21 @@ func TicketInsightPageHandler(response http.ResponseWriter, request *http.Reques
 			fmt.Println(err)
 		}
 
-		internal, err := template.ParseFiles("./assets/html/ticketInsightViewTemplate.html")
+		var templateFiles []string
+		templateFiles = append(templateFiles, "./assets/html/ticketInsightTemplates/ticketInsightViewHeaderCssTemplate.html")
+		templateFiles = append(templateFiles, "./assets/html/ticketInsightTemplates/ticketInsightTicketDetailsTemplate.html")
+		templateFiles = append(templateFiles, "./assets/html/ticketInsightTemplates/ticketInsightViewFooterTemplate.html")
+
+		templates, err := template.ParseFiles(templateFiles...)
 		if err != nil {
 			fmt.Println(err)
 		}
 
-		internal.ExecuteTemplate(response, "internal", ticket.GetTicket(intId))
+		templates.ExecuteTemplate(response, "outer", sessionHandler.GetSessionUserName(request))
+		templates.ExecuteTemplate(response, "inner", ticket.GetTicket(intId))
+		templates.ExecuteTemplate(response, "footer", nil)
 
-		internal.Execute(response, nil)
+		templates.Execute(response, nil)
 
 	} else {
 		http.ServeFile(response, request, "./assets/html/index.html")

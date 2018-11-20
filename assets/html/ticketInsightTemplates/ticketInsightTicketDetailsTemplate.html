@@ -1,0 +1,40 @@
+{{define "inner"}}
+<html>
+<body>
+<div class="details">
+    <div>
+        <form action="/ticketTake" mehtod="POST" style="display: inline">
+            <input type="submit" value="Ticket Nehmen">
+        </form>
+
+        <form action="/ticketSubmit" mehtod="POST" style="display: inline">
+            <input type="submit" value="Ticket Abgeben">
+        </form>
+
+        <form action="/ticketDelegate" mehtod="POST" style="display: inline">
+            <input type="submit" value="Ticket Delegieren">
+        </form>
+
+        <form action="/ticketNewEntry" mehtod="POST" style="display: inline">
+            <input type="submit" value="Eintrag Hinzufügen">
+        </form>
+        </div>
+
+        <div>
+            <h2>Ticket insight Page</h2>
+        </div>
+
+        <div>
+            <div>
+                <div>Ticket Id: {{.Id}} Status: {{.Status}}</div>
+                <div>Subject: {{.Subject}}</div>
+            </div>
+            <p></p>
+            <div>Editor: {{.EditorId}}</div>
+            <p></p>
+            <div>Entries: {{.Entries}}</div>
+        </div>
+    </div>
+    </body>
+</html>
+{{end}}
