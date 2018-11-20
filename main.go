@@ -36,6 +36,9 @@ func resetData() {
 
 	err = os.RemoveAll(sessionHandler.GetAssetsDir() + "users.json")
 	sessionHandler.HandleError(err)
+
+	err = os.RemoveAll(sessionHandler.GetAssetsDir() + "ticketId_resource.json")
+	sessionHandler.HandleError(err)
 }
 
 // Setze den Server zurück und installiere Testdaten.
@@ -56,6 +59,10 @@ func demoMode() {
 	// Kopiere die Nutzerdaten aus dem Demo-Ordner in den Zielordner.
 	srcFile := strings.Join([]string{sessionHandler.GetAssetsDir(), "demo/users.json"}, "")
 	copyFile(srcFile, sessionHandler.GetAssetsDir())
+
+	// Kopiere die Nutzerdaten aus dem Demo-Ordner in den Zielordner.
+	srcFile = strings.Join([]string{sessionHandler.GetAssetsDir(), "ticketId_resource.json"}, "")
+	copyFile(srcFile, sessionHandler.GetAssetsDir())
 }
 
 // A-3.1:
@@ -69,9 +76,9 @@ func demoMode() {
 // Die Konfiguration soll komplett über Startparameter erfolgen.
 //
 // Der Anwender kann beim Starten über die Kommandozeile folgende Flags optional setzen:
-// 	-port=x		int		Port für den Webserver
-//	-reset=x	bool	True: Löscht alle Tickets und Nutzerdaten.
-//	-demo=x		bool	True: Setzt den Webserver zurück und installiert Testdaten
+//  -port=x     int     Port für den Webserver
+//  -reset=x    bool    True: Löscht alle Tickets und Nutzerdaten.
+//  -demo=x     bool    True: Setzt den Webserver zurück und installiert Testdaten
 // Das Flag -reset überschreibt dabei das Flag -demo.
 //
 //
