@@ -38,7 +38,7 @@ func resetData() {
 	sessionHandler.HandleError(err)
 }
 
-// Setze den Server zurück und instlliere Testdaten.
+// Setze den Server zurück und installiere Testdaten.
 func demoMode() {
 	resetData()
 
