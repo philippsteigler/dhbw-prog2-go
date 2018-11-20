@@ -1,9 +1,9 @@
 package pageHandler
 
 import (
-	"../sessionHandler"
 	"io/ioutil"
 	"net/http"
+	"ticketBackend/sessionHandler"
 )
 
 type Handler interface {

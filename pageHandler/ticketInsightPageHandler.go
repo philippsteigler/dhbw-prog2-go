@@ -1,12 +1,12 @@
 package pageHandler
 
 import (
-	"../sessionHandler"
-	"../ticket"
 	"fmt"
 	"html/template"
 	"net/http"
 	"strconv"
+	"ticketBackend/sessionHandler"
+	"ticketBackend/ticket"
 )
 
 // localhost:.../ticketInsight

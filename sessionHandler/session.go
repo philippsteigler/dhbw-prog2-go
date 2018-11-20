@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strconv"
 )
 
@@ -21,9 +23,25 @@ type User struct {
 
 var users UserAccounts
 
+// Berechne den korrekten Pfad für users.json zur Laufzeit.
+func getPathForUserData() string {
+	path, _ := os.Getwd()
+
+	// Fallunterscheidung für Aufruf von main.go oder session_test.go aus.
+	if filepath.Base(path) == "sessionHandler" {
+		path = "../assets/users.json"
+	} else if filepath.Base(path) == "ticketBackend" {
+		path = "./assets/users.json"
+	} else {
+		path = ""
+	}
+
+	return path
+}
+
 // Lies users.json und importiere alle Benutzerdaten nach &users.
-func refreshUserData() {
-	userData, err := ioutil.ReadFile("./assets/users.json")
+func loadUserData() {
+	userData, err := ioutil.ReadFile(getPathForUserData())
 	if err != nil {
 		fmt.Print(err)
 	}
@@ -114,7 +132,7 @@ func LoginHandler(response http.ResponseWriter, request *http.Request) {
 
 	if inputUsername != "" && inputPassword != "" {
 		// Lade die aktuellen Daten für registrierte Nutzer.
-		refreshUserData()
+		loadUserData()
 
 		// Überprüfe, ob der Benutzer registriert ist und prüfe dann das Passwort.
 		for i := 0; i < len(users.Users); i++ {
@@ -142,12 +160,13 @@ func LogoutHandler(response http.ResponseWriter, request *http.Request) {
 	http.Redirect(response, request, "/", 302)
 }
 
+/*
 // Registrieren und speichern eines neuen Benutzers in users.json.
 // Dabei wird der Hashwert des Passworts mit einem persönlichen Salt-Wert verschleiert.
 // Der Salt-Wert wird für spätere Abgleiche beider Hashwerte benötigt und folglich gespeichert.
 func RegistrationHandler(response http.ResponseWriter, request *http.Request) {
 	hash, salt := HashString(request.FormValue("password"))
-	refreshUserData()
+	loadUserData()
 
 	users.Users = append(users.Users, User{
 		ID:       len(users.Users),
@@ -157,10 +176,11 @@ func RegistrationHandler(response http.ResponseWriter, request *http.Request) {
 	})
 
 	usersJson, _ := json.Marshal(users)
-	err := ioutil.WriteFile("./assets/users.json", usersJson, 0644)
+	err := ioutil.WriteFile(getPathForUserData(), usersJson, 0644)
 	if err != nil {
 		fmt.Print(err)
 	}
 
 	http.Redirect(response, request, "/", 302)
 }
+*/

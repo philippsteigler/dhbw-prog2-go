@@ -1,12 +1,12 @@
 package main
 
 import (
-	"./pageHandler"
-	"./sessionHandler"
 	"log"
 	"net/http"
 	"os"
 	"strconv"
+	"ticketBackend/pageHandler"
+	"ticketBackend/sessionHandler"
 )
 
 func errorCheck(err error) {
