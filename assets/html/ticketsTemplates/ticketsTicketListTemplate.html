@@ -15,7 +15,12 @@
             <th>Ticket Nr. {{.Id}}</th>
         </tr>
         <tr>
-            <td></td>
+            <td>
+                <form action="/ticketTake" method="POST" style="display: inline">
+                    <input type="submit" value="Nehmen">
+                    <div style="display:none"><input name="TicketID" type="Text" value="{{.Id}}"></input></div>
+                    </form>
+                </td>
             <td>{{.Status}}</td>
             <td>{{.EditorId}}</td>
             <td class="subject">{{.Subject}}</td>

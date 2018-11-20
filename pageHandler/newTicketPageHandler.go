@@ -25,7 +25,7 @@ type Handler interface {
 // die anmeldung wird nicht abgefragt (kein: if sessionHandler.IsUserLoggedIn(request) {})
 func NewTicketViewPageHandler(response http.ResponseWriter, request *http.Request) {
 	var templateFiles []string
-	templateFiles = append(templateFiles, "./assets/html/dashboardViewTemplate.html")
+	templateFiles = append(templateFiles, "./assets/html/dashboardTemplates/dashboardViewTemplate.html") //TODO: Falsche datei, eigene erstellen
 	templateFiles = append(templateFiles, "./assets/html/newTicketViewTemplate.html")
 
 	templates, err := template.ParseFiles(templateFiles...)

@@ -6,23 +6,18 @@
     <title>Dashboard</title>
     <style>
 
+        .font {
+            font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+        }
+
         .dashboard {
-            background-color: #b4ffcc;
+            background-color: #7bb489;
             height: 60px;
             width: 100%;
             left: 0px;
             top: 0px;
             z-index: 1;
             position: fixed;
-        }
-
-        .middle {
-            font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-            text-align: center;
-            width: 40%;
-            left: 30%;
-            top: 10px;
-            top: -10px;
         }
 
         .left, .middle, .right{
@@ -37,10 +32,17 @@
         }
 
         .user{
-            font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
             left: 165px;
             position: relative;
             top: 7px;
+        }
+
+        .middle {
+            text-align: center;
+            width: 40%;
+            left: 30%;
+            top: 10px;
+            top: -10px;
         }
 
         .right {
@@ -48,7 +50,7 @@
             top: 15px;
         }
 
-        .button {
+        .topButton {
             font-size: 14px;
             background-color: white;
             color: black;
@@ -61,13 +63,21 @@
             position: absolute;
         }
 
-        .button:hover{
+        .topButton:hover{
             background-color: black;
             color: white;
         }
 
+        .innerContainer {
+            position: absolute;
+            padding: 80px 0 0 0;
+            height: 80%;
+            width: 100%;
+            left: 0;
+            top: 0;
+        }
+
         #table{
-            font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
             padding: 2px 0 2px 10%;
             width: 80%;
             position: relative;
@@ -82,23 +92,18 @@
             text-align: left;
         }
 
-        #table tr :nth-child(even){background-color: #f2f2f2;}
-
         #table th, #table td{
             padding: 5px 10px 5px 10px;
         }
 
-        .subject {
+        #table tr :nth-child(even){background-color: #f2f2f2;}
+
+        #table input {
             width: 100%;
         }
 
-        .innerContainer {
-            position: absolute;
-            padding: 80px 0 0 0;
-            height: 80%;
+        .subject {
             width: 100%;
-            left: 0;
-            top: 0;
         }
 
         .footer{
@@ -111,28 +116,29 @@
 
     </style>
 </head>
-<body>
+<body class="font">
 <div>
-<div class="dashboard">
-    <div class="middle">
-        <h1>Dashboard</h1>
+    <div class="dashboard">
+        <div class="middle">
+            <h1>Offene Tickets</h1>
         </div>
 
-    <div class="left">
-        <form action="/logout" mehtod="POST">
-            <button class="button" type="submit">Logout</button>
-            <div class="user">User: {{.}}</div>
-        </form>
-    </div>
-
-    <div class="right">
-        <form action="/ticketsView" mehtod="POST">
-            <button class="button" type="submit">Offene Tickets</button>
+        <div class="left">
+            <form action="/logout" mehtod="POST">
+                <button class="topButton" type="submit">Logout</button>
+                <div class="user">User: {{.}}</div>
             </form>
         </div>
-</div>
+
+        <div class="right">
+            <form action="/dashboard" mehtod="POST">
+                <button class="topButton" type="submit">Dashboard</button>
+            </form>
+        </div>
+    </div>
 </div>
 <div class="innerContainer">
+    <div><h3 style="text-align: center;">Wähle ein Ticket</h3></div>
 </body>
 </html>
 {{end}}
