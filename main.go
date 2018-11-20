@@ -69,9 +69,9 @@ func demoMode() {
 // Die Konfiguration soll komplett über Startparameter erfolgen.
 //
 // Der Anwender kann beim Starten über die Kommandozeile folgende Flags optional setzen:
-// 	-port=x		int		Port für den Webserver
-//	-reset=x	bool	True: Löscht alle Tickets und Nutzerdaten.
-//	-demo=x		bool	True: Setzt den Webserver zurück und installiert Testdaten
+//  -port=x     int     Port für den Webserver
+//  -reset=x    bool    True: Löscht alle Tickets und Nutzerdaten.
+//  -demo=x     bool    True: Setzt den Webserver zurück und installiert Testdaten
 // Das Flag -reset überschreibt dabei das Flag -demo.
 //
 //

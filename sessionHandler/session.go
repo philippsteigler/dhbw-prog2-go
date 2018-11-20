@@ -143,6 +143,10 @@ func IsUserLoggedIn(request *http.Request) bool {
 //
 // Authentifizierung des Benutzers.
 // Die Eingaben des Nutzers werden mit gespeicherten Credentials abgeglichen.
+// Folgende Testuser sind im Demo-Modus vorhanden:
+//  -> User: admin  Passwort: test123   Rang: Admin
+//  -> User: joker  Passwort: mosbach18 Rang: Editor
+//  -> User: rolf   Passwort: gopher    Rang: Editor
 func LoginHandler(response http.ResponseWriter, request *http.Request) {
 	inputUsername := request.FormValue("username")
 	inputPassword := request.FormValue("password")
