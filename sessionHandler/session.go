@@ -15,6 +15,7 @@ type UserAccounts struct {
 
 type User struct {
 	ID       int    `json:"id"`
+	Tier     int    `json:"tier"`
 	Username string `json:"username"`
 	Password string `json:"password"`
 	Salt     string `json:"salt"`
@@ -51,10 +52,15 @@ func loadUserData() {
 }
 
 // Speichern einer Sitzung in Form von 2 Cookies: UserID und UserName.
-func setSession(id int, username string, response http.ResponseWriter) {
+func setSession(id, tier int, username string, response http.ResponseWriter) {
 	cookieUserID := &http.Cookie{
 		Name:  "sessionUserID",
 		Value: strconv.Itoa(id),
+		Path:  "/",
+	}
+	cookieUserTier := &http.Cookie{
+		Name:  "sessionUserTier",
+		Value: strconv.Itoa(tier),
 		Path:  "/",
 	}
 	cookieUserName := &http.Cookie{
@@ -64,6 +70,7 @@ func setSession(id int, username string, response http.ResponseWriter) {
 	}
 
 	http.SetCookie(response, cookieUserID)
+	http.SetCookie(response, cookieUserTier)
 	http.SetCookie(response, cookieUserName)
 }
 
@@ -71,6 +78,12 @@ func setSession(id int, username string, response http.ResponseWriter) {
 func clearSession(response http.ResponseWriter) {
 	cookieUserID := &http.Cookie{
 		Name:   "sessionUserID",
+		Value:  "",
+		Path:   "/",
+		MaxAge: -1,
+	}
+	cookieUserTier := &http.Cookie{
+		Name:   "sessionUserTier",
 		Value:  "",
 		Path:   "/",
 		MaxAge: -1,
@@ -83,16 +96,8 @@ func clearSession(response http.ResponseWriter) {
 	}
 
 	http.SetCookie(response, cookieUserID)
+	http.SetCookie(response, cookieUserTier)
 	http.SetCookie(response, cookieUserName)
-}
-
-// Lies den Namen des aktiven Nutzers aus dem Session-Cookie.
-func GetSessionUserName(request *http.Request) string {
-	if cookie, err := request.Cookie("sessionUserName"); err == nil {
-		return cookie.Value
-	} else {
-		return ""
-	}
 }
 
 // Lies die ID des aktiven Nutzers aus dem Session-Cookie.
@@ -105,13 +110,32 @@ func GetSessionUserID(request *http.Request) int {
 	}
 }
 
+// Lies den Rang des aktiven Nutzers aus dem Session-Cookie.
+func GetSessionUserTier(request *http.Request) int {
+	if cookie, err := request.Cookie("sessionUserTier"); err == nil {
+		t, _ := strconv.Atoi(cookie.Value)
+		return t
+	} else {
+		return 0
+	}
+}
+
+// Lies den Namen des aktiven Nutzers aus dem Session-Cookie.
+func GetSessionUserName(request *http.Request) string {
+	if cookie, err := request.Cookie("sessionUserName"); err == nil {
+		return cookie.Value
+	} else {
+		return ""
+	}
+}
+
 // A-3.2:
 // Der Zugang für die Bearbeiter soll durch Benutzernamen und Passwort geschützt sein.
 //
 // Überprüfe anhand der Session-Cookies, ob ein Benutzer eingeloggt ist.
 // Benutzer eingeloggt = true; Benutzer ist nicht eingeloggt = false.
 func IsUserLoggedIn(request *http.Request) bool {
-	return GetSessionUserID(request) != 0 && GetSessionUserName(request) != ""
+	return GetSessionUserID(request) != 0 && GetSessionUserTier(request) != 0 && GetSessionUserName(request) != ""
 }
 
 // A-3.2:
@@ -135,7 +159,7 @@ func LoginHandler(response http.ResponseWriter, request *http.Request) {
 				// Berechne den Hashwert des Input-Passworts mit dem Salt-Wert, der zum verifizerten Benutzer gehört.
 				// Die Authentifizerung war erfolgreich, wenn dieser Hashwert mit dem Gespeicherten übereinstimmt.
 				if GetHash(inputPassword, users.Users[i].Salt) == users.Users[i].Password {
-					setSession(users.Users[i].ID, users.Users[i].Username, response)
+					setSession(users.Users[i].ID, users.Users[i].Tier, users.Users[i].Username, response)
 					redirectTarget = "/internal"
 				}
 			}
@@ -154,7 +178,6 @@ func LogoutHandler(response http.ResponseWriter, request *http.Request) {
 	http.Redirect(response, request, "/", 302)
 }
 
-/*
 // Registrieren und speichern eines neuen Benutzers in users.json.
 // Dabei wird der Hashwert des Passworts mit einem persönlichen Salt-Wert verschleiert.
 // Der Salt-Wert wird für spätere Abgleiche beider Hashwerte benötigt und folglich gespeichert.
@@ -164,15 +187,16 @@ func RegistrationHandler(response http.ResponseWriter, request *http.Request) {
 
 	users.Users = append(users.Users, User{
 		ID:       len(users.Users),
+		Tier:     2,
 		Username: request.FormValue("username"),
 		Password: hash,
 		Salt:     salt,
 	})
 
-	usersJson, _ := json.Marshal(users)
-	err := ioutil.WriteFile(getPathForUserData(), usersJson, 0644)
+	usersJson, err := json.Marshal(users)
+	HandleError(err)
+	err = ioutil.WriteFile(GetAssetsDir()+"users.json", usersJson, 0644)
 	HandleError(err)
 
 	http.Redirect(response, request, "/", 302)
 }
-*/

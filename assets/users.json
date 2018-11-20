@@ -1,1 +1,18 @@
-{"users":[{"id":1,"username":"admin","password":"ukLe9fbgmmkFfV7QzbhWwU96d75HtD1enuK201SQQsQ=","salt":"ZjwDTxlMEaVKvrnn"},{"id":2,"username":"philipp","password":"wKt3ErMv_qrtrhrBVTsQize6lwoYI1KkvePb4JEn5NA=","salt":"JqNjDW48W9fovmFY"},{"id":3,"username":"root","password":"dvL-1rYj-rZ5LeIRPb9ltPf36stfV6a7xxysJqzHEVs=","salt":"XwX5IzxpLN2mZ3g2"}]}
+{
+  "users": [
+    {
+      "id":1,
+      "tier":1,
+      "username":"admin",
+      "password":"ukLe9fbgmmkFfV7QzbhWwU96d75HtD1enuK201SQQsQ=",
+      "salt":"ZjwDTxlMEaVKvrnn"
+    },
+    {
+      "id":2,
+      "tier":2,
+      "username":"joker",
+      "password":"wKt3ErMv_qrtrhrBVTsQize6lwoYI1KkvePb4JEn5NA=",
+      "salt":"JqNjDW48W9fovmFY"
+    }
+  ]
+}
