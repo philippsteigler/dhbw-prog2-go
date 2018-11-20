@@ -74,6 +74,7 @@ func demoMode() {
 //	-demo=x		bool	True: Setzt den Webserver zurück und installiert Testdaten
 // Das Flag -reset überschreibt dabei das Flag -demo.
 //
+//
 // A-10.2:
 // Der Port muss sich über ein Flag festlegen lassen.
 //
