@@ -25,16 +25,18 @@ type Handler interface {
 // die anmeldung wird nicht abgefragt (kein: if sessionHandler.IsUserLoggedIn(request) {})
 func NewTicketViewPageHandler(response http.ResponseWriter, request *http.Request) {
 	var templateFiles []string
-	templateFiles = append(templateFiles, "./assets/html/ticketInsightTemplates/ticketInsightViewHeaderCssTemplate.html") //TODO: Falsche datei, eigene erstellen
-	templateFiles = append(templateFiles, "./assets/html/newTicketViewTemplate.html")
+	templateFiles = append(templateFiles, "./assets/html/newTicketTemplates/newTicketViewHeaderCssTemplate.html")
+	templateFiles = append(templateFiles, "./assets/html/newTicketTemplates/newTicketTemplate.html")
+	templateFiles = append(templateFiles, "./assets/html/newTicketTemplates/newTicketViewFooterTemplate.html")
 
 	templates, err := template.ParseFiles(templateFiles...)
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	templates.ExecuteTemplate(response, "outer", sessionHandler.GetSessionUserName(request))
+	templates.ExecuteTemplate(response, "outer", nil)
 	templates.ExecuteTemplate(response, "newTicket", nil)
+	templates.ExecuteTemplate(response, "footer", nil)
 
 	templates.Execute(response, nil)
 }

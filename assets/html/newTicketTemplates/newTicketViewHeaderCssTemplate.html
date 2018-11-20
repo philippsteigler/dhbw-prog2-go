@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Ticket Details</title>
+    <title>New Ticket</title>
     <style>
 
         .font {
@@ -20,7 +20,7 @@
             position: fixed;
         }
 
-        .left, .middle, .right{
+        .left, .middle {
             position: absolute;
             z-index: 2;
             display: inline;
@@ -31,23 +31,12 @@
             top: 15px;
         }
 
-        .user{
-            left: 165px;
-            position: relative;
-            top: 7px;
-        }
-
         .middle {
             text-align: center;
             width: 40%;
             left: 30%;
             top: 10px;
             top: -10px;
-        }
-
-        .right {
-            right: 165px;
-            top: 15px;
         }
 
         .topButton {
@@ -77,12 +66,6 @@
             top: 0;
         }
 
-        .details{
-            padding: 2px 0 2px 10%;
-            width: 80%;
-            position: relative;
-        }
-
         .footer{
             position: relative;
             margin: 20px 0 0 0;
@@ -91,33 +74,35 @@
             border-top: 2px solid #b4ffcc;
         }
 
+        .newTicket {
+            left: 25%;
+            position: relative;
+        }
+
+        .saveButton {
+            padding: 10px 0 70px 19%;
+        }
+
     </style>
 </head>
 <body class="font">
 <div>
     <div class="dashboard">
-        <div class="middle">
-            <h1>Ticket Details</h1>
-        </div>
 
         <div class="left">
-            <form action="/logout" mehtod="POST">
-                <button class="topButton" type="submit">Logout</button>
-                <div class="user">User: {{.}}</div>
+            <form action="/loginView" mehtod="POST">
+                <button class="topButton" type="submit">Login</button>
             </form>
         </div>
 
-        <div class="right">
-            <form action="/dashboard" mehtod="POST" >
-                <button class="topButton" type="submit">Dashboard</button>
-                </form>
-            <form action="/ticketsView" mehtod="POST" style="position: relative; right: 165px">
-                <button class="topButton" type="submit">Offene Tickets</button>
-                </form>
+        <div class="middle">
+            <h1>Neues Ticket Erstellen</h1>
+        </div>
         </div>
     </div>
 </div>
 <div class="innerContainer">
+
 </body>
 </html>
 {{end}}

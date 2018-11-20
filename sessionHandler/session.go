@@ -124,7 +124,7 @@ func LoginHandler(response http.ResponseWriter, request *http.Request) {
 				// Die Authentifizerung war erfolgreich, wenn dieser Hashwert mit dem Gespeicherten übereinstimmt.
 				if GetHash(inputPassword, users.Users[i].Salt) == users.Users[i].Password {
 					setSession(users.Users[i].ID, users.Users[i].Username, response)
-					redirectTarget = "/internal"
+					redirectTarget = "/dashboard"
 				}
 			}
 		}

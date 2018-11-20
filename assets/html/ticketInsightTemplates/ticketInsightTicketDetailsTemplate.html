@@ -5,18 +5,22 @@
     <div>
         <form action="/ticketTake" mehtod="POST" style="display: inline">
             <input type="submit" value="Ticket Nehmen">
+            <div style="display:none"><input name="TicketID" type="Text" value="{{.Id}}"></input></div>
         </form>
 
         <form action="/ticketSubmit" mehtod="POST" style="display: inline">
             <input type="submit" value="Ticket Abgeben">
+            <div style="display:none"><input name="TicketID" type="Text" value="{{.Id}}"></input></div>
         </form>
 
         <form action="/ticketDelegate" mehtod="POST" style="display: inline">
             <input type="submit" value="Ticket Delegieren">
+            <div style="display:none"><input name="TicketID" type="Text" value="{{.Id}}"></input></div>
         </form>
 
         <form action="/ticketNewEntry" mehtod="POST" style="display: inline">
             <input type="submit" value="Eintrag Hinzufügen">
+            <div style="display:none"><input name="TicketID" type="Text" value="{{.Id}}"></input></div>
         </form>
         </div>
 

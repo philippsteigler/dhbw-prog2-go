@@ -43,7 +43,7 @@ func TicketInsightPageHandler(response http.ResponseWriter, request *http.Reques
 		templates.Execute(response, nil)
 
 	} else {
-		http.ServeFile(response, request, "./assets/html/index.html")
+		http.ServeFile(response, request, "./assets/html/loginView.html")
 	}
 }
 

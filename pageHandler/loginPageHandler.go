@@ -10,14 +10,14 @@ import (
 //
 // Loginseite
 // Anmeldung mit Benutzer und Passwort
-func IndexPageHandler(response http.ResponseWriter, request *http.Request) {
+func LoginPageHandler(response http.ResponseWriter, request *http.Request) {
 	if sessionHandler.IsUserLoggedIn(request) {
 
 		//Seite für den Angemeldeten User aufrufen
 		http.Redirect(response, request, "/dashboard", 302)
 	} else {
 
-		//Loginseite falls kein User angemeldet ist
-		http.ServeFile(response, request, "./assets/html/index.html")
+		//Neues Ticket falls kein User angemeldet ist
+		http.ServeFile(response, request, "./assets/html/loginView.html")
 	}
 }
