@@ -10,17 +10,11 @@ import (
 	"ticketBackend/sessionHandler"
 )
 
-func errorCheck(err error) {
-	if err != nil {
-		panic(err)
-	}
-}
-
 // TODO: Umwandeln in init() --> Funktion soll flags empfangen und verarbeiten
 func createDirIfNotExist(folder string) {
 	if _, err := os.Stat(folder); os.IsNotExist(err) {
 		err = os.MkdirAll(folder, 0755)
-		errorCheck(err)
+		sessionHandler.HandleError(err)
 	}
 }
 
@@ -74,7 +68,5 @@ func main() {
 		mux,
 	)
 
-	if err != nil {
-		log.Fatal("ListenAndServe error: ", err)
-	}
+	sessionHandler.HandleError(err)
 }

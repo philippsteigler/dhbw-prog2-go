@@ -2,7 +2,6 @@ package sessionHandler
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -23,9 +22,16 @@ type User struct {
 
 var users UserAccounts
 
+func HandleError(err error) {
+	if err != nil {
+		panic(err)
+	}
+}
+
 // Gib den relativen Pfad zum Ressourcen-Verzeichnis zur Laufzeit zurück.
 func GetAssetsDir() string {
-	path, _ := os.Getwd()
+	path, err := os.Getwd()
+	HandleError(err)
 
 	// Fallunterscheidung für Aufruf über main.go oder *_test.go aus Unterverzeichnissen.
 	if filepath.Base(path) == "ticketBackend" {
@@ -38,14 +44,10 @@ func GetAssetsDir() string {
 // Lies users.json und importiere alle Benutzerdaten nach &users.
 func loadUserData() {
 	userData, err := ioutil.ReadFile(GetAssetsDir() + "users.json")
-	if err != nil {
-		fmt.Print(err)
-	}
+	HandleError(err)
 
 	err = json.Unmarshal(userData, &users)
-	if err != nil {
-		fmt.Print(err)
-	}
+	HandleError(err)
 }
 
 // Speichern einer Sitzung in Form von 2 Cookies: UserID und UserName.
@@ -88,20 +90,21 @@ func clearSession(response http.ResponseWriter) {
 func GetSessionUserName(request *http.Request) string {
 	if cookie, err := request.Cookie("sessionUserName"); err == nil {
 		return cookie.Value
+	} else {
+		HandleError(err)
+		return ""
 	}
-	return ""
 }
 
 // Lies die ID des aktiven Nutzers aus dem Session-Cookie.
 func GetSessionUserID(request *http.Request) int {
 	if cookie, err := request.Cookie("sessionUserID"); err == nil {
-		i, err := strconv.Atoi(cookie.Value)
-		if err != nil {
-			fmt.Print(err)
-		}
+		i, _ := strconv.Atoi(cookie.Value)
 		return i
+	} else {
+		HandleError(err)
+		return 0
 	}
-	return 0
 }
 
 // A-3.2:
@@ -110,10 +113,7 @@ func GetSessionUserID(request *http.Request) int {
 // Überprüfe anhand der Session-Cookies, ob ein Benutzer eingeloggt ist.
 // Benutzer eingeloggt = true; Benutzer ist nicht eingeloggt = false.
 func IsUserLoggedIn(request *http.Request) bool {
-	if GetSessionUserID(request) != 0 && GetSessionUserName(request) != "" {
-		return true
-	}
-	return false
+	return GetSessionUserID(request) != 0 && GetSessionUserName(request) != ""
 }
 
 // A-3.2:
@@ -173,9 +173,7 @@ func RegistrationHandler(response http.ResponseWriter, request *http.Request) {
 
 	usersJson, _ := json.Marshal(users)
 	err := ioutil.WriteFile(getPathForUserData(), usersJson, 0644)
-	if err != nil {
-		fmt.Print(err)
-	}
+	HandleError(err)
 
 	http.Redirect(response, request, "/", 302)
 }
