@@ -29,11 +29,9 @@ func DashboardViewPageHandler(response http.ResponseWriter, request *http.Reques
 		templates.ExecuteTemplate(response, "outer", sessionHandler.GetSessionUserName(request))
 
 		pTickets := *ticket.GetTickets(ticket.Open)
+		templates.ExecuteTemplate(response, "inner", pTickets)
 
-		for i := 0; i < len(pTickets); i++ {
-			templates.ExecuteTemplate(response, "inner", pTickets[i])
-		}
-
+		//TODO: footer neu positionieren und die listen der anderen seiten ändern(<div> Error)
 		templates.ExecuteTemplate(response, "footer", nil)
 
 		templates.Execute(response, nil)

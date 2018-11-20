@@ -1,31 +1,36 @@
 {{define "inner"}}
 <html>
 <body>
-<div id="table">
-       <table>
-        <tr>
-            <th>
-                <form action="/ticketInsightView" method="POST" style="display: inline">
-                    <input type="submit" value="Anzeigen">
-                    <div style="display:none"><input name="TicketID" type="Text" value="{{.Id}}"></input></div>
-                </form>
-            </th>
-            <th>Status</th>
-            <th>Editor</th>
-            <th>Ticket Nr. {{.Id}}</th>
-        </tr>
-        <tr>
-            <td>
-                <form action="/ticketSubmit" method="POST" style="display: inline">
-                    <input type="submit" value="Abgeben">
-                    <div style="display:none"><input name="TicketID" type="Text" value="{{.Id}}"></input></div>
+<div class="innerContainer">
+    <div><h3 style="text-align: center;">Eigene Tickets</h3></div>
+    {{range .}}
+    <div id="table">
+           <table>
+            <tr>
+                <th>
+                    <form action="/ticketInsightView" method="POST" style="display: inline">
+                        <input type="submit" value="Anzeigen">
+                        <div style="display:none"><input name="TicketID" type="Text" value="{{.Id}}"></input></div>
                     </form>
-                </td>
-            <td>{{.Status}}</td>
-            <td>{{.EditorId}}</td>
-            <td class="subject">{{.Subject}}</td>
-        </tr>
-        </table>
+                </th>
+                <th>Status</th>
+                <th>Editor</th>
+                <th>Ticket Nr. {{.Id}}</th>
+            </tr>
+            <tr>
+                <td>
+                    <form action="/ticketSubmit" method="POST" style="display: inline">
+                        <input type="submit" value="Abgeben">
+                        <div style="display:none"><input name="TicketID" type="Text" value="{{.Id}}"></input></div>
+                        </form>
+                    </td>
+                <td>{{.Status}}</td>
+                <td>{{.EditorId}}</td>
+                <td class="subject">{{.Subject}}</td>
+            </tr>
+            </table>
+    </div>
+            {{end}}
 </div>
 </body>
 </html>
