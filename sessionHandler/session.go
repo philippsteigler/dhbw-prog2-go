@@ -91,7 +91,6 @@ func GetSessionUserName(request *http.Request) string {
 	if cookie, err := request.Cookie("sessionUserName"); err == nil {
 		return cookie.Value
 	} else {
-		HandleError(err)
 		return ""
 	}
 }
@@ -102,7 +101,6 @@ func GetSessionUserID(request *http.Request) int {
 		i, _ := strconv.Atoi(cookie.Value)
 		return i
 	} else {
-		HandleError(err)
 		return 0
 	}
 }

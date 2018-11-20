@@ -31,7 +31,7 @@ func NewId() int {
 	return freeId
 }
 
-//Wird aktuell für die Tests benötigt, da für das durchführen der meisten Tests ein default Stand
+//Wird aktuell für die Tests benötigt, da für das durchführen der meisten Tests ein demo Stand
 //in der Datei "idGenerator_resource.json" benötigt wird
 func Reset() {
 	id = Id{1}
