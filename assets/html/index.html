@@ -65,7 +65,7 @@
         }
 
         .content {
-            padding: 0 0 0 42%;
+            padding: 0 0 0 37%;
             width: 80%;
             overflow: hidden;
             position: relative;
@@ -80,11 +80,13 @@
             padding: 10px 10px 10px 10px;
         }
 
-        .content input[type=text], .content input[type=password]{
-            width: 60%;
-            max-width: 160px;
+        .content td {
+            padding: 5px 5px 5px 5px;
         }
 
+        .breite {
+            width: 100%;
+        }
 
     </style>
 </head>
@@ -109,13 +111,15 @@
                 <table>
                 <tr>
                     <td><label for="username">User name</label></td>
-                    <td><input type="text" id="username" name="username"></td>
+                    <td class="breite"><input type="text" id="username" name="username"></td>
                 </tr>
                 <tr>
                     <td><label for="password">Password</label></td>
-                    <td><input type="password" id="password" name="password"></td>
+                    <td class="breite"><input type="password" id="password" name="password"></td>
                 </tr>
-                <button style="position: center" type="submit">Login</button>
+                <tr>
+                    <td style="position: relative; left: 40%"><button style="position: center" type="submit">Login</button></td>
+                </tr>
                 </table>
             </div>
         </form>
