@@ -58,12 +58,7 @@ func main() {
 	mux.Handle("/ticketNewEntry", http.HandlerFunc(pageHandler.TicketNewEntryHandler))
 
 	log.Print("Listening on port " + portString + " ... ")
-	err := http.ListenAndServeTLS(
-		":"+portString,
-		"./assets/certificates/server.crt",
-		"./assets/certificates/server.key",
-		mux,
-	)
+	err := http.ListenAndServeTLS(":"+portString, "./assets/certificates/server.crt", "./assets/certificates/server.key", mux)
 
 	if err != nil {
 		log.Fatal("ListenAndServe error: ", err)
