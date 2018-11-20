@@ -8,7 +8,10 @@ import (
 	"net/http"
 )
 
-// localhost:.../ticketsView
+// A-8.1
+// Die Bearbeitung der Tickets soll ausschließlich ¨uber eine WEB-Seite erfolgen.
+//
+// https://localhost:8000/ticketsView
 //anzeigen der Tickets des Users
 func TicketsViewPageHandler(response http.ResponseWriter, request *http.Request) {
 	if sessionHandler.IsUserLoggedIn(request) {

@@ -9,10 +9,8 @@ import (
 	"strconv"
 )
 
-//TODO: Nur
-
 // A-8.3
-// Bearbeiter sollen alle Tickets einsehen k¨onnen, welche noch kein Bearbeiter
+// Bearbeiter sollen alle Tickets einsehen können, welche noch kein Bearbeiter
 // übernommen hat.
 //
 // https://localhost:8000/ticketInsightView
@@ -73,8 +71,13 @@ func TicketDelegateHandler(response http.ResponseWriter, request *http.Request) 
 
 }
 
-// localhost:.../ticketNewEntry
-//Funktion ticket Eintrag hinzufügen
+// A-8.6
+// Kommentiert ein Bearbeiter ein Ticket, soll er wählen können, ob dieser Kommentar
+// an den Kunden versendet wird, oder ob er nur für andere Bearbeiter
+// sichtbar ist.
+//
+// https://localhost:8000/ticketSubmit
+// Ticket Eintrag hinzufügen, Web Interaction
 func TicketNewEntryHandler(response http.ResponseWriter, request *http.Request) {
 
 }
