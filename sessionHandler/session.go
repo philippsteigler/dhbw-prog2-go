@@ -2,6 +2,7 @@ package sessionHandler
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -102,7 +103,7 @@ func GetSessionUserID(request *http.Request) int {
 		i, _ := strconv.Atoi(cookie.Value)
 		return i
 	} else {
-		HandleError(err)
+		fmt.Println(err)
 		return 0
 	}
 }

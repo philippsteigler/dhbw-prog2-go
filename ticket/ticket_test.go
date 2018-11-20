@@ -7,26 +7,25 @@ import (
 	"os"
 	"testing"
 	"ticketBackend/sessionHandler"
-	"time"
 )
 
 func CreateDefaultEnv() {
 	//Alle Tickets aus dem Ordner "tickets" Löschen
 	ticketFiles, err := ioutil.ReadDir(sessionHandler.GetAssetsDir() + "tickets")
-	errorCheck(err)
+	sessionHandler.HandleError(err)
 
 	for _, file := range ticketFiles {
 		err := os.Remove(sessionHandler.GetAssetsDir() + "tickets/" + file.Name())
-		errorCheck(err)
+		sessionHandler.HandleError(err)
 	}
 
 	//Setzt die Datei ticketId_resource.json in default Zustand
 	id = Id{1}
 	filename := sessionHandler.GetAssetsDir() + "ticketId_resource.json"
 	encodedId, errEnc := json.Marshal(id)
-	errorCheck(errEnc)
+	sessionHandler.HandleError(errEnc)
 	errWrite := ioutil.WriteFile(filename, encodedId, 0600)
-	errorCheck(errWrite)
+	sessionHandler.HandleError(errWrite)
 }
 
 func TestCountTickets(t *testing.T) {
@@ -42,7 +41,6 @@ func TestNewTicket(t *testing.T) {
 	ticket2 := *readTicket(2)
 
 	assert.NotEqual(t, ticket1, ticket2)
-
 	CreateDefaultEnv()
 }
 
@@ -55,9 +53,8 @@ func TestDeleteTicket(t *testing.T) {
 }
 
 func TestNewEntry(t *testing.T) {
-	entry1 := *NewEntry("Bob", "Test")
-	entry2 := Entry{Date: time.Now().Local().Format("2006-01-02T15:04:05Z07:00"), Creator: "Bob", Content: "Test"}
-	assert.Equal(t, entry1, entry2)
+	entry := *NewEntry("Bob", "Test")
+	assert.IsType(t, Entry{}, entry)
 }
 
 func TestReadTicket(t *testing.T) {

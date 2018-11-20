@@ -42,17 +42,10 @@ var entry Entry
 var orderedTickets []Ticket
 var id Id
 
-//Error Handler
-func errorCheck(err error) {
-	if err != nil {
-		panic(err)
-	}
-}
-
 //Zählt, wie viele Tickets sich im Ordner "../assets/tickets" befinden
 func countTickets() int {
 	tickets, err := ioutil.ReadDir(sessionHandler.GetAssetsDir() + "tickets")
-	errorCheck(err)
+	sessionHandler.HandleError(err)
 	return len(tickets)
 }
 
@@ -67,7 +60,7 @@ func NewTicket(subject string, creator string, content string) {
 
 //Erstellt einen neuen Eintrag und gibt die Referenz auf ihn zurück
 func NewEntry(creator string, content string) *Entry {
-	date := time.Now().Local().Format("2006-01-02T15:04:05Z07:00")
+	date := time.Now().Local().Format("2006-01-02T15:04:05.0000")
 	entry = Entry{Date: date, Creator: creator, Content: content}
 	return &entry
 }
@@ -77,19 +70,19 @@ func NewEntry(creator string, content string) *Entry {
 func readTicket(id int) *Ticket {
 	filename := sessionHandler.GetAssetsDir() + "tickets/" + strconv.Itoa(id) + ".json"
 	encodedTicket, errRead := ioutil.ReadFile(filename)
-	errorCheck(errRead)
+	sessionHandler.HandleError(errRead)
 	err := json.Unmarshal(encodedTicket, &ticket)
-	errorCheck(err)
+	sessionHandler.HandleError(err)
 	return &ticket
 }
 
 //Schreibt das Ticket "ticket" in die entsprechende .json Datei oder erzeugt diese
 func writeTicket(ticket *Ticket) {
 	encodedTicket, errEnc := json.Marshal(ticket)
-	errorCheck(errEnc)
+	sessionHandler.HandleError(errEnc)
 	filename := sessionHandler.GetAssetsDir() + "tickets/" + strconv.Itoa(ticket.Id) + ".json"
 	err := ioutil.WriteFile(filename, encodedTicket, 0600)
-	errorCheck(err)
+	sessionHandler.HandleError(err)
 }
 
 //Funktion: NeN Hinzufügen von Einträgen
@@ -120,12 +113,12 @@ func GetTickets(status ...Status) *[]Ticket {
 
 	//Überprüfung ob die Eingabe gültig ist
 	if len(status) > 2 {
-		errorCheck(errors.New("invalid input by getTickets"))
+		sessionHandler.HandleError(errors.New("invalid input by getTickets"))
 	}
 
 	orderedTickets = []Ticket{}
 	files, err := ioutil.ReadDir(sessionHandler.GetAssetsDir() + "tickets")
-	errorCheck(err)
+	sessionHandler.HandleError(err)
 	var id int
 
 	//Es wird durch alle gelesenen Tickets durchiteriert
@@ -154,7 +147,7 @@ func GetTickets(status ...Status) *[]Ticket {
 func parseFilename(filename string) int {
 	filename = strings.TrimSuffix(filename, ".json")
 	id, err := strconv.Atoi(filename)
-	errorCheck(err)
+	sessionHandler.HandleError(err)
 	return id
 }
 
@@ -201,7 +194,7 @@ func MergeTickets(dest int, source int) {
 func DeleteTicket(id int) {
 	filename := sessionHandler.GetAssetsDir() + "tickets/" + strconv.Itoa(id) + ".json"
 	err := os.Remove(filename)
-	errorCheck(err)
+	sessionHandler.HandleError(err)
 }
 
 //Liefert eine Referenz auf das angegebene Ticket
@@ -214,17 +207,17 @@ func newId() int {
 	//Hier befindet sich die gültige ID und wird ausgelesen
 	filename := sessionHandler.GetAssetsDir() + "ticketId_resource.json"
 	encodedId, errRead := ioutil.ReadFile(filename)
-	errorCheck(errRead)
+	sessionHandler.HandleError(errRead)
 	err := json.Unmarshal(encodedId, &id)
-	errorCheck(err)
+	sessionHandler.HandleError(err)
 
 	//In "freeId" wird die ID gespeichert und die Zahl in der Datei um eins erhöht (und zurückgeschrieben)
 	freeId := id.FreeId
 	id.FreeId += 1
 
 	encodedId, errEnc := json.Marshal(id)
-	errorCheck(errEnc)
+	sessionHandler.HandleError(errEnc)
 	errWrite := ioutil.WriteFile(filename, encodedId, 0600)
-	errorCheck(errWrite)
+	sessionHandler.HandleError(errWrite)
 	return freeId
 }
