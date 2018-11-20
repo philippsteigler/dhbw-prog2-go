@@ -3,15 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <style>
+        .font {
+            font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+        }
+
+        .dashboard {
+            background-color: #7bb489;
+            height: 60px;
+            width: 100%;
+            left: 0px;
+            top: 0px;
+            z-index: 1;
+            position: fixed;
+        }
+
+        .middle, .right{
+            position: absolute;
+            z-index: 2;
+            display: inline;
+        }
+
+        .middle {
+            text-align: center;
+            width: 40%;
+            left: 30%;
+            top: 10px;
+            top: -10px;
+        }
+
+        .right {
+            right: 165px;
+            top: 15px;
+        }
+
+        .topButton {
+            font-size: 14px;
+            background-color: white;
+            color: black;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            text-align: center;
+            width: 150px;
+            height: 30px;
+            position: absolute;
+        }
+
+        .topButton:hover{
+            background-color: black;
+            color: white;
+        }
+
+        .innerContainer {
+            position: absolute;
+            padding: 80px 0 0 0;
+            height: 80%;
+            width: 100%;
+            left: 0;
+            top: 0;
+        }
+
+        .content {
+            padding: 0 0 0 42%;
+            width: 80%;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .content form{
+            border: 2px solid #7bb489;
+            width: 30%;
+        }
+
+        .content div {
+            padding: 10px 10px 10px 10px;
+        }
+
+        .content input[type=text], .content input[type=password]{
+            width: 60%;
+            max-width: 160px;
+        }
+
+
+    </style>
 </head>
-<body>
-    <h1>Login</h1>
-    <form method="post" action="/login">
-        <label for="username">User name</label>
-        <input type="text" id="username" name="username">
-        <label for="password">Password</label>
-        <input type="password" id="password" name="password">
-        <button type="submit">Login</button>
-    </form>
+<body class="font">
+
+<div class="dashboard">
+    <div class="middle">
+        <h1>Login</h1>
+        </div>
+    <div class="right">
+
+        <form action="/newTicketView" mehtod="POST" style="position: relative; right: 165px">
+            <button class="topButton" type="submit">Neues Ticket</button>
+        </form>
+    </div>
+    </div>
+
+<div class="innerContainer">
+    <div class="content">
+        <form method="post" action="/login">
+            <div>
+                <table>
+                <tr>
+                    <td><label for="username">User name</label></td>
+                    <td><input type="text" id="username" name="username"></td>
+                </tr>
+                <tr>
+                    <td><label for="password">Password</label></td>
+                    <td><input type="password" id="password" name="password"></td>
+                </tr>
+                <button style="position: center" type="submit">Login</button>
+                </table>
+            </div>
+        </form>
+    </div>
+</div>
+
 </body>
 </html>
