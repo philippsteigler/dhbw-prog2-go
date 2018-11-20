@@ -8,14 +8,13 @@ import (
 func TestGenerateSalt(t *testing.T) {
 	salt := generateSalt()
 	assert.Len(t, salt, 16, "Length should be 16 Byte.")
-
 }
 
 func TestHashString(t *testing.T) {
 	text := "test123"
 
 	hash, salt := HashString(text)
-	assert.NotNil(t, hash, salt)
+	assert.NotNil(t, hash, salt, "Function should return values for hash and salt.")
 }
 
 func TestGetHash(t *testing.T) {

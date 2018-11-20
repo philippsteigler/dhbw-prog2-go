@@ -1,8 +1,8 @@
 package pageHandler
 
 import (
-	"../sessionHandler"
 	"net/http"
+	"ticketBackend/sessionHandler"
 )
 
 //anzeigen der Index Seite
