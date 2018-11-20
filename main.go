@@ -36,6 +36,9 @@ func resetData() {
 
 	err = os.RemoveAll(sessionHandler.GetAssetsDir() + "users.json")
 	sessionHandler.HandleError(err)
+
+	err = os.RemoveAll(sessionHandler.GetAssetsDir() + "ticketId_resource.json")
+	sessionHandler.HandleError(err)
 }
 
 // Setze den Server zurück und installiere Testdaten.
@@ -55,6 +58,10 @@ func demoMode() {
 
 	// Kopiere die Nutzerdaten aus dem Demo-Ordner in den Zielordner.
 	srcFile := strings.Join([]string{sessionHandler.GetAssetsDir(), "demo/users.json"}, "")
+	copyFile(srcFile, sessionHandler.GetAssetsDir())
+
+	// Kopiere die Nutzerdaten aus dem Demo-Ordner in den Zielordner.
+	srcFile = strings.Join([]string{sessionHandler.GetAssetsDir(), "ticketId_resource.json"}, "")
 	copyFile(srcFile, sessionHandler.GetAssetsDir())
 }
 
