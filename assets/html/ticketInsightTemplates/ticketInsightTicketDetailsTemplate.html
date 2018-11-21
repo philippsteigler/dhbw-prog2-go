@@ -1,6 +1,7 @@
 {{define "inner"}}
 <html>
 <body>
+<div class="innerContainer">
 <div class="details">
     <div>
         <form action="/ticketTake" mehtod="POST" style="display: inline">
@@ -34,11 +35,22 @@
                 <div>Subject: {{.Subject}}</div>
             </div>
             <p></p>
+            <div>
             <div>Editor: {{.EditorId}}</div>
             <p></p>
-            <div>Entries: {{.Entries}}</div>
+
+            <div>Entries:</div>
+            <p></p>
+            {{range .Entries}}
+                <div>Datum: {{.Date}}</div>
+                <div>Ersteller: {{.Creator}}</div>
+                <div>=> {{.Content}}</div>
+                <p></p>
+                    {{end}}
+            </div>
         </div>
     </div>
-    </body>
+</div>
+</body>
 </html>
 {{end}}

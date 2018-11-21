@@ -2,10 +2,10 @@ package pageHandler
 
 import (
 	"../sessionHandler"
-	"../ticket"
 	"fmt"
 	"html/template"
 	"net/http"
+	"ticketBackend/ticket"
 )
 
 // A-8.1:
@@ -26,12 +26,10 @@ func DashboardViewPageHandler(response http.ResponseWriter, request *http.Reques
 			fmt.Println(err)
 		}
 
-		templates.ExecuteTemplate(response, "outer", sessionHandler.GetSessionUserName(request))
-
 		pTickets := *ticket.GetTickets(ticket.Open)
-		templates.ExecuteTemplate(response, "inner", pTickets)
 
-		//TODO: footer neu positionieren und die listen der anderen seiten ändern(<div> Error)
+		templates.ExecuteTemplate(response, "outer", sessionHandler.GetSessionUserName(request))
+		templates.ExecuteTemplate(response, "inner", pTickets)
 		templates.ExecuteTemplate(response, "footer", nil)
 
 		templates.Execute(response, nil)
