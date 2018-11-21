@@ -2,68 +2,12 @@ package main
 
 import (
 	"flag"
-	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
 	"strconv"
-	"strings"
 	"ticketBackend/pageHandler"
 	"ticketBackend/sessionHandler"
 )
-
-// Erstelle eine Verzeichnis für Tickets, sofern dieses nicht existiert.
-func checkEnvironment() {
-	if _, err := os.Stat(sessionHandler.GetAssetsDir() + "tickets"); os.IsNotExist(err) {
-		err = os.Mkdir(sessionHandler.GetAssetsDir()+"tickets", 0755)
-		sessionHandler.HandleError(err)
-	}
-}
-
-// Kopiere eine Datei an eine andere Stelle.
-func copyFile(src string, dst string) {
-	data, err := ioutil.ReadFile(src)
-	sessionHandler.HandleError(err)
-
-	err = ioutil.WriteFile(dst, data, 0644)
-	sessionHandler.HandleError(err)
-}
-
-//Setz den Webserver zurück, indem alle Tickets und Nutzerdaten gelöscht werden.
-func resetData() {
-	err := os.RemoveAll(sessionHandler.GetAssetsDir() + "tickets")
-	sessionHandler.HandleError(err)
-
-	err = os.RemoveAll(sessionHandler.GetAssetsDir() + "users.json")
-	sessionHandler.HandleError(err)
-
-	err = os.RemoveAll(sessionHandler.GetAssetsDir() + "ticketId_resource.json")
-	sessionHandler.HandleError(err)
-}
-
-// Setze den Server zurück und installiere Testdaten.
-func demoMode() {
-	resetData()
-
-	// Kopiere alle Tickets aus dem Demo-Ordner in den Zielordner.
-	src := strings.Join([]string{sessionHandler.GetAssetsDir(), "demo/tickets"}, "")
-	files, err := ioutil.ReadDir(src)
-	sessionHandler.HandleError(err)
-
-	for _, file := range files {
-		srcFile := strings.Join([]string{sessionHandler.GetAssetsDir(), "demo/tickets/", file.Name()}, "")
-		dstFile := strings.Join([]string{sessionHandler.GetAssetsDir(), "tickets/", file.Name()}, "")
-		copyFile(srcFile, dstFile)
-	}
-
-	// Kopiere die Nutzerdaten aus dem Demo-Ordner in den Zielordner.
-	srcFile := strings.Join([]string{sessionHandler.GetAssetsDir(), "demo/users.json"}, "")
-	copyFile(srcFile, sessionHandler.GetAssetsDir())
-
-	// Kopiere die Nutzerdaten aus dem Demo-Ordner in den Zielordner.
-	srcFile = strings.Join([]string{sessionHandler.GetAssetsDir(), "ticketId_resource.json"}, "")
-	copyFile(srcFile, sessionHandler.GetAssetsDir())
-}
 
 // A-3.1:
 // Die Web-Seite soll nur per HTTPS erreichbar sein.
@@ -100,13 +44,14 @@ func main() {
 	demo := flag.Bool("demo", false, "Install example data for tickets and users.")
 	flag.Parse()
 
+	sessionHandler.CheckEnvironment()
+
 	if *demo == true {
-		demoMode()
+		sessionHandler.DemoMode()
 	} else if *reset == true {
-		resetData()
+		sessionHandler.ResetData()
 	}
 
-	checkEnvironment()
 	mux := http.NewServeMux()
 
 	// Webpages
