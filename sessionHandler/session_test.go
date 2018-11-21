@@ -13,10 +13,10 @@ func TestGetAssetsDir(t *testing.T) {
 }
 
 func TestLoadUserData(t *testing.T) {
-	assert.Empty(t, &users, "User data should be empty at first.")
+	assert.Empty(t, &users, "User rollback should be empty at first.")
 
 	loadUserData()
-	assert.NotEmpty(t, &users, "User data should be available after reading from storage.")
+	assert.NotEmpty(t, &users, "User rollback should be available after reading from storage.")
 }
 
 // TODO: Tests für Session-Handling

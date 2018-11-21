@@ -5,7 +5,7 @@ import (
 	"ticketBackend/sessionHandler"
 )
 
-//anzeigen der Index Seite
+//anzeigen der Value Seite
 func IndexPageHandler(response http.ResponseWriter, request *http.Request) {
 	if sessionHandler.IsUserLoggedIn(request) {
 		http.Redirect(response, request, "/dashboard", 302) //Umbennenen in / ... die Benutzerseite

@@ -22,16 +22,15 @@ func CheckEnvironment() {
 	if _, err := os.Stat(assetsDir + "tickets"); os.IsNotExist(err) {
 		err = os.Mkdir(assetsDir+"tickets", 0755)
 		HandleError(err)
-	}
-
-	if _, err := os.Stat(assetsDir + "ticketId_resource.json"); os.IsNotExist(err) {
-		srcFile := strings.Join([]string{assetsDir, "demo/ticketId_resource.json"}, "")
-		dstFile := strings.Join([]string{assetsDir, "ticketId_resource.json"}, "")
-		copyFile(srcFile, dstFile)
+		if _, err := os.Stat(assetsDir + "ticketId_resource.json"); os.IsNotExist(err) {
+			srcFile := strings.Join([]string{assetsDir, "rollback/default/ticketId_resource.json"}, "")
+			dstFile := strings.Join([]string{assetsDir, "ticketId_resource.json"}, "")
+			copyFile(srcFile, dstFile)
+		}
 	}
 
 	if _, err := os.Stat(assetsDir + "users.json"); os.IsNotExist(err) {
-		srcFile := strings.Join([]string{assetsDir, "demo/users_root.json"}, "")
+		srcFile := strings.Join([]string{assetsDir, "rollback/default/users.json"}, "")
 		dstFile := strings.Join([]string{assetsDir, "users.json"}, "")
 		copyFile(srcFile, dstFile)
 	}
@@ -70,23 +69,23 @@ func DemoMode() {
 	}
 
 	// Kopiere alle Tickets aus dem Demo-Ordner in den Zielordner.
-	src := strings.Join([]string{assetsDir, "demo/tickets"}, "")
+	src := strings.Join([]string{assetsDir, "rollback/demo/tickets"}, "")
 	files, err := ioutil.ReadDir(src)
 	HandleError(err)
 
 	for _, file := range files {
-		srcFile := strings.Join([]string{assetsDir, "demo/tickets/", file.Name()}, "")
+		srcFile := strings.Join([]string{assetsDir, "rollback/demo/tickets/", file.Name()}, "")
 		dstFile := strings.Join([]string{assetsDir, "tickets/", file.Name()}, "")
 		copyFile(srcFile, dstFile)
 	}
 
 	// Kopiere ID-Ressource für Tickets aus dem Demo-Ordner in den Zielordner.
-	srcFile := strings.Join([]string{assetsDir, "demo/ticketId_resource.json"}, "")
+	srcFile := strings.Join([]string{assetsDir, "rollback/demo/ticketId_resource.json"}, "")
 	dstFile := strings.Join([]string{assetsDir, "ticketId_resource.json"}, "")
 	copyFile(srcFile, dstFile)
 
 	// Kopiere Nutzerdaten aus dem Demo-Ordner in den Zielordner.
-	srcFile = strings.Join([]string{assetsDir, "demo/users.json"}, "")
+	srcFile = strings.Join([]string{assetsDir, "rollback/demo/users.json"}, "")
 	dstFile = strings.Join([]string{assetsDir, "users.json"}, "")
 	copyFile(srcFile, dstFile)
 }

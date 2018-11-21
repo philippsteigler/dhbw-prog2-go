@@ -21,9 +21,9 @@ import (
 //
 // Der Anwender kann beim Starten über die Kommandozeile folgende Flags optional setzen:
 //  -port=x     int     Port für den Webserver
-//  -reset=x    bool    True: Löscht alle Tickets und Nutzerdaten.
+//  -default=x    bool    True: Löscht alle Tickets und Nutzerdaten.
 //  -demo=x     bool    True: Setzt den Webserver zurück und installiert Testdaten
-// Das Flag -reset überschreibt dabei das Flag -demo.
+// Das Flag -default überschreibt dabei das Flag -demo.
 //
 //
 // A-10.2:
@@ -40,8 +40,8 @@ import (
 // Self-signed Zertifikate sind demo vorhanden und unter ./assets/certificates gespeichert.
 func main() {
 	port := flag.Int("port", 8000, "Port for webserver.")
-	reset := flag.Bool("reset", false, "Delete all ticket and user data.")
-	demo := flag.Bool("demo", false, "Install example data for tickets and users.")
+	reset := flag.Bool("reset", false, "Delete all ticket and user rollback.")
+	demo := flag.Bool("demo", false, "Install example rollback for tickets and users.")
 	flag.Parse()
 
 	sessionHandler.CheckEnvironment()
