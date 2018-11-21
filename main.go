@@ -21,7 +21,7 @@ import (
 //
 // Der Anwender kann beim Starten über die Kommandozeile folgende Flags optional setzen:
 //  -port=x     int     Port für den Webserver
-//  -default=x    bool    True: Löscht alle Tickets und Nutzerdaten.
+//  -default=x  bool    True: Löscht alle Tickets und Nutzerdaten.
 //  -demo=x     bool    True: Setzt den Webserver zurück und installiert Testdaten
 // Das Flag -default überschreibt dabei das Flag -demo.
 //
