@@ -1,0 +1,11 @@
+{
+  "users": [
+    {
+      "id":1,
+      "tier":1,
+      "username":"admin",
+      "password":"ukLe9fbgmmkFfV7QzbhWwU96d75HtD1enuK201SQQsQ=",
+      "salt":"ZjwDTxlMEaVKvrnn"
+    }
+  ]
+}
