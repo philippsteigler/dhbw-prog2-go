@@ -1,0 +1,56 @@
+{{define "inner"}}
+<html>
+<body>
+<div class="innerContainer">
+<div class="details">
+    <div>
+        <form action="/ticketTake" mehtod="POST" style="display: inline">
+            <input type="submit" value="Ticket Nehmen">
+            <div style="display:none"><input name="TicketID" type="Text" value="{{.Id}}"></input></div>
+        </form>
+
+        <form action="/ticketSubmit" mehtod="POST" style="display: inline">
+            <input type="submit" value="Ticket Abgeben">
+            <div style="display:none"><input name="TicketID" type="Text" value="{{.Id}}"></input></div>
+        </form>
+
+        <form action="/ticketDelegate" mehtod="POST" style="display: inline">
+            <input type="submit" value="Ticket Delegieren">
+            <div style="display:none"><input name="TicketID" type="Text" value="{{.Id}}"></input></div>
+        </form>
+
+        <form action="/ticketNewEntry" mehtod="POST" style="display: inline">
+            <input type="submit" value="Eintrag Hinzufügen">
+            <div style="display:none"><input name="TicketID" type="Text" value="{{.Id}}"></input></div>
+        </form>
+        </div>
+
+        <div>
+            <h2>Ticket insight Page</h2>
+        </div>
+
+        <div>
+            <div>
+                <div>Ticket Id: {{.Id}} Status: {{.Status}}</div>
+                <div>Subject: {{.Subject}}</div>
+            </div>
+            <p></p>
+            <div>
+            <div>Editor: {{.EditorId}}</div>
+            <p></p>
+
+            <div>Entries:</div>
+            <p></p>
+            {{range .Entries}}
+                <div>Datum: {{.Date}}</div>
+                <div>Ersteller: {{.Creator}}</div>
+                <div>=> {{.Content}}</div>
+                <p></p>
+                    {{end}}
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+{{end}}

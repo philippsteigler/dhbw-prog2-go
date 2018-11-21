@@ -1,6 +1,9 @@
 package pageHandler
 
 import (
+	"fmt"
+	"html/template"
+	"io/ioutil"
 	"net/http"
 	"ticketBackend/sessionHandler"
 	"ticketBackend/ticket"
@@ -10,17 +13,36 @@ type Handler interface {
 	ServeHTTP(http.Response, *http.Request)
 }
 
-// localhost:.../newTicketView
-//anzeigen der neues Ticket Seite
+// A-5.1:
+// Uber eine Web-Seite soll ein Ticket erstellt werden können.
+//
+// https://localhost:8000/newTicketView
+// anzeigen der Seite für die erstellung eines neuen Tickets
+
+// A-5.2:
+// Die Erzeugung eines Tickets soll ohne eine Authentifizierung möglich sein.
+//
+// Keine Authentifizierung nötig
+// die anmeldung wird nicht abgefragt (kein: if sessionHandler.IsUserLoggedIn(request) {})
 func NewTicketViewPageHandler(response http.ResponseWriter, request *http.Request) {
-	if sessionHandler.IsUserLoggedIn(request) {
-		http.ServeFile(response, request, "./assets/html/newTicketViewTemplate.html")
-	} else {
-		http.Redirect(response, request, "/", 302)
+	var templateFiles []string
+	templateFiles = append(templateFiles, "./assets/html/newTicketTemplates/newTicketViewHeaderCssTemplate.html")
+	templateFiles = append(templateFiles, "./assets/html/newTicketTemplates/newTicketTemplate.html")
+	templateFiles = append(templateFiles, "./assets/html/newTicketTemplates/newTicketViewFooterTemplate.html")
+
+	templates, err := template.ParseFiles(templateFiles...)
+	if err != nil {
+		fmt.Println(err)
 	}
+
+	templates.ExecuteTemplate(response, "outer", nil)
+	templates.ExecuteTemplate(response, "newTicket", nil)
+	templates.ExecuteTemplate(response, "footer", nil)
+
+	templates.Execute(response, nil)
 }
 
-// localhost:.../saveTicket
+// https://localhost:8000/saveTicket
 // Speichert den Text aus den Textareas in mail, subject, text
 func TicketSafeHandler(response http.ResponseWriter, request *http.Request) {
 

@@ -1,0 +1,107 @@
+{{define "outer"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>New Ticket</title>
+    <style>
+
+        .font {
+            font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+        }
+
+        .dashboard {
+            background-color: #7bb489;
+            height: 60px;
+            width: 100%;
+            left: 0px;
+            top: 0px;
+            z-index: 1;
+            position: fixed;
+        }
+
+        .left, .middle {
+            position: absolute;
+            z-index: 2;
+            display: inline;
+        }
+
+        .left {
+            left: 15px;
+            top: 15px;
+        }
+
+        .middle {
+            text-align: center;
+            width: 40%;
+            left: 30%;
+            top: 10px;
+            top: -10px;
+        }
+
+        .topButton {
+            font-size: 14px;
+            background-color: white;
+            color: black;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            text-align: center;
+            width: 150px;
+            height: 30px;
+            position: absolute;
+        }
+
+        .topButton:hover{
+            background-color: black;
+            color: white;
+        }
+
+        .innerContainer {
+            position: relative;
+            padding: 80px 0 0 0;
+            height: 80%;
+            width: 100%;
+            left: 0;
+            top: 0;
+        }
+
+        .footer{
+            position: relative;
+            margin: 20px 0 0 0;
+            bottom: 0px;
+            background-color: #f2f2f2;
+            border-top: 2px solid #7bb489;
+        }
+
+        .newTicket {
+            left: 28%;
+            width: 70%;
+            position: relative;
+        }
+
+        .saveButton {
+            padding: 10px 0 70px 19%;
+        }
+
+    </style>
+</head>
+<body class="font">
+<div>
+    <div class="dashboard">
+
+        <div class="left">
+            <form action="/loginView" mehtod="POST">
+                <button class="topButton" type="submit">Login</button>
+            </form>
+        </div>
+
+        <div class="middle">
+            <h1>Neues Ticket Erstellen</h1>
+        </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+{{end}}

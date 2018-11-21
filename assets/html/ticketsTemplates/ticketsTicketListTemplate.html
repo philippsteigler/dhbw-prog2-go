@@ -1,0 +1,37 @@
+{{define "inner"}}
+<html>
+<body>
+<div class="innerContainer">
+    <div><h3 style="text-align: center;">Wähle ein Ticket</h3></div>
+    {{range .}}
+    <div id="table">
+           <table>
+            <tr>
+                <th>
+                    <form action="/ticketInsightView" method="POST" style="display: inline">
+                        <input type="submit" value="Anzeigen">
+                        <div style="display:none"><input name="TicketID" type="Text" value="{{.Id}}"></input></div>
+                    </form>
+                </th>
+                <th>Status</th>
+                <th>Editor</th>
+                <th>Ticket Nr. {{.Id}}</th>
+            </tr>
+            <tr>
+                <td>
+                    <form action="/ticketTake" method="POST" style="display: inline">
+                        <input type="submit" value="Nehmen">
+                        <div style="display:none"><input name="TicketID" type="Text" value="{{.Id}}"></input></div>
+                        </form>
+                    </td>
+                <td>{{.Status}}</td>
+                <td>{{.EditorId}}</td>
+                <td class="subject">{{.Subject}}</td>
+            </tr>
+            </table>
+    </div>
+            {{end}}
+</div>
+</body>
+</html>
+{{end}}
