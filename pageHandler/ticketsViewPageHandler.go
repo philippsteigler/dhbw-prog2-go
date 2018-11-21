@@ -30,12 +30,11 @@ func TicketsViewPageHandler(response http.ResponseWriter, request *http.Request)
 
 		pTickets := *ticket.GetTickets(ticket.Open)
 
-		templates.ExecuteTemplate(response, "outer", sessionHandler.GetSessionUserName(request))
+		templates.ExecuteTemplate(response, "outer", sessionHandler.GetSessionUser().Username)
 		templates.ExecuteTemplate(response, "inner", pTickets)
 		templates.ExecuteTemplate(response, "footer", nil)
 
 		templates.Execute(response, nil)
-
 	} else {
 		http.Redirect(response, request, "/", 302)
 	}

@@ -3,7 +3,6 @@ package pageHandler
 import (
 	"fmt"
 	"html/template"
-	"io/ioutil"
 	"net/http"
 	"ticketBackend/sessionHandler"
 	"ticketBackend/ticket"

@@ -36,12 +36,11 @@ func TicketInsightPageHandler(response http.ResponseWriter, request *http.Reques
 			fmt.Println(err)
 		}
 
-		templates.ExecuteTemplate(response, "outer", sessionHandler.GetSessionUserName(request))
+		templates.ExecuteTemplate(response, "outer", sessionHandler.GetSessionUser().Username)
 		templates.ExecuteTemplate(response, "inner", ticket.GetTicket(intId))
 		templates.ExecuteTemplate(response, "footer", nil)
 
 		templates.Execute(response, nil)
-
 	} else {
 		http.ServeFile(response, request, "./assets/html/loginView.html")
 	}
