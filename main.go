@@ -55,7 +55,7 @@ func main() {
 	mux := http.NewServeMux()
 
 	// Webpages
-	mux.Handle("/", http.HandlerFunc(pageHandler.IndexPageHandler))
+	//mux.Handle("/", http.HandlerFunc(pageHandler.IndexPageHandler))
 	mux.Handle("/ticketsView", http.HandlerFunc(pageHandler.TicketsViewPageHandler))
 	mux.Handle("/ticketInsightView", http.HandlerFunc(pageHandler.TicketInsightPageHandler))
 	mux.Handle("/newTicketView", http.HandlerFunc(pageHandler.NewTicketViewPageHandler))
