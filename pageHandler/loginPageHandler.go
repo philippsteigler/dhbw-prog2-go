@@ -1,8 +1,8 @@
 package pageHandler
 
 import (
-	"../sessionHandler"
 	"net/http"
+	"ticketBackend/sessionHandler"
 )
 
 // A-8.1:

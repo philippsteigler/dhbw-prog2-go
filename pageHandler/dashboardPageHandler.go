@@ -1,10 +1,10 @@
 package pageHandler
 
 import (
-	"../sessionHandler"
 	"fmt"
 	"html/template"
 	"net/http"
+	"ticketBackend/sessionHandler"
 	"ticketBackend/ticket"
 )
 
