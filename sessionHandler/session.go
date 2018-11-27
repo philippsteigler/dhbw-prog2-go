@@ -101,7 +101,7 @@ func IsUserLoggedIn(r *http.Request) bool {
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	inputUsername := r.FormValue("username")
 	inputPassword := r.FormValue("password")
-	redirectTarget := "/"
+	redirectTarget := "/loginView"
 
 	if inputUsername != "" && inputPassword != "" {
 		// Lade die aktuellen Daten für registrierte Nutzer.
