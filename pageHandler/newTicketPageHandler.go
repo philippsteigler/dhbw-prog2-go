@@ -29,6 +29,7 @@ func NewTicketViewPageHandler(response http.ResponseWriter, request *http.Reques
 		http.Redirect(response, request, "/dashboard", 302)
 	} else {
 		var templateFiles []string
+		// TODO: GetAssetsDir() für alle PageHandler
 		templateFiles = append(templateFiles, "./assets/html/newTicketTemplates/newTicketViewHeaderCssTemplate.html")
 		templateFiles = append(templateFiles, "./assets/html/newTicketTemplates/newTicketTemplate.html")
 		templateFiles = append(templateFiles, "./assets/html/newTicketTemplates/newTicketViewFooterTemplate.html")

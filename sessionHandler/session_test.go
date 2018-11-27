@@ -32,7 +32,7 @@ func TestLoginHandler(t *testing.T) {
 
 	LoginHandler(res1, req1)
 	path1 := string(res1.Header().Get("Location"))
-	assert.Equal(t, "/internal", path1, "Redirect target should be '/internal' after successful login.")
+	assert.Equal(t, "/dashboard", path1, "Redirect target should be '/dashboard' after successful login.")
 
 	// Teste falsche Nutzerdaten.
 	req1, _ = http.NewRequest(http.MethodPost, "/login", nil)
@@ -43,5 +43,5 @@ func TestLoginHandler(t *testing.T) {
 
 	LoginHandler(res1, req1)
 	path1 = string(res1.Header().Get("Location"))
-	assert.Equal(t, "/", path1, "Redirect should be '/' after successful login.")
+	assert.Equal(t, "/loginView", path1, "Redirect should be '/loginView' after failed login.")
 }
