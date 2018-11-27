@@ -21,24 +21,30 @@ type Handler interface {
 // A-5.2:
 // Die Erzeugung eines Tickets soll ohne eine Authentifizierung möglich sein.
 //
-// Keine Authentifizierung nötig
-// die anmeldung wird nicht abgefragt (kein: if sessionHandler.IsUserLoggedIn(request) {})
+// Sofern der Anwender nicht eingeloggt ist, kann er über die Startseite neue Tickets erstellen und einreichen.
+// Nach erfolgreicher Authentifizierung als Editor findet beim Aufruf der Startseite eine Weiterleitung zum
+// internen Bereich statt. Dies basiert auf der Evaluierung des Session-Cookies.
 func NewTicketViewPageHandler(response http.ResponseWriter, request *http.Request) {
-	var templateFiles []string
-	templateFiles = append(templateFiles, "./assets/html/newTicketTemplates/newTicketViewHeaderCssTemplate.html")
-	templateFiles = append(templateFiles, "./assets/html/newTicketTemplates/newTicketTemplate.html")
-	templateFiles = append(templateFiles, "./assets/html/newTicketTemplates/newTicketViewFooterTemplate.html")
+	if sessionHandler.IsUserLoggedIn(request) {
+		http.Redirect(response, request, "/dashboard", 302)
+	} else {
+		var templateFiles []string
+		templateFiles = append(templateFiles, "./assets/html/newTicketTemplates/newTicketViewHeaderCssTemplate.html")
+		templateFiles = append(templateFiles, "./assets/html/newTicketTemplates/newTicketTemplate.html")
+		templateFiles = append(templateFiles, "./assets/html/newTicketTemplates/newTicketViewFooterTemplate.html")
 
-	templates, err := template.ParseFiles(templateFiles...)
-	if err != nil {
-		fmt.Println(err)
+		templates, err := template.ParseFiles(templateFiles...)
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		templates.ExecuteTemplate(response, "outer", nil)
+		templates.ExecuteTemplate(response, "newTicket", nil)
+		templates.ExecuteTemplate(response, "footer", nil)
+
+		templates.Execute(response, nil)
 	}
 
-	templates.ExecuteTemplate(response, "outer", nil)
-	templates.ExecuteTemplate(response, "newTicket", nil)
-	templates.ExecuteTemplate(response, "footer", nil)
-
-	templates.Execute(response, nil)
 }
 
 // https://localhost:8000/saveTicket
