@@ -36,7 +36,7 @@ func TicketInsightPageHandler(response http.ResponseWriter, request *http.Reques
 			fmt.Println(err)
 		}
 
-		templates.ExecuteTemplate(response, "outer", sessionHandler.GetSessionUser().Username)
+		templates.ExecuteTemplate(response, "outer", sessionHandler.GetSessionUser(request).Username)
 		templates.ExecuteTemplate(response, "inner", ticket.GetTicket(intId))
 		templates.ExecuteTemplate(response, "footer", nil)
 

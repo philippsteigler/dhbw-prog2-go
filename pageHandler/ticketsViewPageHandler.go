@@ -30,7 +30,7 @@ func TicketsViewPageHandler(response http.ResponseWriter, request *http.Request)
 
 		pTickets := *ticket.GetTickets(ticket.Open)
 
-		templates.ExecuteTemplate(response, "outer", sessionHandler.GetSessionUser().Username)
+		templates.ExecuteTemplate(response, "outer", sessionHandler.GetSessionUser(request).Username)
 		templates.ExecuteTemplate(response, "inner", pTickets)
 		templates.ExecuteTemplate(response, "footer", nil)
 

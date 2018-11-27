@@ -20,8 +20,7 @@ type User struct {
 	Salt     string `json:"salt"`
 }
 
-var session = map[string]User{}
-var sessionUser User
+var sessionUsers = map[string]User{}
 
 func HandleError(err error) {
 	if err != nil {
@@ -55,22 +54,38 @@ func loadUserData() *UserAccounts {
 	return &users
 }
 
+// A-3.2:
+// Der Zugang für die Bearbeiter soll durch Benutzernamen und Passwort geschützt sein.
 //
-func GetSessionUser() *User {
-	return &sessionUser
+// Gib den Benutzer zurück, der gerade eingeloggt ist.
+func GetSessionUser(r *http.Request) *User {
+	// Lies zunächst den Session-Cookie des Benutzers ein, um dessen Session-Token zu erhalten.
+	if cookie, err := r.Cookie("session_token"); err == nil {
+		sessionToken := cookie.Value
+
+		// Anschließend wird überprüft, ob dieser Token in der sessionUsers-Map enthalten ist.
+		// Existiert der Eintrag, so wird der zugehörige Benutzer zurückgegeben.
+		user, ok := sessionUsers[sessionToken]
+		if ok {
+			return &user
+		}
+	}
+
+	return nil
 }
 
 // A-3.2:
 // Der Zugang für die Bearbeiter soll durch Benutzernamen und Passwort geschützt sein.
 //
-// Überprüfe anhand der Session-Cookies, ob ein Benutzer eingeloggt ist.
+// Überprüfe anhand des Session-Cookies, ob ein Benutzer eingeloggt ist.
 // Benutzer eingeloggt = true; Benutzer ist nicht eingeloggt = false.
 func IsUserLoggedIn(r *http.Request) bool {
 	if cookie, err := r.Cookie("session_token"); err == nil {
 		sessionToken := cookie.Value
-		_, ok := session[sessionToken]
+		_, ok := sessionUsers[sessionToken]
 		return ok
 	}
+
 	return false
 }
 
@@ -93,17 +108,16 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		users := *loadUserData()
 
 		// Überprüfe, ob der Benutzer registriert ist und prüfe dann das Passwort.
-		for _, elem := range users.Users {
-			if elem.Username == inputUsername {
+		for _, i := range users.Users {
+			if i.Username == inputUsername {
 
 				// Berechne den Hashwert des Input-Passworts mit dem Salt-Wert, der zum verifizerten Benutzer gehört.
 				// Die Authentifizerung war erfolgreich, wenn dieser Hashwert mit dem Gespeicherten übereinstimmt.
-				if GetHash(inputPassword, elem.Salt) == elem.Password {
+				if GetHash(inputPassword, i.Salt) == i.Password {
 
 					// Die Berechnung eines zufälligen Salt-Wertes wird hier als sessionToken genutzt.
 					sessionToken := generateSalt()
-					sessionUser = elem
-					session[sessionToken] = elem
+					sessionUsers[sessionToken] = i
 
 					http.SetCookie(w, &http.Cookie{
 						Name:  "session_token",
@@ -111,7 +125,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 						Path:  "/",
 					})
 
-					redirectTarget = "/internal"
+					redirectTarget = "/dashboard"
 				}
 			}
 		}
@@ -125,8 +139,8 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 //
 // Beenden einer Sitzung und ausloggen des Benutzers durch löschen der Session-Cookies.
 func LogoutHandler(w http.ResponseWriter, r *http.Request) {
-	for i := range session {
-		delete(session, i)
+	for i := range sessionUsers {
+		delete(sessionUsers, i)
 	}
 
 	http.SetCookie(w, &http.Cookie{

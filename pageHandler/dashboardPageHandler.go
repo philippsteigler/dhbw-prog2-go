@@ -26,11 +26,11 @@ func DashboardViewPageHandler(response http.ResponseWriter, request *http.Reques
 			fmt.Println(err)
 		}
 
-		templates.ExecuteTemplate(response, "outer", sessionHandler.GetSessionUser().Username)
+		templates.ExecuteTemplate(response, "outer", sessionHandler.GetSessionUser(request).Username)
 
 		pTickets := *ticket.GetTickets(ticket.Open)
 
-		templates.ExecuteTemplate(response, "outer", sessionHandler.GetSessionUser().Username)
+		templates.ExecuteTemplate(response, "outer", sessionHandler.GetSessionUser(request).Username)
 		templates.ExecuteTemplate(response, "inner", pTickets)
 		templates.ExecuteTemplate(response, "footer", nil)
 
