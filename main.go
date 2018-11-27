@@ -74,8 +74,8 @@ func main() {
 	log.Print("Listening on port " + strconv.Itoa(*port) + " ... ")
 	err := http.ListenAndServeTLS(
 		":"+strconv.Itoa(*port),
-		sessionHandler.GetAssetsDir()+"certificates/server.crt",
-		sessionHandler.GetAssetsDir()+"certificates/server.key",
+		sessionHandler.GetAssetsDir()+"certificates/cert.pem",
+		sessionHandler.GetAssetsDir()+"certificates/key.pem",
 		mux,
 	)
 
