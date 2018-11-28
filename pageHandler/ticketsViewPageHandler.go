@@ -19,9 +19,9 @@ func TicketsViewPageHandler(response http.ResponseWriter, request *http.Request)
 	if sessionHandler.IsUserLoggedIn(request) {
 
 		var templateFiles []string
-		templateFiles = append(templateFiles, "./assets/html/ticketsTemplates/ticketsViewHeaderCssTemplate.html")
-		templateFiles = append(templateFiles, "./assets/html/ticketsTemplates/ticketsTicketListTemplate.html")
-		templateFiles = append(templateFiles, "./assets/html/ticketsTemplates/ticketsViewFooterTemplate.html")
+		templateFiles = append(templateFiles, sessionHandler.GetAssetsDir()+"html/ticketsTemplates/ticketsViewHeaderCssTemplate.html")
+		templateFiles = append(templateFiles, sessionHandler.GetAssetsDir()+"html/ticketsTemplates/ticketsTicketListTemplate.html")
+		templateFiles = append(templateFiles, sessionHandler.GetAssetsDir()+"html/ticketsTemplates/ticketsViewFooterTemplate.html")
 
 		templates, err := template.ParseFiles(templateFiles...)
 		if err != nil {

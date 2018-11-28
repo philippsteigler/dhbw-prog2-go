@@ -30,9 +30,9 @@ func NewTicketViewPageHandler(response http.ResponseWriter, request *http.Reques
 	} else {
 		var templateFiles []string
 		// TODO: GetAssetsDir() für alle PageHandler
-		templateFiles = append(templateFiles, "./assets/html/newTicketTemplates/newTicketViewHeaderCssTemplate.html")
-		templateFiles = append(templateFiles, "./assets/html/newTicketTemplates/newTicketTemplate.html")
-		templateFiles = append(templateFiles, "./assets/html/newTicketTemplates/newTicketViewFooterTemplate.html")
+		templateFiles = append(templateFiles, sessionHandler.GetAssetsDir()+"html/newTicketTemplates/newTicketViewHeaderCssTemplate.html")
+		templateFiles = append(templateFiles, sessionHandler.GetAssetsDir()+"html/newTicketTemplates/newTicketTemplate.html")
+		templateFiles = append(templateFiles, sessionHandler.GetAssetsDir()+"html/newTicketTemplates/newTicketViewFooterTemplate.html")
 
 		templates, err := template.ParseFiles(templateFiles...)
 		if err != nil {

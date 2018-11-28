@@ -27,9 +27,9 @@ func TicketInsightPageHandler(response http.ResponseWriter, request *http.Reques
 		}
 
 		var templateFiles []string
-		templateFiles = append(templateFiles, "./assets/html/ticketInsightTemplates/ticketInsightViewHeaderCssTemplate.html")
-		templateFiles = append(templateFiles, "./assets/html/ticketInsightTemplates/ticketInsightTicketDetailsTemplate.html")
-		templateFiles = append(templateFiles, "./assets/html/ticketInsightTemplates/ticketInsightViewFooterTemplate.html")
+		templateFiles = append(templateFiles, sessionHandler.GetAssetsDir()+"html/ticketInsightTemplates/ticketInsightViewHeaderCssTemplate.html")
+		templateFiles = append(templateFiles, sessionHandler.GetAssetsDir()+"html/ticketInsightTemplates/ticketInsightTicketDetailsTemplate.html")
+		templateFiles = append(templateFiles, sessionHandler.GetAssetsDir()+"html/ticketInsightTemplates/ticketInsightViewFooterTemplate.html")
 
 		templates, err := template.ParseFiles(templateFiles...)
 		if err != nil {
@@ -42,7 +42,7 @@ func TicketInsightPageHandler(response http.ResponseWriter, request *http.Reques
 
 		templates.Execute(response, nil)
 	} else {
-		http.ServeFile(response, request, "./assets/html/loginView.html")
+		http.ServeFile(response, request, sessionHandler.GetAssetsDir()+"html/loginView.html")
 	}
 }
 
@@ -63,7 +63,7 @@ func TicketTakeHandler(response http.ResponseWriter, request *http.Request) {
 
 		ticket.TakeTicket(ticketId, 0)
 		// Zurück zu der Ticketseite
-		http.Redirect(response, request, "/dashbord", http.StatusFound)
+		http.Redirect(response, request, "/dashboard", http.StatusFound)
 
 	} else {
 		http.Redirect(response, request, "/", 302)
@@ -88,7 +88,7 @@ func TicketSubmitHandler(response http.ResponseWriter, request *http.Request) {
 
 		ticket.UnhandTicket(ticketId)
 		// Zurück zu der Ticketseite
-		http.Redirect(response, request, "/dashbord", http.StatusFound)
+		http.Redirect(response, request, "/dashboard", http.StatusFound)
 
 	} else {
 		http.Redirect(response, request, "/", 302)
@@ -111,7 +111,7 @@ func TicketDelegateHandler(response http.ResponseWriter, request *http.Request) 
 
 		ticket.TakeTicket(ticketId, 0)
 		// Zurück zu der Ticketseite
-		http.Redirect(response, request, "/dashbord", http.StatusFound)
+		http.Redirect(response, request, "/dashboard", http.StatusFound)
 
 	} else {
 		http.Redirect(response, request, "/", 302)

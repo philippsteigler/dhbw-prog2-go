@@ -18,6 +18,6 @@ func LoginPageHandler(response http.ResponseWriter, request *http.Request) {
 	} else {
 
 		//Neues Ticket falls kein User angemeldet ist
-		http.ServeFile(response, request, "./assets/html/loginView.html")
+		http.ServeFile(response, request, sessionHandler.GetAssetsDir()+"html/loginView.html")
 	}
 }

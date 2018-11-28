@@ -17,9 +17,9 @@ func DashboardViewPageHandler(response http.ResponseWriter, request *http.Reques
 	if sessionHandler.IsUserLoggedIn(request) {
 
 		var templateFiles []string
-		templateFiles = append(templateFiles, "./assets/html/dashboardTemplates/dashboardViewHeaderCssTemplate.html")
-		templateFiles = append(templateFiles, "./assets/html/dashboardTemplates/dashboardTicketListTemplate.html")
-		templateFiles = append(templateFiles, "./assets/html/dashboardTemplates/dashboardViewFooterTemplate.html")
+		templateFiles = append(templateFiles, sessionHandler.GetAssetsDir()+"html/dashboardTemplates/dashboardViewHeaderCssTemplate.html")
+		templateFiles = append(templateFiles, sessionHandler.GetAssetsDir()+"html/dashboardTemplates/dashboardTicketListTemplate.html")
+		templateFiles = append(templateFiles, sessionHandler.GetAssetsDir()+"html/dashboardTemplates/dashboardViewFooterTemplate.html")
 
 		templates, err := template.ParseFiles(templateFiles...)
 		if err != nil {
