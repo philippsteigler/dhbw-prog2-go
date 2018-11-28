@@ -72,6 +72,7 @@ func main() {
 	mux.Handle("/ticketNewEntry", http.HandlerFunc(pageHandler.TicketNewEntryHandler))
 
 	log.Print("Listening on port " + strconv.Itoa(*port) + " ... ")
+	log.Print("Server available at https://localhost:" + strconv.Itoa(*port) + "/")
 	err := http.ListenAndServeTLS(
 		":"+strconv.Itoa(*port),
 		sessionHandler.GetAssetsDir()+"certificates/cert.pem",
