@@ -1,12 +1,12 @@
 package main
 
 import (
+	"de/vorlesung/projekt/crew/pageHandler"
+	"de/vorlesung/projekt/crew/sessionHandler"
 	"flag"
 	"log"
 	"net/http"
 	"strconv"
-	"ticketBackend/pageHandler"
-	"ticketBackend/sessionHandler"
 )
 
 // A-3.1:

@@ -1,13 +1,13 @@
 package ticket
 
 import (
+	"de/vorlesung/projekt/crew/sessionHandler"
 	"encoding/json"
 	"errors"
 	"io/ioutil"
 	"os"
 	"strconv"
 	"strings"
-	"ticketBackend/sessionHandler"
 	"time"
 )
 

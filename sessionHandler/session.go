@@ -35,7 +35,7 @@ func GetAssetsDir() string {
 
 	// Fallunterscheidung für Aufruf über main.go oder *_test.go aus Unterverzeichnissen.
 	// TODO: path == "gruppe420"
-	if filepath.Base(path) == "ticketBackend" {
+	if filepath.Base(path) == "crew" {
 		return "./assets/"
 	} else {
 		return "../assets/"

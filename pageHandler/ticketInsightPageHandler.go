@@ -1,12 +1,12 @@
 package pageHandler
 
 import (
+	"de/vorlesung/projekt/crew/sessionHandler"
+	"de/vorlesung/projekt/crew/ticket"
 	"fmt"
 	"html/template"
 	"net/http"
 	"strconv"
-	"ticketBackend/sessionHandler"
-	"ticketBackend/ticket"
 )
 
 // A-8.3

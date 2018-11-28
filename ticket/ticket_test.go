@@ -1,12 +1,12 @@
 package ticket
 
 import (
+	"de/vorlesung/projekt/crew/sessionHandler"
 	"encoding/json"
 	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"os"
 	"testing"
-	"ticketBackend/sessionHandler"
 )
 
 func CreateDefaultEnv() {

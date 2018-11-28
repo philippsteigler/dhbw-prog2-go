@@ -1,11 +1,11 @@
 package pageHandler
 
 import (
+	"de/vorlesung/projekt/crew/sessionHandler"
+	"de/vorlesung/projekt/crew/ticket"
 	"fmt"
 	"html/template"
 	"net/http"
-	"ticketBackend/sessionHandler"
-	"ticketBackend/ticket"
 )
 
 type Handler interface {
