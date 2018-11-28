@@ -51,10 +51,26 @@ func TicketInsightPageHandler(response http.ResponseWriter, request *http.Reques
 //
 // https://localhost:8000/ticketTake
 // Ticket übernehmen, Web Interaction
+//TODO: EditorID mit geben!!!!, Redirect überarbeiten
+// localhost:.../ticketTake
+//Funktion ticket nehmnen
 func TicketTakeHandler(response http.ResponseWriter, request *http.Request) {
 
+	if sessionHandler.IsUserLoggedIn(request) {
+		idToParse := request.FormValue("TicketID")
+		ticketId, err := strconv.Atoi(idToParse)
+		sessionHandler.HandleError(err)
+
+		ticket.TakeTicket(ticketId, 0)
+		// Zurück zu der Ticketseite
+		http.Redirect(response, request, "/dashbord", http.StatusFound)
+
+	} else {
+		http.Redirect(response, request, "/", 302)
+	}
 }
 
+//TODO: Redirect überarbeiten
 // localhost:.../ticketSubmit
 //Funktion ticket abgeben
 
@@ -65,7 +81,18 @@ func TicketTakeHandler(response http.ResponseWriter, request *http.Request) {
 // https://localhost:8000/ticketSubmit
 // Ticket abgeben, Web Interaction
 func TicketSubmitHandler(response http.ResponseWriter, request *http.Request) {
+	if sessionHandler.IsUserLoggedIn(request) {
+		idToParse := request.FormValue("TicketID")
+		ticketId, err := strconv.Atoi(idToParse)
+		sessionHandler.HandleError(err)
 
+		ticket.UnhandTicket(ticketId)
+		// Zurück zu der Ticketseite
+		http.Redirect(response, request, "/dashbord", http.StatusFound)
+
+	} else {
+		http.Redirect(response, request, "/", 302)
+	}
 }
 
 // A-8.5
@@ -73,8 +100,22 @@ func TicketSubmitHandler(response http.ResponseWriter, request *http.Request) {
 //
 // https://localhost:8000/ticketDelegate
 // Ticket delegieren, Web Interaction
+//TODO: EditorId mitgben; redirect überarbeiten
+// localhost:.../ticketDelegate
+//Funktion ticket Delegieren
 func TicketDelegateHandler(response http.ResponseWriter, request *http.Request) {
+	if sessionHandler.IsUserLoggedIn(request) {
+		idToParse := request.FormValue("TicketID")
+		ticketId, err := strconv.Atoi(idToParse)
+		sessionHandler.HandleError(err)
 
+		ticket.TakeTicket(ticketId, 0)
+		// Zurück zu der Ticketseite
+		http.Redirect(response, request, "/dashbord", http.StatusFound)
+
+	} else {
+		http.Redirect(response, request, "/", 302)
+	}
 }
 
 // A-8.6

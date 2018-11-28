@@ -40,7 +40,7 @@ const (
 var ticket Ticket
 var entry Entry
 var orderedTickets []Ticket
-var id Id
+var freeId Id
 
 //Zählt, wie viele Tickets sich im Ordner "../assets/tickets" befinden
 func countTickets() int {
@@ -103,20 +103,58 @@ func TakeTicket(id int, editorId int) {
 	writeTicket(&ticket)
 }
 
-//TODO Input auf nicht erlaubte Strings überprüfen
+//TODO Funktion überarbeiten
 //A-8.3
 //Bearbeitung eines Tickets, Alle (offenen) Tickets einsehen
 //Übergben werden können null bis zwei Status und eine Referenz auf die Tickets mit entsprechendem Status
 //werden zurückgeliefert.
 //Bei null Argumenten wird auf alle Tickets referenziert
-func GetTickets(status ...Status) *[]Ticket {
+func GetTickets(args ...interface{}) *[]Ticket {
+	var argType string
+
+	type argument struct {
+		status     Status
+		editorId   int
+		okStatus   bool
+		okEditorId bool
+	}
 
 	//Überprüfung ob die Eingabe gültig ist
-	if len(status) > 2 {
-		sessionHandler.HandleError(errors.New("invalid input by getTickets"))
+	if len(args) > 2 {
+		sessionHandler.HandleError(errors.New("invalid input by GetTickets: too many args"))
+	}
+
+	input := []argument{}
+
+	for _, arg := range args {
+		status, okStatus := arg.(Status)
+		editorId, okEditorId := arg.(int)
+		input = append(input, argument{status: status, editorId: editorId, okStatus: okStatus, okEditorId: okEditorId})
+	}
+
+	countEditorId := 0
+	countStatus := 0
+
+	for _, arg := range input {
+		if arg.okEditorId == true && arg.okStatus == false {
+			countEditorId += 1
+		} else if arg.okEditorId == false && arg.okStatus == true {
+			countStatus += 1
+		} else {
+			sessionHandler.HandleError(errors.New("invalid input by GetTickets: wrong types"))
+		}
+	}
+
+	if countEditorId == len(args) {
+		argType = "editorId"
+	} else if countStatus == len(args) {
+		argType = "status"
+	} else {
+		sessionHandler.HandleError(errors.New("invalid input by GetTickets: mixed types"))
 	}
 
 	orderedTickets = []Ticket{}
+
 	files, err := ioutil.ReadDir(sessionHandler.GetAssetsDir() + "tickets")
 	sessionHandler.HandleError(err)
 	var id int
@@ -127,12 +165,19 @@ func GetTickets(status ...Status) *[]Ticket {
 		readTicket(id)
 
 		//Überprüfung ob alle oder nur bestimmte Tickets zurückgeliefert werden
-		if len(status) > 0 {
-
-			//Für jeden Status der übergeben wird
-			for _, state := range status {
-				if ticket.Status == state {
-					orderedTickets = append(orderedTickets, ticket)
+		if len(args) > 0 {
+			if argType == "editorId" {
+				for _, editorId := range args {
+					if ticket.EditorId == editorId {
+						orderedTickets = append(orderedTickets, ticket)
+					}
+				}
+			} else if argType == "status" {
+				//Für jeden Status der übergeben wird
+				for _, state := range args {
+					if ticket.Status == state {
+						orderedTickets = append(orderedTickets, ticket)
+					}
 				}
 			}
 		} else {
@@ -141,6 +186,7 @@ func GetTickets(status ...Status) *[]Ticket {
 	}
 
 	return &orderedTickets
+
 }
 
 //Parst aus dem Dateinamen eines Tickets die entsprechende ID raus
@@ -208,16 +254,16 @@ func newId() int {
 	filename := sessionHandler.GetAssetsDir() + "ticketId_resource.json"
 	encodedId, errRead := ioutil.ReadFile(filename)
 	sessionHandler.HandleError(errRead)
-	err := json.Unmarshal(encodedId, &id)
+	err := json.Unmarshal(encodedId, &freeId)
 	sessionHandler.HandleError(err)
 
 	//In "freeId" wird die ID gespeichert und die Zahl in der Datei um eins erhöht (und zurückgeschrieben)
-	freeId := id.FreeId
-	id.FreeId += 1
+	id := freeId.FreeId
+	freeId.FreeId += 1
 
-	encodedId, errEnc := json.Marshal(id)
+	encodedId, errEnc := json.Marshal(freeId)
 	sessionHandler.HandleError(errEnc)
 	errWrite := ioutil.WriteFile(filename, encodedId, 0600)
 	sessionHandler.HandleError(errWrite)
-	return freeId
+	return id
 }

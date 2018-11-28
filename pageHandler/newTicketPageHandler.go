@@ -56,7 +56,7 @@ func TicketSafeHandler(response http.ResponseWriter, request *http.Request) {
 
 		ticket.NewTicket(request.FormValue("ticketSubject"), request.FormValue("ticketMail"), request.FormValue("ticketText"))
 		// Zurück zu der Ticketseite
-		http.Redirect(response, request, "/ticket", http.StatusFound)
+		http.Redirect(response, request, "/", http.StatusFound)
 
 	} else {
 		http.Redirect(response, request, "/", 302)
