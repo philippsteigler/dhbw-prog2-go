@@ -36,22 +36,59 @@ func TicketInsightPageHandler(response http.ResponseWriter, request *http.Reques
 	}
 }
 
+//TODO: EditorID mit geben!!!!, Redirect überarbeiten
 // localhost:.../ticketTake
 //Funktion ticket nehmnen
 func TicketTakeHandler(response http.ResponseWriter, request *http.Request) {
 
+	if sessionHandler.IsUserLoggedIn(request) {
+		idToParse := request.FormValue("TicketID")
+		ticketId, err := strconv.Atoi(idToParse)
+		sessionHandler.HandleError(err)
+
+		ticket.TakeTicket(ticketId, 0)
+		// Zurück zu der Ticketseite
+		http.Redirect(response, request, "/dashbord", http.StatusFound)
+
+	} else {
+		http.Redirect(response, request, "/", 302)
+	}
 }
 
+//TODO: Redirect überarbeiten
 // localhost:.../ticketSubmit
 //Funktion ticket abgeben
 func TicketSubmitHandler(response http.ResponseWriter, request *http.Request) {
+	if sessionHandler.IsUserLoggedIn(request) {
+		idToParse := request.FormValue("TicketID")
+		ticketId, err := strconv.Atoi(idToParse)
+		sessionHandler.HandleError(err)
 
+		ticket.UnhandTicket(ticketId)
+		// Zurück zu der Ticketseite
+		http.Redirect(response, request, "/dashbord", http.StatusFound)
+
+	} else {
+		http.Redirect(response, request, "/", 302)
+	}
 }
 
+//TODO: EditorId mitgben; redirect überarbeiten
 // localhost:.../ticketDelegate
 //Funktion ticket Delegieren
 func TicketDelegateHandler(response http.ResponseWriter, request *http.Request) {
+	if sessionHandler.IsUserLoggedIn(request) {
+		idToParse := request.FormValue("TicketID")
+		ticketId, err := strconv.Atoi(idToParse)
+		sessionHandler.HandleError(err)
 
+		ticket.TakeTicket(ticketId, 0)
+		// Zurück zu der Ticketseite
+		http.Redirect(response, request, "/dashbord", http.StatusFound)
+
+	} else {
+		http.Redirect(response, request, "/", 302)
+	}
 }
 
 // localhost:.../ticketNewEntry

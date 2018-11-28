@@ -20,7 +20,7 @@ func CreateDefaultEnv() {
 	}
 
 	//Setzt die Datei ticketId_resource.json in default Zustand
-	id = Id{1}
+	id := Id{1}
 	filename := sessionHandler.GetAssetsDir() + "ticketId_resource.json"
 	encodedId, errEnc := json.Marshal(id)
 	sessionHandler.HandleError(errEnc)
@@ -156,6 +156,6 @@ func TestNewId(t *testing.T) {
 	CreateDefaultEnv()
 	newId := newId()
 	assert.Equal(t, 1, newId)
-	assert.Equal(t, 2, id.FreeId)
+	assert.Equal(t, 2, freeId.FreeId)
 	CreateDefaultEnv()
 }
