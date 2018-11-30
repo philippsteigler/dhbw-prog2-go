@@ -7,12 +7,24 @@ import (
 	"testing"
 )
 
+func setup() {
+	BackupEnvironment()
+	DemoMode()
+}
+
+func teardown() {
+	RestoreEnvironment()
+}
+
 func TestGetAssetsDir(t *testing.T) {
 	path := GetAssetsDir()
 	assert.Equal(t, "../assets/", path, "Wrong path to folder 'assets'.")
 }
 
 func TestLoadUserData(t *testing.T) {
+	setup()
+	defer teardown()
+
 	var users UserAccounts
 	assert.Empty(t, &users, "User rollback should be empty at first.")
 
@@ -23,6 +35,9 @@ func TestLoadUserData(t *testing.T) {
 // TODO: Tests für Session-Handling
 
 func TestLoginHandler(t *testing.T) {
+	setup()
+	defer teardown()
+
 	// Teste Eingaben für autorisierten Benutzer.
 	req1, _ := http.NewRequest(http.MethodPost, "/login", nil)
 	req1.ParseForm()

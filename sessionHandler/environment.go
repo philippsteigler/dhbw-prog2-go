@@ -11,7 +11,7 @@ func copyFile(src string, dst string) {
 	data, err := ioutil.ReadFile(src)
 	HandleError(err)
 
-	err = ioutil.WriteFile(dst, data, 0644)
+	err = ioutil.WriteFile(dst, data, 0744)
 	HandleError(err)
 }
 
@@ -20,7 +20,7 @@ func CheckEnvironment() {
 	assetsDir := GetAssetsDir()
 
 	if _, err := os.Stat(assetsDir + "tickets"); os.IsNotExist(err) {
-		err = os.Mkdir(assetsDir+"tickets", 0755)
+		err = os.Mkdir(assetsDir+"tickets", 0744)
 		HandleError(err)
 		if _, err := os.Stat(assetsDir + "ticketId_resource.json"); os.IsNotExist(err) {
 			srcFile := strings.Join([]string{assetsDir, "rollback/default/ticketId_resource.json"}, "")
@@ -33,6 +33,104 @@ func CheckEnvironment() {
 		srcFile := strings.Join([]string{assetsDir, "rollback/default/users.json"}, "")
 		dstFile := strings.Join([]string{assetsDir, "users.json"}, "")
 		copyFile(srcFile, dstFile)
+	}
+}
+
+// Hilfsfunktion für Unit-Tests.
+// Sichere alle produktiven Daten des nach ./assets/rollback/backup.
+func BackupEnvironment() {
+	assetsDir := GetAssetsDir()
+
+	// Lösche alte Backups, sofern diese vorhanden sind.
+	if _, err := os.Stat(assetsDir + "rollback/backup"); os.IsNotExist(err) {
+		err = os.Mkdir(assetsDir+"rollback/backup", 0744)
+		HandleError(err)
+	} else {
+		err := os.RemoveAll(assetsDir + "rollback/backup")
+		HandleError(err)
+		err = os.Mkdir(assetsDir+"rollback/backup", 0744)
+		HandleError(err)
+	}
+
+	// Überprüfe, ob Tickets existieren.
+	if _, err := os.Stat(assetsDir + "tickets"); os.IsNotExist(err) == false {
+		src := strings.Join([]string{assetsDir, "tickets"}, "")
+		files, err := ioutil.ReadDir(src)
+		HandleError(err)
+
+		// Wenn Tickets vorhanden sind, werden alle gesichert.
+		if len(files) > 0 {
+			err = os.Mkdir(assetsDir+"rollback/backup/tickets", 0744)
+			HandleError(err)
+
+			for _, file := range files {
+				srcFile := strings.Join([]string{assetsDir, "tickets/", file.Name()}, "")
+				dstFile := strings.Join([]string{assetsDir, "rollback/backup/tickets/", file.Name()}, "")
+				copyFile(srcFile, dstFile)
+			}
+		}
+	}
+
+	// Sichere die Nutzerdaten, sofern diese existieren.
+	if _, err := os.Stat(assetsDir + "users.json"); os.IsNotExist(err) == false {
+		srcFile := strings.Join([]string{assetsDir, "users.json"}, "")
+		dstFile := strings.Join([]string{assetsDir, "rollback/backup/users.json"}, "")
+		copyFile(srcFile, dstFile)
+	}
+
+	// Sichere die Daten für Ticket-IDs, sofern diese existieren.
+	if _, err := os.Stat(assetsDir + "ticketId_resource.json"); os.IsNotExist(err) == false {
+		srcFile := strings.Join([]string{assetsDir, "ticketId_resource.json"}, "")
+		dstFile := strings.Join([]string{assetsDir, "rollback/backup/ticketId_resource.json"}, "")
+		copyFile(srcFile, dstFile)
+	}
+}
+
+// Hilfsfunktion für Unit-Tests.
+// Lösche alle produktiven Daten und lade ein Backup.
+func RestoreEnvironment() {
+	assetsDir := GetAssetsDir()
+
+	// Produktive Daten werden nur durch ein Backup ersetzt, wenn eins vorhanden ist.
+	if _, err := os.Stat(assetsDir + "rollback/backup"); os.IsNotExist(err) == false {
+		ResetData()
+
+		// Überprüfe, ob das Backup Tickets enthält.
+		if _, err := os.Stat(assetsDir + "rollback/backup/tickets"); os.IsNotExist(err) == false {
+			src := strings.Join([]string{assetsDir, "rollback/backup/tickets"}, "")
+			files, err := ioutil.ReadDir(src)
+			HandleError(err)
+
+			// Wenn Tickets vorhanden sind, werden alle geladen.
+			if len(files) > 0 {
+				err = os.Mkdir(assetsDir+"tickets", 0700)
+				HandleError(err)
+
+				for _, file := range files {
+					srcFile := strings.Join([]string{assetsDir, "rollback/backup/tickets/", file.Name()}, "")
+					dstFile := strings.Join([]string{assetsDir, "tickets/", file.Name()}, "")
+					copyFile(srcFile, dstFile)
+				}
+			}
+		}
+
+		// Lade die Nutzerdaten, sofern diese existieren.
+		if _, err := os.Stat(assetsDir + "rollback/backup/users.json"); os.IsNotExist(err) == false {
+			srcFile := strings.Join([]string{assetsDir, "rollback/backup/users.json"}, "")
+			dstFile := strings.Join([]string{assetsDir, "users.json"}, "")
+			copyFile(srcFile, dstFile)
+		}
+
+		// Lade die Daten für Ticket-IDs, sofern diese existieren.
+		if _, err := os.Stat(assetsDir + "rollback/backup/ticketId_resource.json"); os.IsNotExist(err) == false {
+			srcFile := strings.Join([]string{assetsDir, "rollback/backup/ticketId_resource.json"}, "")
+			dstFile := strings.Join([]string{assetsDir, "ticketId_resource.json"}, "")
+			copyFile(srcFile, dstFile)
+		}
+
+		// Lösche abschließend das Backup.
+		err := os.RemoveAll(assetsDir + "rollback/backup")
+		HandleError(err)
 	}
 }
 
@@ -64,7 +162,7 @@ func DemoMode() {
 
 	// Erstelle Verzeichnis für Tickets, falls dieses nicht existiert.
 	if _, err := os.Stat(assetsDir + "tickets"); os.IsNotExist(err) {
-		err = os.Mkdir(assetsDir+"tickets", 0755)
+		err = os.Mkdir(assetsDir+"tickets", 0744)
 		HandleError(err)
 	}
 
