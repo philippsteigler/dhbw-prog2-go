@@ -122,10 +122,10 @@ func TestGetTicketsByEditorId(t *testing.T) {
 	NewTicket("Test", "Chris", "Test")
 	TakeTicket(2, 7)
 
-	orderedTickets := *getTicketsByEditorId(0)
+	orderedTickets := *GetTicketsByEditorId(0)
 	assert.Equal(t, 2, len(orderedTickets))
 
-	orderedTickets = *getTicketsByEditorId(7)
+	orderedTickets = *GetTicketsByEditorId(7)
 	assert.Equal(t, 1, len(orderedTickets))
 }
 

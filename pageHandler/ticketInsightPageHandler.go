@@ -61,7 +61,7 @@ func TicketTakeHandler(response http.ResponseWriter, request *http.Request) {
 		ticketId, err := strconv.Atoi(idToParse)
 		sessionHandler.HandleError(err)
 
-		ticket.TakeTicket(ticketId, 0)
+		ticket.TakeTicket(ticketId, sessionHandler.GetSessionUser(request).ID)
 		// Zurück zu der Ticketseite
 		http.Redirect(response, request, "/dashboard", http.StatusFound)
 

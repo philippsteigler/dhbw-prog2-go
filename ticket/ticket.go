@@ -143,7 +143,7 @@ func AppendEntry(id int, creator string, content string) {
 }
 
 //Tickets nach einer bestimmten EditorID filtern und zurückgeben
-func getTicketsByEditorId(editorId int) *[]Ticket {
+func GetTicketsByEditorId(editorId int) *[]Ticket {
 
 	var orderedTickets []Ticket
 
@@ -173,7 +173,7 @@ func TakeTicket(id int, editorId int) {
 //A-8.3
 //Bearbeitung eines Tickets, alle offenen Tickets einsehen (besitzen die EditorID 0)
 func GetAllOpenTickets() *[]Ticket {
-	return getTicketsByEditorId(0)
+	return GetTicketsByEditorId(0)
 }
 
 //A-8.4:
