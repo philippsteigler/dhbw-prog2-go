@@ -3,9 +3,9 @@ package ticket
 import (
 	"de/vorlesung/projekt/crew/sessionHandler"
 	"encoding/json"
-	"errors"
 	"io/ioutil"
 	"os"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -27,167 +27,11 @@ type Entry struct {
 	Content string `json:"content"`
 }
 
-type Id struct {
-	FreeId int `json:"free id"`
-}
-
 const (
 	Open      Status = "offen"
 	InProcess Status = "in Bearbeitung"
 	Closed    Status = "geschlossen"
 )
-
-var ticket Ticket
-var entry Entry
-var orderedTickets []Ticket
-var freeId Id
-
-//Zählt, wie viele Tickets sich im Ordner "../assets/tickets" befinden
-func countTickets() int {
-	tickets, err := ioutil.ReadDir(sessionHandler.GetAssetsDir() + "tickets")
-	sessionHandler.HandleError(err)
-	return len(tickets)
-}
-
-//A-5:
-//Ticketerstellung, Erfassung der Eingabedaten
-//Ticket wird in die globale Variable "ticket" geladen und anschließend in einer .json Datei gespeichert
-func NewTicket(subject string, creator string, content string) {
-	id := newId()
-	ticket = Ticket{Id: id, Subject: subject, Status: Open, EditorId: 0, Entries: []Entry{*NewEntry(creator, content)}}
-	writeTicket(&ticket)
-}
-
-//Erstellt einen neuen Eintrag und gibt die Referenz auf ihn zurück
-func NewEntry(creator string, content string) *Entry {
-	date := time.Now().Local().Format("2006-01-02T15:04:05.0000")
-	entry = Entry{Date: date, Creator: creator, Content: content}
-	return &entry
-}
-
-//Liest das Ticket mit der ID "id" aus der entsprechenden .json Datei
-//und gibt die Referenz auf das entsprechende Ticket zurück
-func readTicket(id int) *Ticket {
-	filename := sessionHandler.GetAssetsDir() + "tickets/" + strconv.Itoa(id) + ".json"
-	encodedTicket, errRead := ioutil.ReadFile(filename)
-	sessionHandler.HandleError(errRead)
-	err := json.Unmarshal(encodedTicket, &ticket)
-	sessionHandler.HandleError(err)
-	return &ticket
-}
-
-//Schreibt das Ticket "ticket" in die entsprechende .json Datei oder erzeugt diese
-func writeTicket(ticket *Ticket) {
-	encodedTicket, errEnc := json.Marshal(ticket)
-	sessionHandler.HandleError(errEnc)
-	filename := sessionHandler.GetAssetsDir() + "tickets/" + strconv.Itoa(ticket.Id) + ".json"
-	err := ioutil.WriteFile(filename, encodedTicket, 0600)
-	sessionHandler.HandleError(err)
-}
-
-//Funktion: NeN Hinzufügen von Einträgen
-func AppendEntry(id int, creator string, content string) {
-	readTicket(id)
-	ticket.Entries = append(ticket.Entries, *NewEntry(creator, content))
-	writeTicket(&ticket)
-}
-
-//A-8.2:
-//Bearbeitung eines Tickets, Ticket nehmen
-//Das entsprechende Ticket wird gelesen, die Werte Status und EditorId überschrieben
-//und das Ticket in die Datei zurückgeschrieben
-func TakeTicket(id int, editorId int) {
-	readTicket(id)
-	ticket.Status = InProcess
-	ticket.EditorId = editorId
-	writeTicket(&ticket)
-}
-
-//TODO Funktion überarbeiten
-//A-8.3
-//Bearbeitung eines Tickets, Alle (offenen) Tickets einsehen
-//Übergben werden können null bis zwei Status und eine Referenz auf die Tickets mit entsprechendem Status
-//werden zurückgeliefert.
-//Bei null Argumenten wird auf alle Tickets referenziert
-func GetTickets(args ...interface{}) *[]Ticket {
-	var argType string
-
-	type argument struct {
-		status     Status
-		editorId   int
-		okStatus   bool
-		okEditorId bool
-	}
-
-	//Überprüfung ob die Eingabe gültig ist
-	if len(args) > 2 {
-		sessionHandler.HandleError(errors.New("invalid input by GetTickets: too many args"))
-	}
-
-	input := []argument{}
-
-	for _, arg := range args {
-		status, okStatus := arg.(Status)
-		editorId, okEditorId := arg.(int)
-		input = append(input, argument{status: status, editorId: editorId, okStatus: okStatus, okEditorId: okEditorId})
-	}
-
-	countEditorId := 0
-	countStatus := 0
-
-	for _, arg := range input {
-		if arg.okEditorId == true && arg.okStatus == false {
-			countEditorId += 1
-		} else if arg.okEditorId == false && arg.okStatus == true {
-			countStatus += 1
-		} else {
-			sessionHandler.HandleError(errors.New("invalid input by GetTickets: wrong types"))
-		}
-	}
-
-	if countEditorId == len(args) {
-		argType = "editorId"
-	} else if countStatus == len(args) {
-		argType = "status"
-	} else {
-		sessionHandler.HandleError(errors.New("invalid input by GetTickets: mixed types"))
-	}
-
-	orderedTickets = []Ticket{}
-
-	files, err := ioutil.ReadDir(sessionHandler.GetAssetsDir() + "tickets")
-	sessionHandler.HandleError(err)
-	var id int
-
-	//Es wird durch alle gelesenen Tickets durchiteriert
-	for _, file := range files {
-		id = parseFilename(file.Name())
-		readTicket(id)
-
-		//Überprüfung ob alle oder nur bestimmte Tickets zurückgeliefert werden
-		if len(args) > 0 {
-			if argType == "editorId" {
-				for _, editorId := range args {
-					if ticket.EditorId == editorId {
-						orderedTickets = append(orderedTickets, ticket)
-					}
-				}
-			} else if argType == "status" {
-				//Für jeden Status der übergeben wird
-				for _, state := range args {
-					if ticket.Status == state {
-						orderedTickets = append(orderedTickets, ticket)
-					}
-				}
-			}
-		} else {
-			orderedTickets = append(orderedTickets, ticket)
-		}
-	}
-
-	return &orderedTickets
-
-}
 
 //Parst aus dem Dateinamen eines Tickets die entsprechende ID raus
 func parseFilename(filename string) int {
@@ -197,26 +41,157 @@ func parseFilename(filename string) int {
 	return id
 }
 
+//Liest das gewünschte Ticket aus der JSON-Datei
+//und gibt eine Referenz auf das Ticket (+ Historie) zurück
+func readTicket(id int) *[]Ticket {
+	var readTicket []Ticket
+	filename := sessionHandler.GetAssetsDir() + "tickets/" + strconv.Itoa(id) + ".json"
+	encodedTicket, errRead := ioutil.ReadFile(filename)
+	sessionHandler.HandleError(errRead)
+	err := json.Unmarshal(encodedTicket, &readTicket)
+	sessionHandler.HandleError(err)
+	return &readTicket
+}
+
+//Schreibt ein Ticket in seine entsprechende JSON-Datei oder erzeugt diese
+//Ein Ticket wird mit seinem Ticketverlauf zusammen in einer Datei gespeichert
+//Die aktuelle Version des Tickets findet sich an der letzten Stelle eines Arrays aus Tickets
+func writeTicket(ticket *Ticket) {
+	var encodedTicket []byte
+	var err error
+
+	filename := sessionHandler.GetAssetsDir() + "tickets/" + strconv.Itoa((*ticket).Id) + ".json"
+
+	if ticketExist((*ticket).Id) {
+		storedTicket := readTicket((*ticket).Id)
+		*storedTicket = append(*storedTicket, *ticket)
+		encodedTicket, err = json.Marshal(storedTicket)
+		sessionHandler.HandleError(err)
+
+	} else {
+		encodedTicket, err = json.Marshal([]Ticket{*ticket})
+		sessionHandler.HandleError(err)
+	}
+
+	err = ioutil.WriteFile(filename, encodedTicket, 0600)
+	sessionHandler.HandleError(err)
+}
+
+//Liefert eine Referenz auf das angegebene Ticket
+func GetTicket(id int) *Ticket {
+	storedTicket := readTicket(id)
+	return &(*storedTicket)[len(*storedTicket)-1]
+}
+
+//Zur Erzeugung einer TicketID wird die höchste vergebene ID inkrementiert
+func newId() int {
+	var ids []int
+
+	ticketDir := sessionHandler.GetAssetsDir() + "/tickets"
+	files, err := ioutil.ReadDir(ticketDir)
+	sessionHandler.HandleError(err)
+
+	//Falls keine Tickets existieren
+	if len(files) == 0 {
+		return 1
+	}
+
+	for _, file := range files {
+
+		indexOfFileExtension := strings.Index(file.Name(), ".")
+		fileId, err := strconv.Atoi(file.Name()[:indexOfFileExtension])
+		sessionHandler.HandleError(err)
+		ids = append(ids, fileId)
+	}
+
+	sort.Ints(ids)
+
+	return ids[len(ids)-1] + 1
+}
+
+func ticketExist(id int) bool {
+	files, err := ioutil.ReadDir(sessionHandler.GetAssetsDir() + "/tickets")
+	sessionHandler.HandleError(err)
+
+	for _, file := range files {
+		if parseFilename(file.Name()) == id {
+			return true
+		}
+	}
+
+	return false
+}
+
+//A-5:
+//Ticketerstellung, Erfassung der Eingabedaten
+func NewTicket(subject string, creator string, content string) {
+	newTicket := Ticket{Id: newId(), Subject: subject, Status: Open, EditorId: 0, Entries: []Entry{NewEntry(creator, content)}}
+	writeTicket(&newTicket)
+}
+
+//Erstellt einen neuen Eintrag
+func NewEntry(creator string, content string) Entry {
+	date := time.Now().Local().Format("2006-01-02T15:04:05.0000")
+	return Entry{Date: date, Creator: creator, Content: content}
+}
+
+//Fügt einen neuen Eintrag einem bestehenden Ticket hinzu
+func AppendEntry(id int, creator string, content string) {
+	ticketToAppend := *GetTicket(id)
+	ticketToAppend.Entries = append(ticketToAppend.Entries, NewEntry(creator, content))
+	writeTicket(&ticketToAppend)
+}
+
+//Tickets nach einer bestimmten EditorID filtern und zurückgeben
+func getTicketsByEditorId(editorId int) *[]Ticket {
+
+	var orderedTickets []Ticket
+
+	files, err := ioutil.ReadDir(sessionHandler.GetAssetsDir() + "tickets")
+	sessionHandler.HandleError(err)
+
+	for _, file := range files {
+		actualTicket := GetTicket(parseFilename(file.Name()))
+
+		if actualTicket.EditorId == editorId {
+			orderedTickets = append(orderedTickets, *actualTicket)
+		}
+	}
+
+	return &orderedTickets
+}
+
+//A-8.2:
+//Bearbeitung eines Tickets, Ticket nehmen
+func TakeTicket(id int, editorId int) {
+	ticketToTake := GetTicket(id)
+	ticketToTake.Status = InProcess
+	ticketToTake.EditorId = editorId
+	writeTicket(ticketToTake)
+}
+
+//A-8.3
+//Bearbeitung eines Tickets, alle offenen Tickets einsehen (besitzen die EditorID 0)
+func GetAllOpenTickets() *[]Ticket {
+	return getTicketsByEditorId(0)
+}
+
 //A-8.4:
 //Bearbeitung eines Tickets, Tickets nach Übernahme wieder freigeben
-//Das entsprechende Ticket wird gelesen, die Werte Status und EditorId überschrieben
-//und das Ticket in die Datei zurückgeschrieben
 func UnhandTicket(id int) {
-	readTicket(id)
-	ticket.Status = Open
-	ticket.EditorId = 0
-	writeTicket(&ticket)
+	ticketToUnhand := GetTicket(id)
+	ticketToUnhand.Status = Open
+	ticketToUnhand.EditorId = 0
+	writeTicket(ticketToUnhand)
 }
 
 //A-8.5:
 //Bearbeitung eines Tickets, Ticket jmd anderem zuteilen
-//Das entsprechende Ticket wird gelesen, die Werte Status und EditorId überschrieben
-//und das Ticket in die Datei zurückgeschrieben
 func DelegateTicket(id int, editorId int) {
-	readTicket(id)
-	ticket.Status = InProcess
-	ticket.EditorId = editorId
-	writeTicket(&ticket)
+	ticketToDelegate := GetTicket(id)
+	ticketToDelegate.Status = InProcess
+	ticketToDelegate.EditorId = editorId
+	writeTicket(ticketToDelegate)
 }
 
 //A-12:
@@ -224,46 +199,21 @@ func DelegateTicket(id int, editorId int) {
 //Die ID's der Tickets, welche zusammengeführt werden, werden übergeben.
 //Das erste Argument ist das Ticket, in welches geschrieben wird, das Zweite das Ticket welches gelöcht wird.
 func MergeTickets(dest int, source int) {
-	destTicket := *readTicket(dest)
-	sourceTicket := *readTicket(source)
+	destTicket := GetTicket(dest)
+	sourceTicket := GetTicket(source)
 
 	//Die Einträge des "sourceTickets" werden an die Einträge des "destTickets" gehangen
 	for _, entry := range sourceTicket.Entries {
 		destTicket.Entries = append(destTicket.Entries, entry)
 	}
-	writeTicket(&destTicket)
 
-	DeleteTicket(source)
+	writeTicket(destTicket)
+	deleteTicket(source)
 }
 
-//Löscht die .json Datei des angegebenen Tickets
-func DeleteTicket(id int) {
+//Löscht die JSON-Datei des angegebenen Tickets
+func deleteTicket(id int) {
 	filename := sessionHandler.GetAssetsDir() + "tickets/" + strconv.Itoa(id) + ".json"
 	err := os.Remove(filename)
 	sessionHandler.HandleError(err)
-}
-
-//Liefert eine Referenz auf das angegebene Ticket
-func GetTicket(id int) *Ticket {
-	readTicket(id)
-	return &ticket
-}
-
-func newId() int {
-	//Hier befindet sich die gültige ID und wird ausgelesen
-	filename := sessionHandler.GetAssetsDir() + "ticketId_resource.json"
-	encodedId, errRead := ioutil.ReadFile(filename)
-	sessionHandler.HandleError(errRead)
-	err := json.Unmarshal(encodedId, &freeId)
-	sessionHandler.HandleError(err)
-
-	//In "freeId" wird die ID gespeichert und die Zahl in der Datei um eins erhöht (und zurückgeschrieben)
-	id := freeId.FreeId
-	freeId.FreeId += 1
-
-	encodedId, errEnc := json.Marshal(freeId)
-	sessionHandler.HandleError(errEnc)
-	errWrite := ioutil.WriteFile(filename, encodedId, 0600)
-	sessionHandler.HandleError(errWrite)
-	return id
 }
