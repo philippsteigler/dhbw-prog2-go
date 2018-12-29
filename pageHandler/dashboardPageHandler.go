@@ -28,7 +28,7 @@ func DashboardViewPageHandler(response http.ResponseWriter, request *http.Reques
 
 		templates.ExecuteTemplate(response, "outer", sessionHandler.GetSessionUser(request).Username)
 
-		pTickets := *ticket.GetTickets(ticket.Open)
+		pTickets := *ticket.GetAllOpenTickets()
 
 		templates.ExecuteTemplate(response, "outer", sessionHandler.GetSessionUser(request).Username)
 		templates.ExecuteTemplate(response, "inner", pTickets)

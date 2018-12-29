@@ -28,7 +28,7 @@ func TicketsViewPageHandler(response http.ResponseWriter, request *http.Request)
 			fmt.Println(err)
 		}
 
-		pTickets := *ticket.GetTickets(ticket.Open)
+		pTickets := *ticket.GetAllOpenTickets()
 
 		templates.ExecuteTemplate(response, "outer", sessionHandler.GetSessionUser(request).Username)
 		templates.ExecuteTemplate(response, "inner", pTickets)
