@@ -52,13 +52,7 @@ func NewTicketViewPageHandler(response http.ResponseWriter, request *http.Reques
 // Speichert den Text aus den Textareas in mail, subject, text
 func TicketSafeHandler(response http.ResponseWriter, request *http.Request) {
 
-	if sessionHandler.IsUserLoggedIn(request) {
-
-		ticket.NewTicket(request.FormValue("ticketSubject"), request.FormValue("ticketMail"), request.FormValue("ticketText"))
-		// Zurück zu der Ticketseite
-		http.Redirect(response, request, "/", http.StatusFound)
-
-	} else {
-		http.Redirect(response, request, "/", 302)
-	}
+	ticket.NewTicket(request.FormValue("ticketSubject"), request.FormValue("ticketMail"), request.FormValue("ticketText"))
+	// Zurück zu der Ticketseite
+	http.Redirect(response, request, "/", http.StatusFound)
 }
