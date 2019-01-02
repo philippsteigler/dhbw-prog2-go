@@ -22,11 +22,6 @@ func CheckEnvironment() {
 	if _, err := os.Stat(assetsDir + "tickets"); os.IsNotExist(err) {
 		err = os.Mkdir(assetsDir+"tickets", 0744)
 		HandleError(err)
-		if _, err := os.Stat(assetsDir + "ticketId_resource.json"); os.IsNotExist(err) {
-			srcFile := strings.Join([]string{assetsDir, "rollback/default/ticketId_resource.json"}, "")
-			dstFile := strings.Join([]string{assetsDir, "ticketId_resource.json"}, "")
-			copyFile(srcFile, dstFile)
-		}
 	}
 
 	if _, err := os.Stat(assetsDir + "users.json"); os.IsNotExist(err) {
@@ -77,13 +72,6 @@ func BackupEnvironment() {
 		dstFile := strings.Join([]string{assetsDir, "rollback/backup/users.json"}, "")
 		copyFile(srcFile, dstFile)
 	}
-
-	// Sichere die Daten für Ticket-IDs, sofern diese existieren.
-	if _, err := os.Stat(assetsDir + "ticketId_resource.json"); os.IsNotExist(err) == false {
-		srcFile := strings.Join([]string{assetsDir, "ticketId_resource.json"}, "")
-		dstFile := strings.Join([]string{assetsDir, "rollback/backup/ticketId_resource.json"}, "")
-		copyFile(srcFile, dstFile)
-	}
 }
 
 // Hilfsfunktion für Unit-Tests.
@@ -121,13 +109,6 @@ func RestoreEnvironment() {
 			copyFile(srcFile, dstFile)
 		}
 
-		// Lade die Daten für Ticket-IDs, sofern diese existieren.
-		if _, err := os.Stat(assetsDir + "rollback/backup/ticketId_resource.json"); os.IsNotExist(err) == false {
-			srcFile := strings.Join([]string{assetsDir, "rollback/backup/ticketId_resource.json"}, "")
-			dstFile := strings.Join([]string{assetsDir, "ticketId_resource.json"}, "")
-			copyFile(srcFile, dstFile)
-		}
-
 		// Lösche abschließend das Backup.
 		err := os.RemoveAll(assetsDir + "rollback/backup")
 		HandleError(err)
@@ -149,10 +130,7 @@ func ResetData() {
 		HandleError(err)
 	}
 
-	if _, err := os.Stat(assetsDir + "ticketId_resource.json"); os.IsNotExist(err) == false {
-		err = os.Remove(assetsDir + "ticketId_resource.json")
-		HandleError(err)
-	}
+	CheckEnvironment()
 }
 
 // Setze den Webserver zurück und installiere Testdaten.
@@ -177,13 +155,8 @@ func DemoMode() {
 		copyFile(srcFile, dstFile)
 	}
 
-	// Kopiere ID-Ressource für Tickets aus dem Demo-Ordner in den Zielordner.
-	srcFile := strings.Join([]string{assetsDir, "rollback/demo/ticketId_resource.json"}, "")
-	dstFile := strings.Join([]string{assetsDir, "ticketId_resource.json"}, "")
-	copyFile(srcFile, dstFile)
-
 	// Kopiere Nutzerdaten aus dem Demo-Ordner in den Zielordner.
-	srcFile = strings.Join([]string{assetsDir, "rollback/demo/users.json"}, "")
-	dstFile = strings.Join([]string{assetsDir, "users.json"}, "")
+	srcFile := strings.Join([]string{assetsDir, "rollback/demo/users.json"}, "")
+	dstFile := strings.Join([]string{assetsDir, "users.json"}, "")
 	copyFile(srcFile, dstFile)
 }
