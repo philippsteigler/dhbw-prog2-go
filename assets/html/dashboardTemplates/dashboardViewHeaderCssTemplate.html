@@ -107,7 +107,7 @@
             width: 100%;
         }
 
-        .footer{
+        .footer {
             position: relative;
             margin: 20px 0 0 0;
             bottom: 0px;
@@ -118,29 +118,22 @@
     </style>
 </head>
 <body class="font">
-<div>
-<div class="dashboard">
-    <div class="middle">
-        <h1>Dashboard</h1>
+    <div>
+        <div class="dashboard">
+            <div class="middle"><h1>Dashboard</h1></div>
+            <div class="left">
+                <form action="/logout" mehtod="POST">
+                    <button class="topButton" type="submit">Logout</button>
+                    <div class="user">User: {{.}}</div>
+                </form>
+            </div>
+            <div class="right">
+                <form action="/ticketsView" mehtod="POST">
+                    <button class="topButton" type="submit">Offene Tickets</button>
+                </form>
+            </div>
         </div>
-
-    <div class="left">
-        <form action="/logout" mehtod="POST">
-            <button class="topButton" type="submit">Logout</button>
-            <div class="user">User: {{.}}</div>
-        </form>
     </div>
-
-    <div class="right">
-        <form action="/ticketsView" mehtod="POST">
-            <button class="topButton" type="submit">Offene Tickets</button>
-            </form>
-        <form action="/newTicketView" mehtod="POST" style="position: relative; right: 165px">
-            <button class="topButton" type="submit">Neues Ticket</button>
-            </form>
-        </div>
-</div>
-</div>
 </body>
 </html>
 {{end}}

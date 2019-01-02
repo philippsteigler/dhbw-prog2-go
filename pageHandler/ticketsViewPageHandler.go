@@ -21,7 +21,6 @@ func TicketsViewPageHandler(response http.ResponseWriter, request *http.Request)
 		var templateFiles []string
 		templateFiles = append(templateFiles, sessionHandler.GetAssetsDir()+"html/ticketsTemplates/ticketsViewHeaderCssTemplate.html")
 		templateFiles = append(templateFiles, sessionHandler.GetAssetsDir()+"html/ticketsTemplates/ticketsTicketListTemplate.html")
-		templateFiles = append(templateFiles, sessionHandler.GetAssetsDir()+"html/ticketsTemplates/ticketsViewFooterTemplate.html")
 
 		templates, err := template.ParseFiles(templateFiles...)
 		if err != nil {

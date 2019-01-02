@@ -29,7 +29,6 @@ func TicketInsightPageHandler(response http.ResponseWriter, request *http.Reques
 		var templateFiles []string
 		templateFiles = append(templateFiles, sessionHandler.GetAssetsDir()+"html/ticketInsightTemplates/ticketInsightViewHeaderCssTemplate.html")
 		templateFiles = append(templateFiles, sessionHandler.GetAssetsDir()+"html/ticketInsightTemplates/ticketInsightTicketDetailsTemplate.html")
-		templateFiles = append(templateFiles, sessionHandler.GetAssetsDir()+"html/ticketInsightTemplates/ticketInsightViewFooterTemplate.html")
 
 		templates, err := template.ParseFiles(templateFiles...)
 		if err != nil {
