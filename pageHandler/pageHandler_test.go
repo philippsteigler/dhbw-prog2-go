@@ -23,7 +23,7 @@ func TestDashboardViewPageHandler(t *testing.T) {
 
 	DashboardViewPageHandler(response, request)
 
-	if response.Code != http.StatusOK {
-		t.Errorf("Page didn't return %v, %v", http.StatusOK, response.Code)
+	if response.Code != http.StatusFound {
+		t.Errorf("Page didn't return %v, %v", http.StatusFound, response.Code)
 	}
 }

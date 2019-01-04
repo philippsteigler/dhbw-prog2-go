@@ -60,7 +60,7 @@ func TicketTakeHandler(response http.ResponseWriter, request *http.Request) {
 		ticketId, err := strconv.Atoi(idToParse)
 		sessionHandler.HandleError(err)
 
-		ticket.TakeTicket(ticketId, sessionHandler.GetSessionUser(request).ID)
+		ticket.TakeTicket(ticketId, sessionHandler.GetSessionUser(request).ID, sessionHandler.GetSessionUser(request).Username)
 		// Zurück zu der Ticketseite
 		http.Redirect(response, request, "/dashboard", http.StatusFound)
 
@@ -108,7 +108,7 @@ func TicketDelegateHandler(response http.ResponseWriter, request *http.Request) 
 		ticketId, err := strconv.Atoi(idToParse)
 		sessionHandler.HandleError(err)
 
-		ticket.TakeTicket(ticketId, 0)
+		ticket.TakeTicket(ticketId, 0, "")
 		// Zurück zu der Ticketseite
 		http.Redirect(response, request, "/dashboard", http.StatusFound)
 
@@ -125,5 +125,9 @@ func TicketDelegateHandler(response http.ResponseWriter, request *http.Request) 
 // https://localhost:8000/ticketSubmit
 // Ticket Eintrag hinzufügen, Web Interaction
 func TicketNewEntryHandler(response http.ResponseWriter, request *http.Request) {
+
+}
+
+func TicketShowHistory(response http.ResponseWriter, request *http.Request) {
 
 }
