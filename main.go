@@ -70,6 +70,8 @@ func main() {
 	mux.Handle("/ticketSubmit", http.HandlerFunc(pageHandler.TicketSubmitHandler))
 	mux.Handle("/ticketDelegate", http.HandlerFunc(pageHandler.TicketDelegateHandler))
 	mux.Handle("/ticketNewEntry", http.HandlerFunc(pageHandler.TicketNewEntryHandler))
+	mux.Handle("/ticketShowHistory", http.HandlerFunc(pageHandler.TicketShowHistory))
+	mux.Handle("/ticket", http.HandlerFunc(pageHandler.CreateNewTicket))
 
 	log.Print("Listening on port " + strconv.Itoa(*port) + " ... ")
 	log.Print("Server available at https://localhost:" + strconv.Itoa(*port) + "/")

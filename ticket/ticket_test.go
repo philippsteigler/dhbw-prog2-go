@@ -4,19 +4,16 @@ import (
 	"de/vorlesung/projekt/crew/sessionHandler"
 	"github.com/stretchr/testify/assert"
 	"io/ioutil"
-	"os"
 	"testing"
 )
 
-func CreateDefaultEnv() {
-	//Alle Tickets aus dem Ordner "tickets" Löschen
-	ticketFiles, err := ioutil.ReadDir(sessionHandler.GetAssetsDir() + "tickets")
-	sessionHandler.HandleError(err)
+func setup() {
+	sessionHandler.BackupEnvironment()
+	sessionHandler.DemoMode()
+}
 
-	for _, file := range ticketFiles {
-		err := os.Remove(sessionHandler.GetAssetsDir() + "tickets/" + file.Name())
-		sessionHandler.HandleError(err)
-	}
+func teardown() {
+	sessionHandler.RestoreEnvironment()
 }
 
 func TestParseFilename(t *testing.T) {
@@ -26,70 +23,73 @@ func TestParseFilename(t *testing.T) {
 }
 
 func TestReadTicket(t *testing.T) {
-	CreateDefaultEnv()
+	setup()
+	defer teardown()
 
-	NewTicket("Test", "Bob", "Test")
 	storedTicket := *readTicket(1)
 	assert.IsType(t, []Ticket{}, storedTicket)
 }
 
 func TestWriteTicket(t *testing.T) {
-	CreateDefaultEnv()
+	setup()
+	defer teardown()
 
 	ticketDir := sessionHandler.GetAssetsDir() + "/tickets"
 	files, err := ioutil.ReadDir(ticketDir)
 	sessionHandler.HandleError(err)
 
-	assert.Equal(t, 0, len(files))
+	assert.Equal(t, 2, len(files))
 
 	NewTicket("Test", "Bob", "Test")
 	files, err = ioutil.ReadDir(ticketDir)
 	sessionHandler.HandleError(err)
 
-	assert.Equal(t, 1, len(files))
+	assert.Equal(t, 3, len(files))
 }
 
 func TestGetTicket(t *testing.T) {
-	CreateDefaultEnv()
-	NewTicket("Test", "Bob", "TestGetTicket")
+	setup()
+	defer teardown()
 
 	testTicket := *GetTicket(1)
 	assert.IsType(t, Ticket{}, testTicket)
 	assert.Equal(t, 1, testTicket.Id)
 	assert.Equal(t, Open, testTicket.Status)
 	assert.Equal(t, 0, testTicket.EditorId)
-	assert.Equal(t, "Test", testTicket.Subject)
-	assert.Equal(t, "TestGetTicket", testTicket.Entries[0].Content)
-	assert.Equal(t, "Bob", testTicket.Entries[0].Creator)
+	assert.Equal(t, "Test 1", testTicket.Subject)
+	assert.Equal(t, "Test", testTicket.Entries[0].Content)
+	assert.Equal(t, "bob@dhbw.de", testTicket.Entries[0].Creator)
 }
 
 func TestNewId(t *testing.T) {
-	CreateDefaultEnv()
+	setup()
+	defer teardown()
 
 	id := newId()
-	assert.Equal(t, 1, id)
+	assert.Equal(t, 3, id)
 
 	NewTicket("Test", "Bob", "Test")
 	id = newId()
-	assert.Equal(t, 2, id)
+	assert.Equal(t, 4, id)
 }
 
 func TestTicketExist(t *testing.T) {
-	CreateDefaultEnv()
+	setup()
+	defer teardown()
 
 	exist := ticketExist(1)
-	assert.Equal(t, false, exist)
-
-	NewTicket("Test", "Bob", "Test")
-	exist = ticketExist(1)
 	assert.Equal(t, true, exist)
+
+	exist = ticketExist(3)
+	assert.Equal(t, false, exist)
 }
 
 func TestNewTicket(t *testing.T) {
-	CreateDefaultEnv()
+	setup()
+	defer teardown()
 
 	NewTicket("Test", "Bob", "Test")
-	testTicket := *GetTicket(1)
+	testTicket := *GetTicket(3)
 
 	assert.NotEmpty(t, testTicket)
 }
@@ -102,9 +102,8 @@ func TestNewEntry(t *testing.T) {
 }
 
 func TestAppendEntry(t *testing.T) {
-	CreateDefaultEnv()
-
-	NewTicket("Test", "Bob", "Test")
+	setup()
+	defer teardown()
 
 	AppendEntry(1, "Chris", "Test")
 	AppendEntry(1, "Petra", "Test")
@@ -115,46 +114,42 @@ func TestAppendEntry(t *testing.T) {
 }
 
 func TestGetTicketsByEditorId(t *testing.T) {
-	CreateDefaultEnv()
+	setup()
+	defer teardown()
 
-	NewTicket("Test", "Alice", "Test")
-	NewTicket("Test", "Bob", "Test")
-	NewTicket("Test", "Chris", "Test")
-	TakeTicket(2, 7)
+	TakeTicket(2, 7, "Ronny")
 
 	orderedTickets := *GetTicketsByEditorId(0)
-	assert.Equal(t, 2, len(orderedTickets))
+	assert.Equal(t, 1, len(orderedTickets))
 
 	orderedTickets = *GetTicketsByEditorId(7)
 	assert.Equal(t, 1, len(orderedTickets))
 }
 
 func TestTakeTicket(t *testing.T) {
-	CreateDefaultEnv()
+	setup()
+	defer teardown()
 
-	NewTicket("Test", "Bob", "Test")
-	TakeTicket(1, 7)
+	TakeTicket(1, 7, "Alex")
 	testTicket := GetTicket(1)
 	assert.Equal(t, InProcess, testTicket.Status)
 	assert.Equal(t, 7, testTicket.EditorId)
+	assert.Equal(t, "Alex", testTicket.EditorUsername)
 }
 
 func TestGetAllOpenTickets(t *testing.T) {
-	CreateDefaultEnv()
-
-	NewTicket("Test", "Alice", "Test")
-	NewTicket("Test", "Bob", "Test")
-	NewTicket("Test", "Chris", "Test")
+	setup()
+	defer teardown()
 
 	openTickets := *GetAllOpenTickets()
-	assert.Equal(t, 3, len(openTickets))
+	assert.Equal(t, 2, len(openTickets))
 }
 
 func TestUnhandTicket(t *testing.T) {
-	CreateDefaultEnv()
+	setup()
+	defer teardown()
 
-	NewTicket("Test", "Tim", "Test")
-	TakeTicket(1, 7)
+	TakeTicket(1, 7, "Frank")
 
 	UnhandTicket(1)
 	testTicket := GetTicket(1)
@@ -164,19 +159,19 @@ func TestUnhandTicket(t *testing.T) {
 }
 
 func TestDelegateTicket(t *testing.T) {
-	CreateDefaultEnv()
+	setup()
+	defer teardown()
 
-	NewTicket("Test", "Bob", "Test")
-	DelegateTicket(1, 4)
+	DelegateTicket(1, 4, "Sascha")
 	testTicket := GetTicket(1)
 	assert.Equal(t, InProcess, testTicket.Status)
 	assert.Equal(t, 4, testTicket.EditorId)
+	assert.Equal(t, "Sascha", testTicket.EditorUsername)
 }
 
 func TestMergeTickets(t *testing.T) {
-	CreateDefaultEnv()
-	NewTicket("Test", "Bob", "Test")
-	NewTicket("Test", "Bob", "Test")
+	setup()
+	defer teardown()
 
 	MergeTickets(1, 2)
 	testTicket := GetTicket(1)
@@ -184,14 +179,38 @@ func TestMergeTickets(t *testing.T) {
 }
 
 func TestDeleteTicket(t *testing.T) {
-	CreateDefaultEnv()
+	setup()
+	defer teardown()
 
-	NewTicket("Test", "Bob", "Test")
 	deleteTicket(1)
 
 	ticketDir := sessionHandler.GetAssetsDir() + "/tickets"
 	files, err := ioutil.ReadDir(ticketDir)
 	sessionHandler.HandleError(err)
 
-	assert.Equal(t, 0, len(files))
+	assert.Equal(t, 1, len(files))
+}
+
+func TestGetTicketHistory(t *testing.T) {
+	setup()
+	defer teardown()
+
+	NewTicket("Test", "Bob", "Test")
+	TakeTicket(3, 2, "Guido")
+	UnhandTicket(3)
+	DelegateTicket(3, 4, "Alice")
+
+	ticketHistory := *GetTicketHistory(3)
+
+	assert.Equal(t, 4, len(ticketHistory))
+	assert.Equal(t, 0, ticketHistory[0].EditorId)
+	assert.Equal(t, 2, ticketHistory[1].EditorId)
+	assert.Equal(t, 4, ticketHistory[3].EditorId)
+}
+
+func TestGetAllTickets(t *testing.T) {
+	setup()
+	defer teardown()
+
+	assert.Equal(t, []Ticket{*GetTicket(1), *GetTicket(2)}, *GetAllTickets())
 }

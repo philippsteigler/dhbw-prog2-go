@@ -26,25 +26,25 @@
         </div>
 
         <div>
-            <h2>Ticket insight Page</h2>
+            <h2>Ticket Nr. {{.Id}}</h2>
         </div>
 
         <div>
             <div>
-                <div>Ticket Id: {{.Id}} Status: {{.Status}}</div>
-                <div>Subject: {{.Subject}}</div>
+                <div>Status: {{.Status}}</div>
+                <div>Betreff: {{.Subject}}</div>
             </div>
             <p></p>
             <div>
-            <div>Editor: {{.EditorId}}</div>
+            <div>Bearbeiter: {{.EditorUsername}}</div>
             <p></p>
 
-            <div>Entries:</div>
+            <div>Kommentare:</div>
             <p></p>
             {{range .Entries}}
                 <div>Datum: {{.Date}}</div>
                 <div>Ersteller: {{.Creator}}</div>
-                <div>=> {{.Content}}</div>
+                <div>Inhalt: {{.Content}}</div>
                 <p></p>
                     {{end}}
             </div>
