@@ -47,6 +47,25 @@ func TestWriteTicket(t *testing.T) {
 	assert.Equal(t, 3, len(files))
 }
 
+func TestWriteMail(t *testing.T) {
+	setup()
+	defer teardown()
+
+	mailsDir := sessionHandler.GetAssetsDir() + "/mails"
+	files, err := ioutil.ReadDir(mailsDir)
+	sessionHandler.HandleError(err)
+
+	assert.Equal(t, 3, len(files))
+
+	mail := Mail{Email: "testing@home.ru", Subject: "Unit Test", Content: "Test Test Test"}
+	writeMail(mail)
+	files, err = ioutil.ReadDir(mailsDir)
+	sessionHandler.HandleError(err)
+
+	assert.Equal(t, 4, len(files))
+	DeleteMail(mail)
+}
+
 func TestGetTicket(t *testing.T) {
 	setup()
 	defer teardown()
@@ -65,11 +84,11 @@ func TestNewId(t *testing.T) {
 	setup()
 	defer teardown()
 
-	id := newId()
+	id := newId("/tickets")
 	assert.Equal(t, 3, id)
 
 	NewTicket("Test", "Bob", "Test")
-	id = newId()
+	id = newId("/tickets")
 	assert.Equal(t, 4, id)
 }
 
@@ -105,9 +124,9 @@ func TestAppendEntry(t *testing.T) {
 	setup()
 	defer teardown()
 
-	AppendEntry(1, "Chris", "Test")
-	AppendEntry(1, "Petra", "Test")
-	AppendEntry(1, "Bob", "Test")
+	AppendEntry(1, "Chris", "Test", false)
+	AppendEntry(1, "Petra", "Test", false)
+	AppendEntry(1, "Bob", "Test", false)
 
 	testTicket := GetTicket(1)
 	assert.Equal(t, 4, len(testTicket.Entries))
@@ -213,4 +232,25 @@ func TestGetAllTickets(t *testing.T) {
 	defer teardown()
 
 	assert.Equal(t, []Ticket{*GetTicket(1), *GetTicket(2)}, *GetAllTickets())
+}
+
+func TestGetAllMailsAndDeleteMail(t *testing.T) {
+	setup()
+	defer teardown()
+
+	mail1 := Mail{Email: "testing@home.ru", Subject: "Unit Test 1", Content: "Test"}
+	mail2 := Mail{Email: "testing@work.com", Subject: "Unit Test 2", Content: "Test Test"}
+	mail3 := Mail{Email: "testing@dhbw.de", Subject: "Unit Test 3", Content: "Test Test Test"}
+
+	writeMail(mail1)
+	writeMail(mail2)
+	writeMail(mail3)
+
+	mails := *GetAllMails()
+
+	assert.IsType(t, []Mail{}, mails)
+	assert.Equal(t, 6, len(mails))
+	assert.Equal(t, "testing@home.ru", mails[3].Email)
+	assert.Equal(t, "Unit Test 2", mails[4].Subject)
+	assert.Equal(t, "Test Test Test", mails[5].Content)
 }

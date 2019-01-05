@@ -13,6 +13,12 @@ import (
 
 type Status string
 
+type Mail struct {
+	Email   string
+	Subject string
+	Content string
+}
+
 type Ticket struct {
 	Id             int     `json:"id"`
 	Subject        string  `json:"subject"`
@@ -78,6 +84,16 @@ func writeTicket(ticket *Ticket) {
 	sessionHandler.HandleError(err)
 }
 
+func writeMail(mail Mail) {
+	filename := sessionHandler.GetAssetsDir() + "mails/" + strconv.Itoa(newId("/mails")) + ".json"
+
+	encodedMail, err := json.Marshal(mail)
+	sessionHandler.HandleError(err)
+
+	err = ioutil.WriteFile(filename, encodedMail, 0600)
+	sessionHandler.HandleError(err)
+}
+
 //Liefert eine Referenz auf das angegebene Ticket
 func GetTicket(id int) *Ticket {
 	storedTicket := readTicket(id)
@@ -85,10 +101,10 @@ func GetTicket(id int) *Ticket {
 }
 
 //Zur Erzeugung einer TicketID wird die höchste vergebene ID inkrementiert
-func newId() int {
+func newId(path string) int {
 	var ids []int
 
-	ticketDir := sessionHandler.GetAssetsDir() + "/tickets"
+	ticketDir := sessionHandler.GetAssetsDir() + path
 	files, err := ioutil.ReadDir(ticketDir)
 	sessionHandler.HandleError(err)
 
@@ -126,7 +142,7 @@ func ticketExist(id int) bool {
 //A-5:
 //Ticketerstellung, Erfassung der Eingabedaten
 func NewTicket(subject string, creator string, content string) {
-	newTicket := Ticket{Id: newId(), Subject: subject, Status: Open, EditorId: 0, EditorUsername: "none", Entries: []Entry{NewEntry(creator, content)}}
+	newTicket := Ticket{Id: newId("/tickets"), Subject: subject, Status: Open, EditorId: 0, EditorUsername: "none", Entries: []Entry{NewEntry(creator, content)}}
 	writeTicket(&newTicket)
 }
 
@@ -137,10 +153,16 @@ func NewEntry(creator string, content string) Entry {
 }
 
 //Fügt einen neuen Eintrag einem bestehenden Ticket hinzu
-func AppendEntry(id int, creator string, content string) {
+func AppendEntry(id int, creator, content string, mail bool) {
 	ticketToAppend := *GetTicket(id)
 	ticketToAppend.Entries = append(ticketToAppend.Entries, NewEntry(creator, content))
 	writeTicket(&ticketToAppend)
+	if mail {
+		//Email und Subject aus initialem Ticket laden
+		storedTicket := readTicket(id)
+		subject := "Rueckmeldung bzgl.:" + (*storedTicket)[0].Subject
+		writeMail(Mail{Email: (*storedTicket)[0].Entries[0].Creator, Subject: subject, Content: content})
+	}
 }
 
 //Tickets nach einer bestimmten EditorID filtern und zurückgeben
@@ -245,4 +267,46 @@ func SetTicketToOpen(id int) {
 	ticketToOpen := GetTicket(id)
 	ticketToOpen.Status = Open
 	writeTicket(ticketToOpen)
+}
+
+func GetAllMails() *[]Mail {
+	var orderedMails []Mail
+	var mail Mail
+
+	files, err := ioutil.ReadDir(sessionHandler.GetAssetsDir() + "/mails")
+	sessionHandler.HandleError(err)
+
+	for _, file := range files {
+		filename := sessionHandler.GetAssetsDir() + "mails/" + file.Name()
+
+		encodedTicket, errRead := ioutil.ReadFile(filename)
+		sessionHandler.HandleError(errRead)
+		err := json.Unmarshal(encodedTicket, &mail)
+		sessionHandler.HandleError(err)
+
+		orderedMails = append(orderedMails, mail)
+	}
+
+	return &orderedMails
+}
+
+func DeleteMail(mail Mail) {
+	var storedMail Mail
+
+	files, err := ioutil.ReadDir(sessionHandler.GetAssetsDir() + "/mails")
+	sessionHandler.HandleError(err)
+
+	for _, file := range files {
+		filename := sessionHandler.GetAssetsDir() + "mails/" + file.Name()
+
+		encodedTicket, errRead := ioutil.ReadFile(filename)
+		sessionHandler.HandleError(errRead)
+		err := json.Unmarshal(encodedTicket, &storedMail)
+		sessionHandler.HandleError(err)
+
+		if mail.Content == storedMail.Content && mail.Email == storedMail.Email && mail.Subject == storedMail.Subject {
+			err := os.Remove(filename)
+			sessionHandler.HandleError(err)
+		}
+	}
 }

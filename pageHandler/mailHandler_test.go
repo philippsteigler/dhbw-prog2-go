@@ -2,6 +2,7 @@ package pageHandler
 
 import (
 	"de/vorlesung/projekt/crew/sessionHandler"
+	"de/vorlesung/projekt/crew/ticket"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -20,8 +21,8 @@ func TestCreateNewTicket(t *testing.T) {
 }
 
 func TestValidateMail(t *testing.T) {
-	validMail := Mail{Email: "testing@golang.org", Subject: "Unit Test", Content: "Valid Email"}
-	invalidMail := Mail{Email: "testing@golang.org"}
+	validMail := ticket.Mail{Email: "testing@golang.org", Subject: "Unit Test", Content: "Valid Email"}
+	invalidMail := ticket.Mail{Email: "testing@golang.org"}
 
 	assert.NoError(t, validateMail(validMail))
 	assert.Error(t, validateMail(invalidMail))
