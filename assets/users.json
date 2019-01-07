@@ -6,6 +6,20 @@
       "username":"admin",
       "password":"ukLe9fbgmmkFfV7QzbhWwU96d75HtD1enuK201SQQsQ=",
       "salt":"ZjwDTxlMEaVKvrnn"
+    },
+    {
+      "id":2,
+      "tier":2,
+      "username":"joker",
+      "password":"wKt3ErMv_qrtrhrBVTsQize6lwoYI1KkvePb4JEn5NA=",
+      "salt":"JqNjDW48W9fovmFY"
+    },
+    {
+      "id":3,
+      "tier":2,
+      "username":"rolf",
+      "password":"bHouSfDb3CtvdFGiU-nY4frViRAdlJg4NNNLPZ47rgk=",
+      "salt":"wDhNfEssGPjsJAth"
     }
   ]
 }
