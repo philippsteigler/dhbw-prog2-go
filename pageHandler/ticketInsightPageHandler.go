@@ -17,7 +17,6 @@ import (
 // Detailansicht des Tickets
 func TicketInsightPageHandler(response http.ResponseWriter, request *http.Request) {
 	if sessionHandler.IsUserLoggedIn(request) {
-
 		id := request.FormValue("TicketID")
 
 		intId, err := strconv.Atoi(id)
@@ -60,7 +59,7 @@ func TicketTakeHandler(response http.ResponseWriter, request *http.Request) {
 		ticketId, err := strconv.Atoi(idToParse)
 		sessionHandler.HandleError(err)
 
-		ticket.TakeTicket(ticketId, sessionHandler.GetSessionUser(request).ID, sessionHandler.GetSessionUser(request).Username)
+		ticket.TakeTicket(ticketId, sessionHandler.GetSessionUser(request).ID)
 		// Zurück zu der Ticketseite
 		http.Redirect(response, request, "/dashboard", http.StatusFound)
 
@@ -108,7 +107,7 @@ func TicketDelegateHandler(response http.ResponseWriter, request *http.Request) 
 		ticketId, err := strconv.Atoi(idToParse)
 		sessionHandler.HandleError(err)
 
-		ticket.TakeTicket(ticketId, 0, "")
+		ticket.TakeTicket(ticketId, 0)
 		// Zurück zu der Ticketseite
 		http.Redirect(response, request, "/dashboard", http.StatusFound)
 
@@ -122,10 +121,26 @@ func TicketDelegateHandler(response http.ResponseWriter, request *http.Request) 
 // an den Kunden versendet wird, oder ob er nur für andere Bearbeiter
 // sichtbar ist.
 //
-// https://localhost:8000/ticketSubmit
 // Ticket Eintrag hinzufügen, Web Interaction
-func TicketNewEntryHandler(response http.ResponseWriter, request *http.Request) {
+func TicketAppendEntry(w http.ResponseWriter, r *http.Request) {
 
+	if sessionHandler.IsUserLoggedIn(r) {
+		id := r.FormValue("TicketID")
+		intId, err := strconv.Atoi(id)
+		sessionHandler.HandleError(err)
+
+		sendingMail := false
+		if r.FormValue("mail") == "mail" {
+			sendingMail = true
+		}
+
+		ticket.AppendEntry(intId, sessionHandler.GetUsername(sessionHandler.GetSessionUser(r).ID), r.FormValue("entryText"), sendingMail)
+		// Zurück zu der Ticketseite
+		http.Redirect(w, r, "/dashboard", http.StatusFound)
+
+	} else {
+		http.Redirect(w, r, "/", 302)
+	}
 }
 
 func TicketShowHistory(response http.ResponseWriter, request *http.Request) {
