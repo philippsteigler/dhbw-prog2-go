@@ -20,12 +20,11 @@ type Mail struct {
 }
 
 type Ticket struct {
-	Id             int     `json:"id"`
-	Subject        string  `json:"subject"`
-	Status         Status  `json:"status"`
-	EditorId       int     `json:"editorId"`
-	EditorUsername string  `json:"editorUsername"`
-	Entries        []Entry `json:"entries"`
+	Id       int     `json:"id"`
+	Subject  string  `json:"subject"`
+	Status   Status  `json:"status"`
+	EditorId int     `json:"editorId"`
+	Entries  []Entry `json:"entries"`
 }
 
 type Entry struct {
@@ -142,7 +141,7 @@ func ticketExist(id int) bool {
 //A-5:
 //Ticketerstellung, Erfassung der Eingabedaten
 func NewTicket(subject string, creator string, content string) {
-	newTicket := Ticket{Id: newId("/tickets"), Subject: subject, Status: Open, EditorId: 0, EditorUsername: "none", Entries: []Entry{NewEntry(creator, content)}}
+	newTicket := Ticket{Id: newId("/tickets"), Subject: subject, Status: Open, EditorId: 0, Entries: []Entry{NewEntry(creator, content)}}
 	writeTicket(&newTicket)
 }
 
@@ -186,11 +185,10 @@ func GetTicketsByEditorId(editorId int) *[]Ticket {
 
 //A-8.2:
 //Bearbeitung eines Tickets, Ticket nehmen
-func TakeTicket(id int, editorId int, editorUsername string) {
+func TakeTicket(id int, editorId int) {
 	ticketToTake := GetTicket(id)
 	ticketToTake.Status = InProcess
 	ticketToTake.EditorId = editorId
-	ticketToTake.EditorUsername = editorUsername
 	writeTicket(ticketToTake)
 }
 
@@ -206,17 +204,15 @@ func UnhandTicket(id int) {
 	ticketToUnhand := GetTicket(id)
 	ticketToUnhand.Status = Open
 	ticketToUnhand.EditorId = 0
-	ticketToUnhand.EditorUsername = ""
 	writeTicket(ticketToUnhand)
 }
 
 //A-8.5:
 //Bearbeitung eines Tickets, Ticket jmd anderem zuteilen
-func DelegateTicket(id int, editorId int, editorUsername string) {
+func DelegateTicket(id int, editorId int) {
 	ticketToDelegate := GetTicket(id)
 	ticketToDelegate.Status = InProcess
 	ticketToDelegate.EditorId = editorId
-	ticketToDelegate.EditorUsername = editorUsername
 	writeTicket(ticketToDelegate)
 }
 

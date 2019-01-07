@@ -136,7 +136,7 @@ func TestGetTicketsByEditorId(t *testing.T) {
 	setup()
 	defer teardown()
 
-	TakeTicket(2, 7, "Ronny")
+	TakeTicket(2, 7)
 
 	orderedTickets := *GetTicketsByEditorId(0)
 	assert.Equal(t, 1, len(orderedTickets))
@@ -149,11 +149,10 @@ func TestTakeTicket(t *testing.T) {
 	setup()
 	defer teardown()
 
-	TakeTicket(1, 7, "Alex")
+	TakeTicket(1, 7)
 	testTicket := GetTicket(1)
 	assert.Equal(t, InProcess, testTicket.Status)
 	assert.Equal(t, 7, testTicket.EditorId)
-	assert.Equal(t, "Alex", testTicket.EditorUsername)
 }
 
 func TestGetAllOpenTickets(t *testing.T) {
@@ -168,7 +167,7 @@ func TestUnhandTicket(t *testing.T) {
 	setup()
 	defer teardown()
 
-	TakeTicket(1, 7, "Frank")
+	TakeTicket(1, 7)
 
 	UnhandTicket(1)
 	testTicket := GetTicket(1)
@@ -181,11 +180,10 @@ func TestDelegateTicket(t *testing.T) {
 	setup()
 	defer teardown()
 
-	DelegateTicket(1, 4, "Sascha")
+	DelegateTicket(1, 4)
 	testTicket := GetTicket(1)
 	assert.Equal(t, InProcess, testTicket.Status)
 	assert.Equal(t, 4, testTicket.EditorId)
-	assert.Equal(t, "Sascha", testTicket.EditorUsername)
 }
 
 func TestMergeTickets(t *testing.T) {
@@ -215,9 +213,9 @@ func TestGetTicketHistory(t *testing.T) {
 	defer teardown()
 
 	NewTicket("Test", "Bob", "Test")
-	TakeTicket(3, 2, "Guido")
+	TakeTicket(3, 2)
 	UnhandTicket(3)
-	DelegateTicket(3, 4, "Alice")
+	DelegateTicket(3, 4)
 
 	ticketHistory := *GetTicketHistory(3)
 

@@ -19,10 +19,12 @@
             <div style="display:none"><input name="TicketID" type="Text" value="{{.Id}}"></input></div>
         </form>
 
-        <form action="/ticketNewEntry" mehtod="POST" style="display: inline">
+        <form action="/appendEntry" mehtod="POST" style="display: inline">
             <input type="submit" value="Eintrag Hinzufügen">
+            <div><textarea id="entryText" name="entryText" maxlength="1500" rows="20" cols="80" required style="resize: none;"></textarea></div>
             <div style="display:none"><input name="TicketID" type="Text" value="{{.Id}}"></input></div>
         </form>
+
         </div>
 
         <div>
@@ -36,7 +38,7 @@
             </div>
             <p></p>
             <div>
-            <div>Bearbeiter: {{.EditorUsername}}</div>
+            <div>Bearbeiter: {{.EditorId}}</div>
             <p></p>
 
             <div>Kommentare:</div>
