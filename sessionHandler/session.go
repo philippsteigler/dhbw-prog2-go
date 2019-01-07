@@ -3,9 +3,11 @@ package sessionHandler
 import (
 	"encoding/json"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
 	"path/filepath"
+	"strconv"
 )
 
 type UserAccounts struct {
@@ -54,6 +56,19 @@ func loadUserData() *UserAccounts {
 	return &users
 }
 
+func GetUsername(id int) string {
+	users := *loadUserData()
+
+	for _, v := range users.Users {
+		if v.ID == id {
+			return v.Username
+		}
+	}
+
+	log.Print("User with ID '" + strconv.Itoa(id) + "' does not exist.")
+	return ""
+}
+
 // A-3.2:
 // Der Zugang für die Bearbeiter soll durch Benutzernamen und Passwort geschützt sein.
 //
@@ -71,6 +86,7 @@ func GetSessionUser(r *http.Request) *User {
 		}
 	}
 
+	log.Print("No user for current session.")
 	return nil
 }
 
@@ -108,16 +124,16 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		users := *loadUserData()
 
 		// Überprüfe, ob der Benutzer registriert ist und prüfe dann das Passwort.
-		for _, i := range users.Users {
-			if i.Username == inputUsername {
+		for _, v := range users.Users {
+			if v.Username == inputUsername {
 
 				// Berechne den Hashwert des Input-Passworts mit dem Salt-Wert, der zum verifizerten Benutzer gehört.
 				// Die Authentifizerung war erfolgreich, wenn dieser Hashwert mit dem Gespeicherten übereinstimmt.
-				if GetHash(inputPassword, i.Salt) == i.Password {
+				if GetHash(inputPassword, v.Salt) == v.Password {
 
 					// Die Berechnung eines zufälligen Salt-Wertes wird hier als sessionToken genutzt.
 					sessionToken := generateSalt()
-					sessionUsers[sessionToken] = i
+					sessionUsers[sessionToken] = v
 
 					http.SetCookie(w, &http.Cookie{
 						Name:  "session_token",
