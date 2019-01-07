@@ -129,7 +129,7 @@ func TicketAppendEntry(w http.ResponseWriter, r *http.Request) {
 		intId, err := strconv.Atoi(id)
 		sessionHandler.HandleError(err)
 
-		ticket.AppendEntry(intId, strconv.Itoa(sessionHandler.GetSessionUser(r).ID), r.FormValue("entryText"), false)
+		ticket.AppendEntry(intId, sessionHandler.GetUsername(sessionHandler.GetSessionUser(r).ID), r.FormValue("entryText"), false)
 		// Zurück zu der Ticketseite
 		http.Redirect(w, r, "/dashboard", http.StatusFound)
 
