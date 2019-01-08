@@ -252,3 +252,26 @@ func TestGetAllMailsAndDeleteMail(t *testing.T) {
 	assert.Equal(t, "Unit Test 2", mails[4].Subject)
 	assert.Equal(t, "Test Test Test", mails[5].Content)
 }
+
+func TestSetTicketToOpenIfClosed(t *testing.T) {
+	setup()
+	defer teardown()
+
+	assert.Equal(t, Open, (*GetTicket(1)).Status)
+	SetTicketToOpenIfClosed(1)
+	assert.Equal(t, Open, (*GetTicket(1)).Status)
+
+	CloseTicket(1)
+	SetTicketToOpenIfClosed(1)
+	assert.Equal(t, Open, (*GetTicket(1)).Status)
+}
+
+func TestCloseTicket(t *testing.T) {
+	setup()
+	defer teardown()
+
+	assert.Equal(t, Open, (*GetTicket(1)).Status)
+
+	CloseTicket(1)
+	assert.Equal(t, Closed, (*GetTicket(1)).Status)
+}

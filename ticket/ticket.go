@@ -68,6 +68,7 @@ func writeTicket(ticket *Ticket) {
 
 	filename := sessionHandler.GetAssetsDir() + "tickets/" + strconv.Itoa((*ticket).Id) + ".json"
 
+	//wenn ein Ticket bereits besteht und geändert wird, wird die neuste Version des Tickets der Datei hinzugefügt
 	if ticketExist((*ticket).Id) {
 		storedTicket := readTicket((*ticket).Id)
 		*storedTicket = append(*storedTicket, *ticket)
@@ -83,6 +84,7 @@ func writeTicket(ticket *Ticket) {
 	sessionHandler.HandleError(err)
 }
 
+//Schreibt eine Mail in eine JSON-Datei
 func writeMail(mail Mail) {
 	filename := sessionHandler.GetAssetsDir() + "mails/" + strconv.Itoa(newId("/mails")) + ".json"
 
@@ -112,6 +114,7 @@ func newId(path string) int {
 		return 1
 	}
 
+	//Jede ID aus dem Dateinamen parsen und in ids speichern
 	for _, file := range files {
 
 		indexOfFileExtension := strings.Index(file.Name(), ".")
@@ -120,11 +123,13 @@ func newId(path string) int {
 		ids = append(ids, fileId)
 	}
 
+	//ids sortieren (aufsteigend) und die höchste vergebene ID inkrementieren und zurückgeben
 	sort.Ints(ids)
 
 	return ids[len(ids)-1] + 1
 }
 
+//Überprüft, ob ein Ticket existiert. Dazu werden alle Tickets eingelesen und die Dateinamen mit der übergebenen ID verglichen
 func ticketExist(id int) bool {
 	files, err := ioutil.ReadDir(sessionHandler.GetAssetsDir() + "/tickets")
 	sessionHandler.HandleError(err)
@@ -152,6 +157,7 @@ func NewEntry(creator string, content string) Entry {
 }
 
 //Fügt einen neuen Eintrag einem bestehenden Ticket hinzu
+//Wenn mail true ist, wird eine E-Mail erzeugt und als JSON gespeichert
 func AppendEntry(id int, creator, content string, mail bool) {
 	ticketToAppend := *GetTicket(id)
 	ticketToAppend.Entries = append(ticketToAppend.Entries, NewEntry(creator, content))
@@ -193,9 +199,23 @@ func TakeTicket(id int, editorId int) {
 }
 
 //A-8.3
-//Bearbeitung eines Tickets, alle offenen Tickets einsehen (besitzen die EditorID 0)
+//Bearbeitung eines Tickets, alle offenen Tickets einsehen
 func GetAllOpenTickets() *[]Ticket {
-	return GetTicketsByEditorId(0)
+	var orderedTickets []Ticket
+
+	files, err := ioutil.ReadDir(sessionHandler.GetAssetsDir() + "tickets")
+	sessionHandler.HandleError(err)
+
+	for _, file := range files {
+		actualTicket := GetTicket(parseFilename(file.Name()))
+
+		if actualTicket.Status == Open {
+			orderedTickets = append(orderedTickets, *actualTicket)
+		}
+	}
+
+	return &orderedTickets
+
 }
 
 //A-8.4:
@@ -245,6 +265,7 @@ func GetTicketHistory(id int) *[]Ticket {
 	return readTicket(id)
 }
 
+//Liefert alle Tickets zurück, die existieren
 func GetAllTickets() *[]Ticket {
 	var orderedTickets []Ticket
 
@@ -259,12 +280,24 @@ func GetAllTickets() *[]Ticket {
 	return &orderedTickets
 }
 
-func SetTicketToOpen(id int) {
+//Setzt geschlossene Tickets auf offen
+func SetTicketToOpenIfClosed(id int) {
 	ticketToOpen := GetTicket(id)
-	ticketToOpen.Status = Open
-	writeTicket(ticketToOpen)
+	if ticketToOpen.Status == Closed {
+		ticketToOpen.Status = Open
+		writeTicket(ticketToOpen)
+	}
 }
 
+//Ticket schließen
+func CloseTicket(id int) {
+	ticketToClose := GetTicket(id)
+	ticketToClose.Status = Closed
+	ticketToClose.EditorId = 0
+	writeTicket(ticketToClose)
+}
+
+//Liefert alle eine Referenz auf alle Mails
 func GetAllMails() *[]Mail {
 	var orderedMails []Mail
 	var mail Mail
@@ -286,6 +319,7 @@ func GetAllMails() *[]Mail {
 	return &orderedMails
 }
 
+//Löscht eine Mail. Dazu wird eine Mail übergeben und mit allen abgeglichen. Wenn die übergebene Mail existiert, wird sie gelöscht
 func DeleteMail(mail Mail) {
 	var storedMail Mail
 

@@ -19,10 +19,15 @@
             <div style="display:none"><input name="TicketID" type="Text" value="{{.Id}}"></input></div>
         </form>
 
+        <form action="/ticketClose" mehtod="POST" style="display: inline">
+            <input type="submit" value="Ticket Schließen">
+            <div style="display:none"><input name="TicketID" type="Text" value="{{.Id}}"></input></div>
+        </form>
+
         <form action="/appendEntry" mehtod="POST" style="display: inline">
-            <input type="submit" value="Eintrag Hinzufügen">
-            <input type="checkbox" name="mail" value="mail"> Mail an Ticketersteller senden<br>
-            <div><textarea id="entryText" name="entryText" maxlength="1500" rows="20" cols="80" required style="resize: none;"></textarea></div>
+            <input type="submit" value="Kommentar Hinzufügen">
+            <input type="checkbox" name="mail" value="mail"> Mail mit Kommentar an Ticketersteller senden<br>
+            <div><textarea id="entryText" name="entryText" maxlength="1500" rows="20" cols="80" placeholder="Hier einen neuen Kommentar schreiben..." required style="resize: none;"></textarea></div>
             <div style="display:none"><input name="TicketID" type="Text" value="{{.Id}}"></input></div>
         </form>
 

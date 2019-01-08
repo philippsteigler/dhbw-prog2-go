@@ -17,6 +17,7 @@ var ticketInsightTemplates *template.Template
 //
 // https://localhost:8000/ticketInsightView
 // Detailansicht des Tickets
+
 func TicketInsightPageHandler(response http.ResponseWriter, request *http.Request) {
 	if sessionHandler.IsUserLoggedIn(request) {
 		id := request.FormValue("TicketID")
@@ -141,6 +142,21 @@ func TicketAppendEntry(w http.ResponseWriter, r *http.Request) {
 		}
 
 		ticket.AppendEntry(intId, sessionHandler.GetUsername(sessionHandler.GetSessionUser(r).ID), r.FormValue("entryText"), sendingMail)
+		// Zurück zu der Ticketseite
+		http.Redirect(w, r, "/dashboard", http.StatusFound)
+
+	} else {
+		http.Redirect(w, r, "/", 302)
+	}
+}
+
+func TicketClose(w http.ResponseWriter, r *http.Request) {
+	if sessionHandler.IsUserLoggedIn(r) {
+		id := r.FormValue("TicketID")
+		intId, err := strconv.Atoi(id)
+		sessionHandler.HandleError(err)
+
+		ticket.CloseTicket(intId)
 		// Zurück zu der Ticketseite
 		http.Redirect(w, r, "/dashboard", http.StatusFound)
 
