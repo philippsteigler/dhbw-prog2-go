@@ -10,6 +10,8 @@ import (
 
 //TODO: Selektor für die Ticket Anzeige
 
+var ticketsViewTemplates *template.Template
+
 // A-8.1
 // Die Bearbeitung der Tickets soll ausschließlich ¨uber eine WEB-Seite erfolgen.
 //
@@ -18,23 +20,28 @@ import (
 func TicketsViewPageHandler(response http.ResponseWriter, request *http.Request) {
 	if sessionHandler.IsUserLoggedIn(request) {
 
-		var templateFiles []string
-		templateFiles = append(templateFiles, sessionHandler.GetAssetsDir()+"html/ticketsTemplates/ticketsViewHeaderCssTemplate.html")
-		templateFiles = append(templateFiles, sessionHandler.GetAssetsDir()+"html/ticketsTemplates/ticketsTicketListTemplate.html")
-
-		templates, err := template.ParseFiles(templateFiles...)
-		if err != nil {
-			fmt.Println(err)
-		}
-
 		pTickets := *ticket.GetAllOpenTickets()
 
-		templates.ExecuteTemplate(response, "outer", sessionHandler.GetSessionUser(request).Username)
-		templates.ExecuteTemplate(response, "inner", pTickets)
-		templates.ExecuteTemplate(response, "footer", nil)
+		ticketsViewTemplates.ExecuteTemplate(response, "outer", sessionHandler.GetSessionUser(request).Username)
+		ticketsViewTemplates.ExecuteTemplate(response, "inner", pTickets)
+		ticketsViewTemplates.ExecuteTemplate(response, "footer", nil)
 
-		templates.Execute(response, nil)
+		ticketsViewTemplates.Execute(response, nil)
 	} else {
 		http.Redirect(response, request, "/", 302)
 	}
+}
+
+func TicketsViewInit() {
+	var templateFiles []string
+	var err error
+
+	templateFiles = append(templateFiles, sessionHandler.GetAssetsDir()+"html/ticketsTemplates/ticketsViewHeaderCssTemplate.html")
+	templateFiles = append(templateFiles, sessionHandler.GetAssetsDir()+"html/ticketsTemplates/ticketsTicketListTemplate.html")
+
+	ticketsViewTemplates, err = template.ParseFiles(templateFiles...)
+	if err != nil {
+		fmt.Println(err)
+	}
+
 }

@@ -9,6 +9,8 @@ import (
 	"strconv"
 )
 
+var ticketInsightTemplates *template.Template
+
 // A-8.3
 // Bearbeiter sollen alle Tickets einsehen können, welche noch kein Bearbeiter
 // übernommen hat.
@@ -20,28 +22,32 @@ func TicketInsightPageHandler(response http.ResponseWriter, request *http.Reques
 		id := request.FormValue("TicketID")
 
 		intId, err := strconv.Atoi(id)
-
 		if err != nil {
 			fmt.Println(err)
 		}
 
-		var templateFiles []string
-		templateFiles = append(templateFiles, sessionHandler.GetAssetsDir()+"html/ticketInsightTemplates/ticketInsightViewHeaderCssTemplate.html")
-		templateFiles = append(templateFiles, sessionHandler.GetAssetsDir()+"html/ticketInsightTemplates/ticketInsightTicketDetailsTemplate.html")
+		ticketInsightTemplates.ExecuteTemplate(response, "outer", sessionHandler.GetSessionUser(request).Username)
+		ticketInsightTemplates.ExecuteTemplate(response, "inner", ticket.GetTicket(intId))
+		ticketInsightTemplates.ExecuteTemplate(response, "footer", nil)
 
-		templates, err := template.ParseFiles(templateFiles...)
-		if err != nil {
-			fmt.Println(err)
-		}
-
-		templates.ExecuteTemplate(response, "outer", sessionHandler.GetSessionUser(request).Username)
-		templates.ExecuteTemplate(response, "inner", ticket.GetTicket(intId))
-		templates.ExecuteTemplate(response, "footer", nil)
-
-		templates.Execute(response, nil)
+		ticketInsightTemplates.Execute(response, nil)
 	} else {
 		http.ServeFile(response, request, sessionHandler.GetAssetsDir()+"html/loginView.html")
 	}
+}
+
+func TicketInsightInit() {
+	var templateFiles []string
+	var err error
+
+	templateFiles = append(templateFiles, sessionHandler.GetAssetsDir()+"html/ticketInsightTemplates/ticketInsightViewHeaderCssTemplate.html")
+	templateFiles = append(templateFiles, sessionHandler.GetAssetsDir()+"html/ticketInsightTemplates/ticketInsightTicketDetailsTemplate.html")
+
+	ticketInsightTemplates, err = template.ParseFiles(templateFiles...)
+	if err != nil {
+		fmt.Println(err)
+	}
+
 }
 
 // A-8.2
