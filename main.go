@@ -52,6 +52,8 @@ func main() {
 		sessionHandler.ResetData()
 	}
 
+	initTemplates()
+
 	mux := http.NewServeMux()
 
 	// Webpages
@@ -84,4 +86,11 @@ func main() {
 	)
 
 	sessionHandler.HandleError(err)
+}
+
+func initTemplates() {
+	pageHandler.TicketsViewInit()
+	pageHandler.TicketInsightInit()
+	pageHandler.NewTicketViewInit()
+	pageHandler.DashboardViewInit()
 }

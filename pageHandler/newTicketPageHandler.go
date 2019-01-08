@@ -12,6 +12,8 @@ type Handler interface {
 	ServeHTTP(http.Response, *http.Request)
 }
 
+var newTicketViewTemplates *template.Template
+
 // A-5.1:
 // Uber eine Web-Seite soll ein Ticket erstellt werden können.
 //
@@ -28,22 +30,27 @@ func NewTicketViewPageHandler(response http.ResponseWriter, request *http.Reques
 	if sessionHandler.IsUserLoggedIn(request) {
 		http.Redirect(response, request, "/dashboard", 302)
 	} else {
-		var templateFiles []string
-		templateFiles = append(templateFiles, sessionHandler.GetAssetsDir()+"html/newTicketTemplates/newTicketViewHeaderCssTemplate.html")
-		templateFiles = append(templateFiles, sessionHandler.GetAssetsDir()+"html/newTicketTemplates/newTicketTemplate.html")
 
-		templates, err := template.ParseFiles(templateFiles...)
-		if err != nil {
-			fmt.Println(err)
-		}
+		newTicketViewTemplates.ExecuteTemplate(response, "outer", nil)
+		newTicketViewTemplates.ExecuteTemplate(response, "newTicket", nil)
+		newTicketViewTemplates.ExecuteTemplate(response, "footer", nil)
 
-		templates.ExecuteTemplate(response, "outer", nil)
-		templates.ExecuteTemplate(response, "newTicket", nil)
-		templates.ExecuteTemplate(response, "footer", nil)
-
-		templates.Execute(response, nil)
+		newTicketViewTemplates.Execute(response, nil)
 	}
 
+}
+
+func NewTicketViewInit() {
+	var templateFiles []string
+	var err error
+
+	templateFiles = append(templateFiles, sessionHandler.GetAssetsDir()+"html/newTicketTemplates/newTicketViewHeaderCssTemplate.html")
+	templateFiles = append(templateFiles, sessionHandler.GetAssetsDir()+"html/newTicketTemplates/newTicketTemplate.html")
+
+	newTicketViewTemplates, err = template.ParseFiles(templateFiles...)
+	if err != nil {
+		fmt.Println(err)
+	}
 }
 
 // https://localhost:8000/saveTicket
