@@ -48,7 +48,7 @@ func CreateNewTicket(w http.ResponseWriter, r *http.Request) {
 		} else {
 			//sonst wird ein neuer Eintrag an das bestehende Ticket angefügt
 			ticket.AppendEntry(id, newMail.Email, newMail.Content, false)
-			ticket.SetTicketToOpen(id)
+			ticket.SetTicketToOpenIfClosed(id)
 		}
 	}
 }
