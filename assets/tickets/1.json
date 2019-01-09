@@ -1,1 +1,1 @@
-{"id":1,"subject":"Test 1","status":"offen","editorId":0,"entries":[{"date":"2018-12-29T15:24:57.0417","creator":"bob@dhbw.de","content":"Test"},{"date":"2019-01-09T17:42:53.3574","creator":"admin","content":"asdf"}]}
+{"id":1,"subject":"Test 1","status":"in Bearbeitung","editorId":1,"entries":[{"date":"2018-12-29T15:24:57.0417","creator":"bob@dhbw.de","content":"Test"},{"date":"2019-01-09T17:42:53.3574","creator":"admin","content":"asdf"},{"date":"2019-01-09T20:35:29.4814","creator":"admin","content":"Das ist ein weiterer Test"}]}

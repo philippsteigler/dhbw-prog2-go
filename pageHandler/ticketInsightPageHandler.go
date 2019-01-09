@@ -82,7 +82,7 @@ func TicketTakeHandler(response http.ResponseWriter, request *http.Request) {
 	}
 }
 
-//TODO: Redirect überarbeiten
+
 // localhost:.../ticketSubmit
 //Funktion ticket abgeben
 
