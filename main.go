@@ -72,7 +72,6 @@ func main() {
 	mux.Handle("/ticketSubmit", http.HandlerFunc(pageHandler.TicketSubmitHandler))
 	mux.Handle("/ticketDelegate", http.HandlerFunc(pageHandler.TicketDelegateHandler))
 	mux.Handle("/ticketClose", http.HandlerFunc(pageHandler.TicketClose))
-	mux.Handle("/ticketShowHistory", http.HandlerFunc(pageHandler.TicketShowHistory))
 	mux.Handle("/appendEntry", http.HandlerFunc(pageHandler.TicketAppendEntry))
 	mux.Handle("/ticket", http.HandlerFunc(pageHandler.CreateNewTicket))
 	mux.Handle("/mails", http.HandlerFunc(pageHandler.Mails))

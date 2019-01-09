@@ -1,28 +1,13 @@
-[
-  {"id":1,
-    "subject":"Test 1",
-    "status":"offen",
-    "editorId":0,
-    "entries":
-    [{"date":"2018-12-29T15:24:57.0417","creator":"bob@dhbw.de","content":"Test"}]
-  },
-  {"id":1,
-    "subject":"Test 1",
-    "status":"in Bearbeitung",
-    "editorId":1,
-    "entries":
-    [{"date":"2018-12-29T15:24:57.0417","creator":"bob@dhbw.de","content":"Test"}]
-  },
-  {"id":1,
-    "subject":"Test 1",
-    "status":"offen",
-    "editorId":0,
-    "entries":
-    [{"date":"2018-12-29T15:24:57.0417","creator":"bob@dhbw.de","content":"Test"}]
-  },
-  {"id":1,
-    "subject":"Test 1",
-    "status":"offen",
-    "editorId":0,
-    "entries":
-    [{"date":"2018-12-29T15:24:57.0417","creator":"bob@dhbw.de","content":"Test"}]}]
+{
+  "id": 1,
+  "subject": "Test 1",
+  "status": "offen",
+  "editorId": 0,
+  "entries": [
+    {
+      "date": "2018-12-29T15:24:57.0417",
+      "creator": "bob@dhbw.de",
+      "content": "Test"
+    }
+  ]
+}

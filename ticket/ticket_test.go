@@ -27,7 +27,7 @@ func TestReadTicket(t *testing.T) {
 	defer teardown()
 
 	storedTicket := *readTicket(1)
-	assert.IsType(t, []Ticket{}, storedTicket)
+	assert.IsType(t, Ticket{}, storedTicket)
 }
 
 func TestWriteTicket(t *testing.T) {
@@ -63,7 +63,6 @@ func TestWriteMail(t *testing.T) {
 	sessionHandler.HandleError(err)
 
 	assert.Equal(t, 4, len(files))
-	DeleteMail(mail)
 }
 
 func TestGetTicket(t *testing.T) {
@@ -90,17 +89,6 @@ func TestNewId(t *testing.T) {
 	NewTicket("Test", "Bob", "Test")
 	id = newId("/tickets")
 	assert.Equal(t, 4, id)
-}
-
-func TestTicketExist(t *testing.T) {
-	setup()
-	defer teardown()
-
-	exist := ticketExist(1)
-	assert.Equal(t, true, exist)
-
-	exist = ticketExist(3)
-	assert.Equal(t, false, exist)
 }
 
 func TestNewTicket(t *testing.T) {
@@ -208,23 +196,6 @@ func TestDeleteTicket(t *testing.T) {
 	assert.Equal(t, 1, len(files))
 }
 
-func TestGetTicketHistory(t *testing.T) {
-	setup()
-	defer teardown()
-
-	NewTicket("Test", "Bob", "Test")
-	TakeTicket(3, 2)
-	UnhandTicket(3)
-	DelegateTicket(3, 4)
-
-	ticketHistory := *GetTicketHistory(3)
-
-	assert.Equal(t, 4, len(ticketHistory))
-	assert.Equal(t, 0, ticketHistory[0].EditorId)
-	assert.Equal(t, 2, ticketHistory[1].EditorId)
-	assert.Equal(t, 4, ticketHistory[3].EditorId)
-}
-
 func TestGetAllTickets(t *testing.T) {
 	setup()
 	defer teardown()
@@ -232,25 +203,30 @@ func TestGetAllTickets(t *testing.T) {
 	assert.Equal(t, []Ticket{*GetTicket(1), *GetTicket(2)}, *GetAllTickets())
 }
 
-func TestGetAllMailsAndDeleteMail(t *testing.T) {
+func TestGetAllMails(t *testing.T) {
 	setup()
 	defer teardown()
-
-	mail1 := Mail{Email: "testing@home.ru", Subject: "Unit Test 1", Content: "Test"}
-	mail2 := Mail{Email: "testing@work.com", Subject: "Unit Test 2", Content: "Test Test"}
-	mail3 := Mail{Email: "testing@dhbw.de", Subject: "Unit Test 3", Content: "Test Test Test"}
-
-	writeMail(mail1)
-	writeMail(mail2)
-	writeMail(mail3)
 
 	mails := *GetAllMails()
 
 	assert.IsType(t, []Mail{}, mails)
-	assert.Equal(t, 6, len(mails))
-	assert.Equal(t, "testing@home.ru", mails[3].Email)
-	assert.Equal(t, "Unit Test 2", mails[4].Subject)
-	assert.Equal(t, "Test Test Test", mails[5].Content)
+	assert.Equal(t, 3, len(mails))
+	assert.Equal(t, "testing@home.ru", mails[0].Email)
+	assert.Equal(t, "Unit Test 2", mails[1].Subject)
+	assert.Equal(t, "Test Test Test", mails[2].Content)
+}
+
+func TestDeleteMail(t *testing.T) {
+	setup()
+	defer teardown()
+	mails := *GetAllMails()
+	assert.Equal(t, 3, len(mails))
+
+	mail := Mail{Email: "testing@home.ru", Subject: "Unit Test 1", Content: "Test"}
+	DeleteMail(mail)
+
+	mails = *GetAllMails()
+	assert.Equal(t, 2, len(mails))
 }
 
 func TestSetTicketToOpenIfClosed(t *testing.T) {
