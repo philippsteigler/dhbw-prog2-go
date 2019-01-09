@@ -78,7 +78,7 @@ func main() {
 
 	if *port < 0 || *port > 65535 {
 		*port = 8000
-		log.Fatalf("Port should be in range of 0..65535")
+		log.Printf("Port should be in range of 0..65535")
 	}
 
 	log.Print("Listening on port " + strconv.Itoa(*port) + " ... ")
