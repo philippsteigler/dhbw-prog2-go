@@ -20,6 +20,10 @@ type User struct {
 	Salt     string `json:"salt"`
 }
 
+type IDList struct {
+	IDs []int
+}
+
 var users UserAccounts
 var sessionUsers = map[string]User{}
 
@@ -67,16 +71,18 @@ func GetSessionUser(r *http.Request) *User {
 }
 
 // Gib alle UserIDs von Editoren zurück, außer vom derzeit eingeloggten User.
-func GetAllOtherUserIDs(r *http.Request) []int {
-	var IDs []int
+func GetAllOtherUserIDs(r *http.Request) IDList {
+	list := IDList{
+		IDs: []int{},
+	}
 
 	for _, v := range users.Users {
 		if v.ID != GetSessionUser(r).ID {
-			IDs = append(IDs, v.ID)
+			list.IDs = append(list.IDs, v.ID)
 		}
 	}
 
-	return IDs
+	return list
 }
 
 // A-3.2:
