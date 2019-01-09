@@ -16,11 +16,18 @@ import (
 // Eingehende HTTP-Anfragen auf Webseiten werden hier geroutet.
 //
 //
+// A-9.1:
+// Es soll ein geeignetes Caching implementiert werden,
+// d.h. es sollen nicht bei jedem Request alle Dateien neu eingelesen werden.
+//
+// Templates und Benutzerdaten zum Login werden initial eingelesen und sind fortlaufend verfügbar.
+//
+//
 // A-10.1:
 // Die Konfiguration soll komplett über Startparameter erfolgen.
 //
 // Der Anwender kann beim Starten über die Kommandozeile folgende Flags optional setzen:
-//  -port=x   int     Port für den Webserver
+//  -port=n   int     Port für den Webserver
 //  -reset    bool    True: Löscht alle Tickets und Nutzerdaten.
 //  -demo     bool    True: Setzt den Webserver zurück und installiert Testdaten
 // Das Flag -reset überschreibt dabei das Flag -demo.
@@ -45,14 +52,14 @@ func main() {
 	flag.Parse()
 
 	sessionHandler.CheckEnvironment()
+	sessionHandler.LoadUserData()
+	sessionHandler.InitTemplates()
 
 	if *demo == true {
 		sessionHandler.DemoMode()
 	} else if *reset == true {
 		sessionHandler.ResetData()
 	}
-
-	initTemplates()
 
 	mux := http.NewServeMux()
 
@@ -91,11 +98,4 @@ func main() {
 	)
 
 	sessionHandler.HandleError(err)
-}
-
-func initTemplates() {
-	pageHandler.TicketsViewInit()
-	pageHandler.TicketInsightInit()
-	pageHandler.NewTicketViewInit()
-	pageHandler.DashboardViewInit()
 }

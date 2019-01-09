@@ -2,11 +2,10 @@ package sessionHandler
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
-	"path/filepath"
 	"strconv"
 )
 
@@ -22,31 +21,11 @@ type User struct {
 	Salt     string `json:"salt"`
 }
 
+var users UserAccounts
 var sessionUsers = map[string]User{}
 
-func HandleError(err error) {
-	if err != nil {
-		panic(err)
-	}
-}
-
-// Gib den relativen Pfad zum Ressourcen-Verzeichnis zur Laufzeit zurück.
-func GetAssetsDir() string {
-	path, err := os.Getwd()
-	HandleError(err)
-
-	// Fallunterscheidung für Aufruf über main.go oder *_test.go aus Unterverzeichnissen.
-	if filepath.Base(path) == "crew" {
-		return "./assets/"
-	} else {
-		return "../assets/"
-	}
-}
-
 // Lies users.json und importiere alle Benutzerdaten nach &users.
-func loadUserData() *UserAccounts {
-	var users UserAccounts
-
+func LoadUserData() *UserAccounts {
 	userData, err := ioutil.ReadFile(GetAssetsDir() + "users.json")
 	HandleError(err)
 
@@ -57,8 +36,6 @@ func loadUserData() *UserAccounts {
 }
 
 func GetUsername(id int) string {
-	users := *loadUserData()
-
 	for _, v := range users.Users {
 		if v.ID == id {
 			return v.Username
@@ -88,6 +65,20 @@ func GetSessionUser(r *http.Request) *User {
 
 	log.Print("No user for current session.")
 	return nil
+}
+
+// Gib alle UserIDs von Editoren zurück, außer vom derzeit eingeloggten User.
+func GetAllOtherUserIDs(r *http.Request) []int {
+	var IDs []int
+
+	for _, v := range users.Users {
+		if v.ID != GetSessionUser(r).ID {
+			IDs = append(IDs, v.ID)
+		}
+	}
+
+	fmt.Println(IDs)
+	return IDs
 }
 
 // A-3.2:
@@ -121,8 +112,6 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	if inputUsername != "" && inputPassword != "" {
 		// Lade die aktuellen Daten für registrierte Nutzer.
-		users := *loadUserData()
-
 		// Überprüfe, ob der Benutzer registriert ist und prüfe dann das Passwort.
 		for _, v := range users.Users {
 			if v.Username == inputUsername {
@@ -174,7 +163,6 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 // Der Salt-Wert wird für spätere Abgleiche beider Hashwerte benötigt und folglich gespeichert.
 func RegistrationHandler(w http.ResponseWriter, r *http.Request) {
 	hash, salt := HashString(r.FormValue("password"))
-	users := *loadUserData()
 
 	users.Users = append(users.Users, User{
 		ID:       len(users.Users),
@@ -186,7 +174,7 @@ func RegistrationHandler(w http.ResponseWriter, r *http.Request) {
 
 	usersJson, err := json.Marshal(users)
 	HandleError(err)
-	err = ioutil.WriteFile(GetAssetsDir()+"users.json", usersJson, 0644)
+	err = ioutil.WriteFile(GetAssetsDir()+"users.json", usersJson, 0744)
 	HandleError(err)
 
 	http.Redirect(w, r, "/", 302)

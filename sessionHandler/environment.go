@@ -1,9 +1,11 @@
 package sessionHandler
 
 import (
+	"de/vorlesung/projekt/crew/pageHandler"
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -14,6 +16,34 @@ func copyFile(src string, dst string) {
 
 	err = ioutil.WriteFile(dst, data, 0744)
 	HandleError(err)
+}
+
+// Funktion zum behandeln sämtlicher Fehlermeldungen.
+func HandleError(err error) {
+	if err != nil {
+		panic(err)
+	}
+}
+
+// Gib den relativen Pfad zum Ressourcen-Verzeichnis zur Laufzeit zurück.
+func GetAssetsDir() string {
+	path, err := os.Getwd()
+	HandleError(err)
+
+	// Fallunterscheidung für Aufruf über main.go oder *_test.go aus Unterverzeichnissen.
+	if filepath.Base(path) == "crew" {
+		return "./assets/"
+	} else {
+		return "../assets/"
+	}
+}
+
+// Initialisiere alle Templates, um I/O zu sparen.
+func InitTemplates() {
+	pageHandler.TicketsViewInit()
+	pageHandler.TicketInsightInit()
+	pageHandler.NewTicketViewInit()
+	pageHandler.DashboardViewInit()
 }
 
 // Erstelle ein Verzeichnis für Tickets und Mails, sofern dieses nicht existiert.
