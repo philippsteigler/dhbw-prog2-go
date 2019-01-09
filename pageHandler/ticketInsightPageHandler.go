@@ -164,7 +164,3 @@ func TicketClose(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/", 302)
 	}
 }
-
-func TicketShowHistory(response http.ResponseWriter, request *http.Request) {
-
-}

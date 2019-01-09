@@ -48,9 +48,9 @@ func parseFilename(filename string) int {
 }
 
 //Liest das gewünschte Ticket aus der JSON-Datei
-//und gibt eine Referenz auf das Ticket (+ Historie) zurück
-func readTicket(id int) *[]Ticket {
-	var readTicket []Ticket
+//und gibt eine Referenz auf das Ticket zurück
+func readTicket(id int) *Ticket {
+	var readTicket Ticket
 	filename := sessionHandler.GetAssetsDir() + "tickets/" + strconv.Itoa(id) + ".json"
 	encodedTicket, errRead := ioutil.ReadFile(filename)
 	sessionHandler.HandleError(errRead)
@@ -60,25 +60,12 @@ func readTicket(id int) *[]Ticket {
 }
 
 //Schreibt ein Ticket in seine entsprechende JSON-Datei oder erzeugt diese
-//Ein Ticket wird mit seinem Ticketverlauf zusammen in einer Datei gespeichert
-//Die aktuelle Version des Tickets findet sich an der letzten Stelle eines Arrays aus Tickets
 func writeTicket(ticket *Ticket) {
-	var encodedTicket []byte
-	var err error
 
 	filename := sessionHandler.GetAssetsDir() + "tickets/" + strconv.Itoa((*ticket).Id) + ".json"
 
-	//wenn ein Ticket bereits besteht und geändert wird, wird die neuste Version des Tickets der Datei hinzugefügt
-	if ticketExist((*ticket).Id) {
-		storedTicket := readTicket((*ticket).Id)
-		*storedTicket = append(*storedTicket, *ticket)
-		encodedTicket, err = json.Marshal(storedTicket)
-		sessionHandler.HandleError(err)
-
-	} else {
-		encodedTicket, err = json.Marshal([]Ticket{*ticket})
-		sessionHandler.HandleError(err)
-	}
+	encodedTicket, err := json.Marshal(*ticket)
+	sessionHandler.HandleError(err)
 
 	err = ioutil.WriteFile(filename, encodedTicket, 0600)
 	sessionHandler.HandleError(err)
@@ -97,8 +84,7 @@ func writeMail(mail Mail) {
 
 //Liefert eine Referenz auf das angegebene Ticket
 func GetTicket(id int) *Ticket {
-	storedTicket := readTicket(id)
-	return &(*storedTicket)[len(*storedTicket)-1]
+	return readTicket(id)
 }
 
 //Zur Erzeugung einer TicketID wird die höchste vergebene ID inkrementiert
@@ -129,20 +115,6 @@ func newId(path string) int {
 	return ids[len(ids)-1] + 1
 }
 
-//Überprüft, ob ein Ticket existiert. Dazu werden alle Tickets eingelesen und die Dateinamen mit der übergebenen ID verglichen
-func ticketExist(id int) bool {
-	files, err := ioutil.ReadDir(sessionHandler.GetAssetsDir() + "/tickets")
-	sessionHandler.HandleError(err)
-
-	for _, file := range files {
-		if parseFilename(file.Name()) == id {
-			return true
-		}
-	}
-
-	return false
-}
-
 //A-5:
 //Ticketerstellung, Erfassung der Eingabedaten
 func NewTicket(subject string, creator string, content string) {
@@ -163,10 +135,10 @@ func AppendEntry(id int, creator, content string, mail bool) {
 	ticketToAppend.Entries = append(ticketToAppend.Entries, NewEntry(creator, content))
 	writeTicket(&ticketToAppend)
 	if mail {
-		//Email und Subject aus initialem Ticket laden
+		//Email und Subject aus Ticket laden
 		storedTicket := readTicket(id)
-		subject := "Rueckmeldung bzgl.:" + (*storedTicket)[0].Subject
-		writeMail(Mail{Email: (*storedTicket)[0].Entries[0].Creator, Subject: subject, Content: content})
+		subject := "Rueckmeldung bzgl.:" + storedTicket.Subject
+		writeMail(Mail{Email: storedTicket.Entries[0].Creator, Subject: subject, Content: content})
 	}
 }
 
@@ -260,11 +232,6 @@ func deleteTicket(id int) {
 	sessionHandler.HandleError(err)
 }
 
-//Funktion: Historie eines Tickets anzeigen
-func GetTicketHistory(id int) *[]Ticket {
-	return readTicket(id)
-}
-
 //Liefert alle Tickets zurück, die existieren
 func GetAllTickets() *[]Ticket {
 	var orderedTickets []Ticket
@@ -273,8 +240,7 @@ func GetAllTickets() *[]Ticket {
 	sessionHandler.HandleError(err)
 
 	for _, file := range files {
-		storedTicket := readTicket(parseFilename(file.Name()))
-		orderedTickets = append(orderedTickets, (*storedTicket)[0])
+		orderedTickets = append(orderedTickets, *GetTicket(parseFilename(file.Name())))
 	}
 
 	return &orderedTickets
@@ -322,10 +288,8 @@ func GetAllMails() *[]Mail {
 //Löscht eine Mail. Dazu wird eine Mail übergeben und mit allen abgeglichen. Wenn die übergebene Mail existiert, wird sie gelöscht
 func DeleteMail(mail Mail) {
 	var storedMail Mail
-
 	files, err := ioutil.ReadDir(sessionHandler.GetAssetsDir() + "/mails")
 	sessionHandler.HandleError(err)
-
 	for _, file := range files {
 		filename := sessionHandler.GetAssetsDir() + "mails/" + file.Name()
 
