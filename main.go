@@ -20,9 +20,9 @@ import (
 // Die Konfiguration soll komplett über Startparameter erfolgen.
 //
 // Der Anwender kann beim Starten über die Kommandozeile folgende Flags optional setzen:
-//  -port=x     int     Port für den Webserver
-//  -reset=x    bool    True: Löscht alle Tickets und Nutzerdaten.
-//  -demo=x     bool    True: Setzt den Webserver zurück und installiert Testdaten
+//  -port=x   int     Port für den Webserver
+//  -reset    bool    True: Löscht alle Tickets und Nutzerdaten.
+//  -demo     bool    True: Setzt den Webserver zurück und installiert Testdaten
 // Das Flag -reset überschreibt dabei das Flag -demo.
 //
 //
@@ -75,6 +75,11 @@ func main() {
 	mux.Handle("/appendEntry", http.HandlerFunc(pageHandler.TicketAppendEntry))
 	mux.Handle("/ticket", http.HandlerFunc(pageHandler.CreateNewTicket))
 	mux.Handle("/mails", http.HandlerFunc(pageHandler.Mails))
+
+	if *port < 0 || *port > 65535 {
+		*port = 8000
+		log.Fatalf("Port should be in range of 0..65535")
+	}
 
 	log.Print("Listening on port " + strconv.Itoa(*port) + " ... ")
 	log.Print("Server available at https://localhost:" + strconv.Itoa(*port) + "/")
