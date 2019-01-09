@@ -28,8 +28,12 @@ func TicketInsightPageHandler(response http.ResponseWriter, request *http.Reques
 		}
 
 		ticketInsightTemplates.ExecuteTemplate(response, "outer", sessionHandler.GetSessionUser(request).Username)
-		ticketInsightTemplates.ExecuteTemplate(response, "inner", ticket.GetTicket(intId))
-		ticketInsightTemplates.ExecuteTemplate(response, "footer", nil)
+
+		if ticket.GetTicket(intId).Status == "offen" {
+			ticketInsightTemplates.ExecuteTemplate(response, "open", ticket.GetTicket(intId))
+		} else if ticket.GetTicket(intId).Status == "in Bearbeitung" {
+			ticketInsightTemplates.ExecuteTemplate(response, "taken", ticket.GetTicket(intId))
+		}
 
 		ticketInsightTemplates.Execute(response, nil)
 	} else {
@@ -42,7 +46,8 @@ func TicketInsightInit() {
 	var err error
 
 	templateFiles = append(templateFiles, sessionHandler.GetAssetsDir()+"html/ticketInsightTemplates/ticketInsightViewHeaderCssTemplate.html")
-	templateFiles = append(templateFiles, sessionHandler.GetAssetsDir()+"html/ticketInsightTemplates/ticketInsightTicketDetailsTemplate.html")
+	templateFiles = append(templateFiles, sessionHandler.GetAssetsDir()+"html/ticketInsightTemplates/ticketInsightTicketDetailsOpenTemplate.html")
+	templateFiles = append(templateFiles, sessionHandler.GetAssetsDir()+"html/ticketInsightTemplates/ticketInsightTicketDetailsTakenTemplate.html")
 
 	ticketInsightTemplates, err = template.ParseFiles(templateFiles...)
 	if err != nil {
