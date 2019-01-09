@@ -1,16 +1,10 @@
 {{define "select"}}
-<!DOCTYPE html>
-<html lang="en">
-<body>
 
-    <select>
-            {{range .}}
+<select>
+            {{range .IDs}}
                 <option value="{{.}}">
-                    {{.}}lol
+                    {{.}}
                 </option>
                     {{end}}
-    </select>
-
-</body>
-</html>
+</select>
         {{end}}

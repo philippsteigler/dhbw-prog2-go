@@ -15,7 +15,9 @@
             <div style="display:none"><input name="TicketID" type="Text" value="{{.Id}}"></input></div>
         </form>
 
-        {{template "select"}}
+
+    {{template "select"}}
+
 
         <form action="/ticketClose" mehtod="POST" style="display: inline">
             <input type="submit" value="Ticket Schließen">
