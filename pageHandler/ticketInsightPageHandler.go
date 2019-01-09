@@ -32,6 +32,7 @@ func TicketInsightPageHandler(response http.ResponseWriter, request *http.Reques
 		if ticket.GetTicket(intId).Status == "offen" {
 			ticketInsightTemplates.ExecuteTemplate(response, "open", ticket.GetTicket(intId))
 		} else if ticket.GetTicket(intId).Status == "in Bearbeitung" {
+			ticketInsightTemplates.ExecuteTemplate(response, "select", sessionHandler.GetAllOtherUserIDs(request))
 			ticketInsightTemplates.ExecuteTemplate(response, "taken", ticket.GetTicket(intId))
 		}
 
@@ -48,6 +49,7 @@ func TicketInsightInit() {
 	templateFiles = append(templateFiles, sessionHandler.GetAssetsDir()+"html/ticketInsightTemplates/ticketInsightViewHeaderCssTemplate.html")
 	templateFiles = append(templateFiles, sessionHandler.GetAssetsDir()+"html/ticketInsightTemplates/ticketInsightTicketDetailsOpenTemplate.html")
 	templateFiles = append(templateFiles, sessionHandler.GetAssetsDir()+"html/ticketInsightTemplates/ticketInsightTicketDetailsTakenTemplate.html")
+	templateFiles = append(templateFiles, sessionHandler.GetAssetsDir()+"html/ticketInsightTemplates/ticketInsightTicketDetailsUserSelectTemplate.html")
 
 	ticketInsightTemplates, err = template.ParseFiles(templateFiles...)
 	if err != nil {
