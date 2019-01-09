@@ -51,9 +51,13 @@ func main() {
 	demo := flag.Bool("demo", false, "Install example rollback for tickets and users.")
 	flag.Parse()
 
+	// Initialisierung und Caching von Templates und Benutzerdaten
 	sessionHandler.CheckEnvironment()
 	sessionHandler.LoadUserData()
-	sessionHandler.InitTemplates()
+	pageHandler.TicketsViewInit()
+	pageHandler.TicketInsightInit()
+	pageHandler.NewTicketViewInit()
+	pageHandler.DashboardViewInit()
 
 	if *demo == true {
 		sessionHandler.DemoMode()

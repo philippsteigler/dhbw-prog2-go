@@ -28,7 +28,7 @@ func TestLoadUserData(t *testing.T) {
 	var users UserAccounts
 	assert.Empty(t, &users, "User rollback should be empty at first.")
 
-	users = *loadUserData()
+	users = *LoadUserData()
 	assert.NotEmpty(t, &users, "User rollback should be available after reading from storage.")
 }
 

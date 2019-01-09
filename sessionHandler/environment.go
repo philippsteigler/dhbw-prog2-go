@@ -1,7 +1,6 @@
 package sessionHandler
 
 import (
-	"de/vorlesung/projekt/crew/pageHandler"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -36,14 +35,6 @@ func GetAssetsDir() string {
 	} else {
 		return "../assets/"
 	}
-}
-
-// Initialisiere alle Templates, um I/O zu sparen.
-func InitTemplates() {
-	pageHandler.TicketsViewInit()
-	pageHandler.TicketInsightInit()
-	pageHandler.NewTicketViewInit()
-	pageHandler.DashboardViewInit()
 }
 
 // Erstelle ein Verzeichnis für Tickets und Mails, sofern dieses nicht existiert.
