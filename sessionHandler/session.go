@@ -2,7 +2,6 @@ package sessionHandler
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -77,7 +76,6 @@ func GetAllOtherUserIDs(r *http.Request) []int {
 		}
 	}
 
-	fmt.Println(IDs)
 	return IDs
 }
 
