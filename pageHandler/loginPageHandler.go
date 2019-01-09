@@ -17,7 +17,7 @@ func LoginPageHandler(response http.ResponseWriter, request *http.Request) {
 		http.Redirect(response, request, "/dashboard", 302)
 	} else {
 
-		//Neues Ticket falls kein User angemeldet ist
+		//Loginseite falls kein User angemeldet ist
 		http.ServeFile(response, request, sessionHandler.GetAssetsDir()+"html/loginView.html")
 	}
 }
