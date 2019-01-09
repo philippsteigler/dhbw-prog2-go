@@ -1,13 +1,9 @@
-{{define "inner"}}
+{{define "taken"}}
 <html>
 <body>
 <div class="innerContainer">
 <div class="details">
     <div>
-        <form action="/ticketTake" mehtod="POST" style="display: inline">
-            <input type="submit" value="Ticket Nehmen">
-            <div style="display:none"><input name="TicketID" type="Text" value="{{.Id}}"></input></div>
-        </form>
 
         <form action="/ticketSubmit" mehtod="POST" style="display: inline">
             <input type="submit" value="Ticket Abgeben">

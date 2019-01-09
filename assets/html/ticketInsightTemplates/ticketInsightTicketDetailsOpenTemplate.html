@@ -1,0 +1,40 @@
+{{define "open"}}
+<html>
+<body>
+<div class="innerContainer">
+<div class="details">
+    <div>
+        <form action="/ticketTake" mehtod="POST" style="display: inline">
+            <input type="submit" value="Ticket Nehmen">
+            <div style="display:none"><input name="TicketID" type="Text" value="{{.Id}}"></input></div>
+        </form>
+
+        </div>
+
+        <div>
+            <h2>Ticket Nr. {{.Id}}</h2>
+        </div>
+
+        <div>
+            <div>
+                <div>Status: {{.Status}}</div>
+                <div>Betreff: {{.Subject}}</div>
+            </div>
+            <p></p>
+            <div>
+            <p></p>
+            <div>Kommentare:</div>
+            <p></p>
+            {{range .Entries}}
+                <div>Datum: {{.Date}}</div>
+                <div>Ersteller: {{.Creator}}</div>
+                <div>Inhalt: {{.Content}}</div>
+                <p></p>
+                    {{end}}
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+{{end}}
