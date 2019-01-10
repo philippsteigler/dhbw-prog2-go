@@ -1,10 +1,14 @@
 {{define "select"}}
-
-<select>
+<div class="innerContainer">
+    <div class="details">
+        <div style="display: inline">Delegieren an: </div>
+        <select>
             {{range .IDs}}
                 <option value="{{.}}">
                     {{.}}
                 </option>
                     {{end}}
-</select>
-        {{end}}
+        </select>
+    </div>
+</div>
+{{end}}

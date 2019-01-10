@@ -1,23 +1,19 @@
 {{define "taken"}}
 <html>
 <body>
-<div class="innerContainer">
+
 <div class="details">
     <div>
-
-        <form action="/ticketSubmit" mehtod="POST" style="display: inline">
-            <input type="submit" value="Ticket Abgeben">
-            <div style="display:none"><input name="TicketID" type="Text" value="{{.Id}}"></input></div>
-        </form>
 
         <form action="/ticketDelegate" mehtod="POST" style="display: inline">
             <input type="submit" value="Ticket Delegieren">
             <div style="display:none"><input name="TicketID" type="Text" value="{{.Id}}"></input></div>
         </form>
 
-
-    {{template "select"}}
-
+        <form action="/ticketSubmit" mehtod="POST" style="display: inline">
+            <input type="submit" value="Ticket Abgeben">
+            <div style="display:none"><input name="TicketID" type="Text" value="{{.Id}}"></input></div>
+        </form>
 
         <form action="/ticketClose" mehtod="POST" style="display: inline">
             <input type="submit" value="Ticket Schließen">
@@ -55,7 +51,7 @@
                     {{end}}
             </div>
         </div>
-    </div>
+
 </div>
 </body>
 </html>

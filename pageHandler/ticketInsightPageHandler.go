@@ -33,8 +33,9 @@ func TicketInsightPageHandler(response http.ResponseWriter, request *http.Reques
 			ticketInsightTemplates.ExecuteTemplate(response, "open", ticket.GetTicket(intId))
 		} else if ticket.GetTicket(intId).Status == "in Bearbeitung" {
 
-			ticketInsightTemplates.ExecuteTemplate(response, "taken", ticket.GetTicket(intId))
 			ticketInsightTemplates.ExecuteTemplate(response, "select", sessionHandler.GetAllOtherUserIDs(request))
+			ticketInsightTemplates.ExecuteTemplate(response, "taken", ticket.GetTicket(intId))
+
 		}
 
 		ticketInsightTemplates.Execute(response, nil)
