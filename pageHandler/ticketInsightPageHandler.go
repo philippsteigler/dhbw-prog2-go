@@ -120,6 +120,7 @@ func TicketSubmitHandler(response http.ResponseWriter, request *http.Request) {
 func TicketDelegateHandler(response http.ResponseWriter, request *http.Request) {
 	if sessionHandler.IsUserLoggedIn(request) {
 		idToParse := request.FormValue("TicketID")
+		fmt.Println(request.FormValue("select"))
 		ticketId, err := strconv.Atoi(idToParse)
 		sessionHandler.HandleError(err)
 
