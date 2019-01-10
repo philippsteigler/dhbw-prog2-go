@@ -1,16 +1,15 @@
-{{define "select"}}
-<!DOCTYPE html>
-<html lang="en">
-<body>
 
-    <select>
-            {{range .}}
+{{define "select"}}
+<div class="innerContainer">
+    <div class="details">
+        <div style="display: inline">Delegieren an: </div>
+        <select>
+            {{range .IDs}}
                 <option value="{{.}}">
-                    {{.}}lol
+                    {{.}}
                 </option>
                     {{end}}
-    </select>
-
-</body>
-</html>
-        {{end}}
+        </select>
+    </div>
+</div>
+{{end}}
