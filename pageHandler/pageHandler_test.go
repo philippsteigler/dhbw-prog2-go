@@ -42,6 +42,17 @@ func TestDashboardViewPageHandler(t *testing.T) {
 	}
 }
 
+func TestLoginPageHandler(t *testing.T) {
+	response := httptest.NewRecorder()
+	request := httptest.NewRequest("GET", "https://localhost:8000/loginView", nil)
+
+	LoginPageHandler(response, request)
+
+	if response.Code != http.StatusOK {
+		t.Errorf("Page didn't return %v, %v", http.StatusOK, response.Code)
+	}
+}
+
 func TestNewTicketViewPageHandler(t *testing.T) {
 	response := httptest.NewRecorder()
 	request := httptest.NewRequest("GET", "https://localhost:8000/", nil)
