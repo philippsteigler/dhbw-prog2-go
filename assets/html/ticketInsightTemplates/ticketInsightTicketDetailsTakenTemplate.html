@@ -1,21 +1,19 @@
 {{define "taken"}}
 <html>
 <body>
-<div class="innerContainer">
+
 <div class="details">
     <div>
-
-        <form action="/ticketSubmit" mehtod="POST" style="display: inline">
-            <input type="submit" value="Ticket Abgeben">
-            <div style="display:none"><input name="TicketID" type="Text" value="{{.Id}}"></input></div>
-        </form>
 
         <form action="/ticketDelegate" mehtod="POST" style="display: inline">
             <input type="submit" value="Ticket Delegieren">
             <div style="display:none"><input name="TicketID" type="Text" value="{{.Id}}"></input></div>
         </form>
 
-        {{template "select"}}
+        <form action="/ticketSubmit" mehtod="POST" style="display: inline">
+            <input type="submit" value="Ticket Abgeben">
+            <div style="display:none"><input name="TicketID" type="Text" value="{{.Id}}"></input></div>
+        </form>
 
         <form action="/ticketClose" mehtod="POST" style="display: inline">
             <input type="submit" value="Ticket Schließen">
@@ -29,31 +27,31 @@
             <div style="display:none"><input name="TicketID" type="Text" value="{{.Id}}"></input></div>
         </form>
 
-        </div>
+    </div>
 
-        <div>
-            <h2>Ticket Nr. {{.Id}}</h2>
-        </div>
+    <div>
+        <h2>Ticket Nr. {{.Id}}</h2>
+    </div>
 
+    <div>
         <div>
-            <div>
-                <div>Status: {{.Status}}</div>
-                <div>Betreff: {{.Subject}}</div>
-            </div>
-            <p></p>
-            <div>
+            <div>Status: {{.Status}}</div>
+            <div>Betreff: {{.Subject}}</div>
+        </div>
+        <p></p>
+        <div>
             <p></p>
             <div>Kommentare:</div>
             <p></p>
-            {{range .Entries}}
-                <div>Datum: {{.Date}}</div>
-                <div>Ersteller: {{.Creator}}</div>
-                <div>Inhalt: {{.Content}}</div>
-                <p></p>
-                    {{end}}
-            </div>
+        {{range .Entries}}
+            <div>Datum: {{.Date}}</div>
+            <div>Ersteller: {{.Creator}}</div>
+            <div>Inhalt: {{.Content}}</div>
+            <p></p>
+        {{end}}
         </div>
     </div>
+
 </div>
 </body>
 </html>
