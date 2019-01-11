@@ -23,7 +23,14 @@ import (
 // A-6.6
 // Es soll ein einfaches CLI-Tool zur Abgabe von Nachrichten an den Server geben
 func main() {
-	sendPostRequest(parseUserInput())
+	response, httpPostErr := sendPostRequest(parseUserInput())
+
+	// Überprüfung auf Fehler
+	if httpPostErr != nil {
+		fmt.Printf("The HTTP POST request to: https://localhost:4443/ticket failed (status code: %s) with error %s\n", response.Status, httpPostErr)
+	} else {
+		fmt.Printf("The HTTP POST request finished with status code: %s.\n", response.Status)
+	}
 }
 
 // Eingabe über das CLI wird geparsed und auf vollständigkeit überprüft
@@ -45,7 +52,7 @@ func parseUserInput() []string {
 }
 
 // Post Request zur Abgabe einer Mail
-func sendPostRequest(userInput []string) {
+func sendPostRequest(userInput []string) (response *http.Response, httpPostErr error) {
 	// Beim senden des Requests an den Server trat folgender Fehler auf: x509: certificate signed by unknown authority
 	// Dieser Fehler trat auf, da es sich beim Zertifikat des Servers um ein self-signed Zertifikat handelt
 	// Entsprechend muss es dem CertPool hinzugefügt werden
@@ -83,12 +90,7 @@ func sendPostRequest(userInput []string) {
 
 	// POST-Request an den Server
 	req, _ := http.NewRequest(http.MethodPost, "https://localhost:4443/ticket", bytes.NewBuffer(jsonInput))
-	response, httpPostErr := client.Do(req)
+	response, httpPostErr = client.Do(req)
 
-	// Überprüfung auf Fehler
-	if httpPostErr != nil {
-		fmt.Printf("The HTTP POST request to: https://localhost:4443/ticket failed (status code: %s) with error %s\n", response.Status, httpPostErr)
-	} else {
-		fmt.Printf("The HTTP POST request finished with status code: %s.\n", response.Status)
-	}
+	return
 }
