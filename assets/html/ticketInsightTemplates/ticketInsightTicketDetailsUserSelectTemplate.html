@@ -1,14 +1,17 @@
 {{define "select"}}
 <div class="innerContainer">
     <div class="details">
-        <div style="display: inline">Delegieren an: </div>
-        <select name="select">
-        {{range .IDs}}
-            <option value="{{.}}">
-            {{.}}
-            </option>
-        {{end}}
-        </select>
+        <form action="/ticketDelegate" mehtod="POST" style="display: inline">
+            <input type="submit" value="Ticket Delegieren">
+            <div style="display: inline">Delegieren an: </div>
+            <select name="select">
+            {{range .IDs}}
+                <option value="{{.}}">
+                {{.}}
+                </option>
+            {{end}}
+            </select>
+        </form>
     </div>
 </div>
 {{end}}
