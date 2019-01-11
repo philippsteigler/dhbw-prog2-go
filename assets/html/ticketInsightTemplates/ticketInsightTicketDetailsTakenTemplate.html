@@ -4,12 +4,6 @@
 
 <div class="details">
     <div>
-
-        <form action="/ticketDelegate" mehtod="POST" style="display: inline">
-            <input type="submit" value="Ticket Delegieren">
-            <div style="display:none"><input name="TicketID" type="Text" value="{{.Id}}"></input></div>
-        </form>
-
         <form action="/ticketSubmit" mehtod="POST" style="display: inline">
             <input type="submit" value="Ticket Abgeben">
             <div style="display:none"><input name="TicketID" type="Text" value="{{.Id}}"></input></div>

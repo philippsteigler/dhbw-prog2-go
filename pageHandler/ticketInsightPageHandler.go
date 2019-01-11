@@ -10,6 +10,7 @@ import (
 )
 
 var ticketInsightTemplates *template.Template
+var ticketID int
 
 // A-8.3
 // Bearbeiter sollen alle Tickets einsehen können, welche noch kein Bearbeiter
@@ -26,6 +27,7 @@ func TicketInsightPageHandler(response http.ResponseWriter, request *http.Reques
 		if err != nil {
 			fmt.Println(err)
 		}
+		ticketID = intId
 
 		ticketInsightTemplates.ExecuteTemplate(response, "outer", sessionHandler.GetSessionUser(request).Username)
 
@@ -119,11 +121,11 @@ func TicketSubmitHandler(response http.ResponseWriter, request *http.Request) {
 //Funktion ticket Delegieren
 func TicketDelegateHandler(response http.ResponseWriter, request *http.Request) {
 	if sessionHandler.IsUserLoggedIn(request) {
-		idToParse := request.FormValue("TicketID")
-		ticketId, err := strconv.Atoi(idToParse)
+		eID := request.FormValue("select")
+		editorID, err := strconv.Atoi(eID)
 		sessionHandler.HandleError(err)
 
-		ticket.TakeTicket(ticketId, 0)
+		ticket.TakeTicket(ticketID, editorID)
 		// Zurück zu der Ticketseite
 		http.Redirect(response, request, "/dashboard", http.StatusFound)
 
