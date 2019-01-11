@@ -17,18 +17,18 @@ import (
 func setup() {
 	sessionHandler.BackupEnvironment()
 	sessionHandler.DemoMode()
+	time.Sleep(100 * time.Millisecond)
 }
 
 func teardown() {
 	sessionHandler.RestoreEnvironment()
+	time.Sleep(100 * time.Millisecond)
 }
 
 func TestParseFilename(t *testing.T) {
 	filename := "123.json"
 	id := parseFilename(filename)
 	assert.Equal(t, 123, id)
-
-	time.Sleep(100 * time.Millisecond)
 }
 
 func TestReadTicket(t *testing.T) {
@@ -38,7 +38,6 @@ func TestReadTicket(t *testing.T) {
 	assert.IsType(t, Ticket{}, storedTicket)
 
 	teardown()
-	time.Sleep(100 * time.Millisecond)
 }
 
 func TestWriteTicket(t *testing.T) {
@@ -57,7 +56,6 @@ func TestWriteTicket(t *testing.T) {
 	assert.Equal(t, 3, len(files))
 
 	teardown()
-	time.Sleep(100 * time.Millisecond)
 }
 
 func TestWriteMail(t *testing.T) {
@@ -77,7 +75,6 @@ func TestWriteMail(t *testing.T) {
 	assert.Equal(t, 4, len(files))
 
 	teardown()
-	time.Sleep(100 * time.Millisecond)
 }
 
 func TestGetTicket(t *testing.T) {
@@ -93,7 +90,6 @@ func TestGetTicket(t *testing.T) {
 	assert.Equal(t, "bob@dhbw.de", testTicket.Entries[0].Creator)
 
 	teardown()
-	time.Sleep(100 * time.Millisecond)
 }
 
 func TestNewId(t *testing.T) {
@@ -107,7 +103,6 @@ func TestNewId(t *testing.T) {
 	assert.Equal(t, 4, id)
 
 	teardown()
-	time.Sleep(100 * time.Millisecond)
 }
 
 func TestNewTicket(t *testing.T) {
@@ -119,7 +114,6 @@ func TestNewTicket(t *testing.T) {
 	assert.NotEmpty(t, testTicket)
 
 	teardown()
-	time.Sleep(100 * time.Millisecond)
 }
 
 func TestNewEntry(t *testing.T) {
@@ -140,7 +134,6 @@ func TestAppendEntry(t *testing.T) {
 	assert.Equal(t, 4, len(testTicket.Entries))
 
 	teardown()
-	time.Sleep(100 * time.Millisecond)
 }
 
 func TestGetTicketsByEditorId(t *testing.T) {
@@ -155,7 +148,6 @@ func TestGetTicketsByEditorId(t *testing.T) {
 	assert.Equal(t, 1, len(orderedTickets))
 
 	teardown()
-	time.Sleep(100 * time.Millisecond)
 }
 
 func TestTakeTicket(t *testing.T) {
@@ -167,7 +159,6 @@ func TestTakeTicket(t *testing.T) {
 	assert.Equal(t, 7, testTicket.EditorId)
 
 	teardown()
-	time.Sleep(100 * time.Millisecond)
 }
 
 func TestGetAllOpenTickets(t *testing.T) {
@@ -177,7 +168,6 @@ func TestGetAllOpenTickets(t *testing.T) {
 	assert.Equal(t, 2, len(openTickets))
 
 	teardown()
-	time.Sleep(100 * time.Millisecond)
 }
 
 func TestUnhandTicket(t *testing.T) {
@@ -192,7 +182,6 @@ func TestUnhandTicket(t *testing.T) {
 	assert.Equal(t, 0, testTicket.EditorId)
 
 	teardown()
-	time.Sleep(100 * time.Millisecond)
 }
 
 func TestDelegateTicket(t *testing.T) {
@@ -204,7 +193,6 @@ func TestDelegateTicket(t *testing.T) {
 	assert.Equal(t, 4, testTicket.EditorId)
 
 	teardown()
-	time.Sleep(100 * time.Millisecond)
 }
 
 func TestMergeTickets(t *testing.T) {
@@ -215,7 +203,6 @@ func TestMergeTickets(t *testing.T) {
 	assert.Equal(t, 2, len(testTicket.Entries))
 
 	teardown()
-	time.Sleep(100 * time.Millisecond)
 }
 
 func TestDeleteTicket(t *testing.T) {
@@ -230,7 +217,6 @@ func TestDeleteTicket(t *testing.T) {
 	assert.Equal(t, 1, len(files))
 
 	teardown()
-	time.Sleep(100 * time.Millisecond)
 }
 
 func TestGetAllTickets(t *testing.T) {
@@ -239,7 +225,6 @@ func TestGetAllTickets(t *testing.T) {
 	assert.Equal(t, []Ticket{*GetTicket(1), *GetTicket(2)}, *GetAllTickets())
 
 	teardown()
-	time.Sleep(100 * time.Millisecond)
 }
 
 func TestGetAllMails(t *testing.T) {
@@ -254,7 +239,6 @@ func TestGetAllMails(t *testing.T) {
 	assert.Equal(t, "Test Test Test", mails[2].Content)
 
 	teardown()
-	time.Sleep(100 * time.Millisecond)
 }
 
 func TestDeleteMail(t *testing.T) {
@@ -270,7 +254,6 @@ func TestDeleteMail(t *testing.T) {
 	assert.Equal(t, 2, len(mails))
 
 	teardown()
-	time.Sleep(100 * time.Millisecond)
 }
 
 func TestSetTicketToOpenIfClosed(t *testing.T) {
@@ -285,7 +268,6 @@ func TestSetTicketToOpenIfClosed(t *testing.T) {
 	assert.Equal(t, Open, (*GetTicket(1)).Status)
 
 	teardown()
-	time.Sleep(100 * time.Millisecond)
 }
 
 func TestCloseTicket(t *testing.T) {
@@ -297,5 +279,4 @@ func TestCloseTicket(t *testing.T) {
 	assert.Equal(t, Closed, (*GetTicket(1)).Status)
 
 	teardown()
-	time.Sleep(100 * time.Millisecond)
 }

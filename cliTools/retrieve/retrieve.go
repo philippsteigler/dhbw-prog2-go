@@ -52,13 +52,13 @@ func main() {
 	client := &http.Client{Transport: tr}
 
 	// GET Request an die entsprechende API
-	req, _ := http.NewRequest(http.MethodGet, "https://localhost:8000/mails", nil)
+	req, _ := http.NewRequest(http.MethodGet, "https://localhost:4443/mails", nil)
 	response, httpGetErr := client.Do(req)
 
 	// Überprüfung auf Fehler. Bei erfolgreichem Request werden die Mails ausgegeben (falls welche existieren)
 	if httpGetErr != nil {
 
-		fmt.Printf("The HTTP GET request to: https://localhost:8000/mails failed with error %s\n", httpGetErr)
+		fmt.Printf("The HTTP GET request to: https://localhost:4443/mails failed with error %s\n", httpGetErr)
 	} else {
 
 		resp, _ := ioutil.ReadAll(response.Body)

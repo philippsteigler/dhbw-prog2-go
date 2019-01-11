@@ -82,12 +82,12 @@ func sendPostRequest(userInput []string) {
 	sessionHandler.HandleError(err)
 
 	// POST-Request an den Server
-	req, _ := http.NewRequest(http.MethodPost, "https://localhost:8000/ticket", bytes.NewBuffer(jsonInput))
+	req, _ := http.NewRequest(http.MethodPost, "https://localhost:4443/ticket", bytes.NewBuffer(jsonInput))
 	response, httpPostErr := client.Do(req)
 
 	// Überprüfung auf Fehler
 	if httpPostErr != nil {
-		fmt.Printf("The HTTP POST request to: https://localhost:8000/ticket failed (status code: %s) with error %s\n", response.Status, httpPostErr)
+		fmt.Printf("The HTTP POST request to: https://localhost:4443/ticket failed (status code: %s) with error %s\n", response.Status, httpPostErr)
 	} else {
 		fmt.Printf("The HTTP POST request finished with status code: %s.\n", response.Status)
 	}

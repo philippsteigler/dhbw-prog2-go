@@ -22,10 +22,12 @@ import (
 func setup() {
 	sessionHandler.BackupEnvironment()
 	sessionHandler.DemoMode()
+	time.Sleep(100 * time.Millisecond)
 }
 
 func teardown() {
 	sessionHandler.RestoreEnvironment()
+	time.Sleep(100 * time.Millisecond)
 }
 
 func TestCreateNewTicket(t *testing.T) {
@@ -49,7 +51,6 @@ func TestCreateNewTicket(t *testing.T) {
 	assert.Equal(t, "Ein weiterer Test.", newTicket.Entries[0].Content)
 
 	teardown()
-	time.Sleep(100 * time.Millisecond)
 }
 
 func TestValidateMail(t *testing.T) {
@@ -100,7 +101,6 @@ func TestRefersToExistingTicket(t *testing.T) {
 	assert.Equal(t, false, notOk)
 
 	teardown()
-	time.Sleep(100 * time.Millisecond)
 }
 
 func TestMailsRetrieveMails(t *testing.T) {
@@ -121,7 +121,6 @@ func TestMailsRetrieveMails(t *testing.T) {
 	assert.Equal(t, expectedResponse, string(getResponse))
 
 	teardown()
-	time.Sleep(100 * time.Millisecond)
 }
 
 func TestMailsSentMails(t *testing.T) {
@@ -140,5 +139,4 @@ func TestMailsSentMails(t *testing.T) {
 	assert.Equal(t, 0, len(*ticket.GetAllMails()))
 
 	teardown()
-	time.Sleep(100 * time.Millisecond)
 }

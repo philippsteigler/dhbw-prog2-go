@@ -17,10 +17,12 @@ import (
 func setup() {
 	BackupEnvironment()
 	DemoMode()
+	time.Sleep(100 * time.Millisecond)
 }
 
 func teardown() {
 	RestoreEnvironment()
+	time.Sleep(100 * time.Millisecond)
 }
 
 func TestGetAssetsDir(t *testing.T) {
@@ -38,7 +40,6 @@ func TestLoadUserData(t *testing.T) {
 	assert.NotEmpty(t, &users, "User rollback should be available after reading from storage.")
 
 	teardown()
-	time.Sleep(100 * time.Millisecond)
 }
 
 func TestLoginHandler(t *testing.T) {
@@ -67,5 +68,4 @@ func TestLoginHandler(t *testing.T) {
 	assert.Equal(t, "/loginView", path1, "Redirect should be '/loginView' after failed login.")
 
 	teardown()
-	time.Sleep(100 * time.Millisecond)
 }
