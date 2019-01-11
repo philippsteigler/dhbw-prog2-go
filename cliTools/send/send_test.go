@@ -1,8 +1,10 @@
 package main
 
 import (
-	"de/vorlesung/projekt/crew/sessionHandler"
+	"de/vorlesung/projekt/crew/pageHandler"
 	"github.com/stretchr/testify/assert"
+	"net/http"
+	"net/http/httptest"
 	"testing"
 )
 
@@ -12,20 +14,13 @@ import (
 // 3880065
 // 8701350
 
-func setup() {
-	sessionHandler.BackupEnvironment()
-	sessionHandler.DemoMode()
-}
-
-func teardown() {
-	sessionHandler.RestoreEnvironment()
-}
-
 func TestSendPostRequest(t *testing.T) {
-	setup()
-	defer teardown()
+	ts := httptest.NewTLSServer(http.HandlerFunc(pageHandler.CreateNewTicket))
+	defer ts.Close()
 
-	response, err := sendPostRequest([]string{"mail@test.com", "subject", "content"})
+	client := ts.Client()
+
+	response, err := client.Get(ts.URL)
 
 	assert.NoError(t, err)
 	assert.Equal(t, "200 OK", response.Status)
