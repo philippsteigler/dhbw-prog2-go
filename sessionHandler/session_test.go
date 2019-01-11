@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 )
 
 // Matrikelnummern:
@@ -29,20 +30,19 @@ func TestGetAssetsDir(t *testing.T) {
 
 func TestLoadUserData(t *testing.T) {
 	setup()
-	defer teardown()
 
 	var users UserAccounts
 	assert.Empty(t, &users, "User rollback should be empty at first.")
 
 	users = *LoadUserData()
 	assert.NotEmpty(t, &users, "User rollback should be available after reading from storage.")
-}
 
-// TODO: Tests für Session-Handling
+	teardown()
+	time.Sleep(100 * time.Millisecond)
+}
 
 func TestLoginHandler(t *testing.T) {
 	setup()
-	defer teardown()
 
 	// Teste Eingaben für autorisierten Benutzer.
 	req1, _ := http.NewRequest(http.MethodPost, "/login", nil)
@@ -65,4 +65,7 @@ func TestLoginHandler(t *testing.T) {
 	LoginHandler(res1, req1)
 	path1 = string(res1.Header().Get("Location"))
 	assert.Equal(t, "/loginView", path1, "Redirect should be '/loginView' after failed login.")
+
+	teardown()
+	time.Sleep(100 * time.Millisecond)
 }

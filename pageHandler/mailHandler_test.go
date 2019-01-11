@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 )
 
 // Matrikelnummern:
@@ -29,7 +30,6 @@ func teardown() {
 
 func TestCreateNewTicket(t *testing.T) {
 	setup()
-	defer teardown()
 
 	//Erzeugen einer Testmail
 	mail := map[string]string{"email": "test@home.com", "subject": "CreateNewTicket Test", "content": "Ein weiterer Test."}
@@ -37,7 +37,7 @@ func TestCreateNewTicket(t *testing.T) {
 	sessionHandler.HandleError(err)
 
 	response := httptest.NewRecorder()
-	request := httptest.NewRequest(http.MethodPost, "https://localhost:8000/ticket", bytes.NewBuffer(jsonMail))
+	request := httptest.NewRequest(http.MethodPost, "https://localhost:4443/ticket", bytes.NewBuffer(jsonMail))
 	CreateNewTicket(response, request)
 
 	assert.Equal(t, http.StatusOK, response.Code)
@@ -47,6 +47,9 @@ func TestCreateNewTicket(t *testing.T) {
 	assert.Equal(t, "test@home.com", newTicket.Entries[0].Creator)
 	assert.Equal(t, "CreateNewTicket Test", newTicket.Subject)
 	assert.Equal(t, "Ein weiterer Test.", newTicket.Entries[0].Content)
+
+	teardown()
+	time.Sleep(100 * time.Millisecond)
 }
 
 func TestValidateMail(t *testing.T) {
@@ -69,7 +72,6 @@ func TestParseSubject(t *testing.T) {
 
 func TestRefersToExistingTicket(t *testing.T) {
 	setup()
-	defer teardown()
 
 	testSubjectOk1 := "RE: Test 1"
 	testSubjectOk2 := "RE: test 1"
@@ -96,18 +98,20 @@ func TestRefersToExistingTicket(t *testing.T) {
 
 	notOk, _ = refersToExistingTicket(testSubjectOk1, emailNotOk)
 	assert.Equal(t, false, notOk)
+
+	teardown()
+	time.Sleep(100 * time.Millisecond)
 }
 
 func TestMailsRetrieveMails(t *testing.T) {
 	setup()
-	defer teardown()
 
 	expectedResponse := "[{\"Email\":\"testing@home.ru\",\"Subject\":\"Unit Test 1\",\"Content\":\"Test\"}," +
 		"{\"Email\":\"testing@work.com\",\"Subject\":\"Unit Test 2\",\"Content\":\"Test Test\"}," +
 		"{\"Email\":\"testing@dhbw.de\",\"Subject\":\"Unit Test 3\",\"Content\":\"Test Test Test\"}]"
 
 	response := httptest.NewRecorder()
-	getRequest := httptest.NewRequest(http.MethodGet, "https://localhost:8000/mail", nil)
+	getRequest := httptest.NewRequest(http.MethodGet, "https://localhost:4443/mail", nil)
 	Mails(response, getRequest)
 
 	assert.Equal(t, http.StatusOK, response.Code)
@@ -115,21 +119,26 @@ func TestMailsRetrieveMails(t *testing.T) {
 	getResponse, _ := ioutil.ReadAll(response.Body)
 
 	assert.Equal(t, expectedResponse, string(getResponse))
+
+	teardown()
+	time.Sleep(100 * time.Millisecond)
 }
 
 func TestMailsSentMails(t *testing.T) {
 	setup()
-	defer teardown()
 
 	sentMails := "[{\"Email\":\"testing@home.ru\",\"Subject\":\"Unit Test 1\",\"Content\":\"Test\"}," +
 		"{\"Email\":\"testing@work.com\",\"Subject\":\"Unit Test 2\",\"Content\":\"Test Test\"}," +
 		"{\"Email\":\"testing@dhbw.de\",\"Subject\":\"Unit Test 3\",\"Content\":\"Test Test Test\"}]"
 
 	response := httptest.NewRecorder()
-	getRequest := httptest.NewRequest(http.MethodPost, "https://localhost:8000/mail", bytes.NewBufferString(sentMails))
+	getRequest := httptest.NewRequest(http.MethodPost, "https://localhost:4443/mail", bytes.NewBufferString(sentMails))
 	Mails(response, getRequest)
 
 	assert.Equal(t, http.StatusOK, response.Code)
 
 	assert.Equal(t, 0, len(*ticket.GetAllMails()))
+
+	teardown()
+	time.Sleep(100 * time.Millisecond)
 }

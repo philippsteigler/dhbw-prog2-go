@@ -39,7 +39,7 @@ func TestTicketsViewInit(t *testing.T) {
 
 func TestDashboardViewPageHandler(t *testing.T) {
 	response := httptest.NewRecorder()
-	request := httptest.NewRequest("GET", "https://localhost:8000/dashboard", nil)
+	request := httptest.NewRequest("GET", "https://localhost:4443/dashboard", nil)
 
 	DashboardViewPageHandler(response, request)
 
@@ -50,7 +50,7 @@ func TestDashboardViewPageHandler(t *testing.T) {
 
 func TestLoginPageHandler(t *testing.T) {
 	response := httptest.NewRecorder()
-	request := httptest.NewRequest("GET", "https://localhost:8000/loginView", nil)
+	request := httptest.NewRequest("GET", "https://localhost:4443/loginView", nil)
 
 	LoginPageHandler(response, request)
 
@@ -61,7 +61,7 @@ func TestLoginPageHandler(t *testing.T) {
 
 func TestNewTicketViewPageHandler(t *testing.T) {
 	response := httptest.NewRecorder()
-	request := httptest.NewRequest("GET", "https://localhost:8000/", nil)
+	request := httptest.NewRequest("GET", "https://localhost:4443/", nil)
 
 	NewTicketViewInit()
 	NewTicketViewPageHandler(response, request)
@@ -73,7 +73,7 @@ func TestNewTicketViewPageHandler(t *testing.T) {
 
 func TestTicketInsightPageHandler(t *testing.T) {
 	response := httptest.NewRecorder()
-	request := httptest.NewRequest("GET", "https://localhost:8000/ticketInsightView", nil)
+	request := httptest.NewRequest("GET", "https://localhost:4443/ticketInsightView", nil)
 
 	TicketInsightPageHandler(response, request)
 
@@ -84,7 +84,7 @@ func TestTicketInsightPageHandler(t *testing.T) {
 
 func TestTicketsViewPageHandler(t *testing.T) {
 	response := httptest.NewRecorder()
-	request := httptest.NewRequest("GET", "https://localhost:8000/ticketsView", nil)
+	request := httptest.NewRequest("GET", "https://localhost:4443/ticketsView", nil)
 
 	TicketsViewPageHandler(response, request)
 

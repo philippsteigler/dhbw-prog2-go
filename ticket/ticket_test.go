@@ -5,6 +5,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"testing"
+	"time"
 )
 
 // Matrikelnummern:
@@ -26,19 +27,22 @@ func TestParseFilename(t *testing.T) {
 	filename := "123.json"
 	id := parseFilename(filename)
 	assert.Equal(t, 123, id)
+
+	time.Sleep(100 * time.Millisecond)
 }
 
 func TestReadTicket(t *testing.T) {
 	setup()
-	defer teardown()
 
 	storedTicket := *readTicket(1)
 	assert.IsType(t, Ticket{}, storedTicket)
+
+	teardown()
+	time.Sleep(100 * time.Millisecond)
 }
 
 func TestWriteTicket(t *testing.T) {
 	setup()
-	defer teardown()
 
 	ticketDir := sessionHandler.GetAssetsDir() + "/tickets"
 	files, err := ioutil.ReadDir(ticketDir)
@@ -51,11 +55,13 @@ func TestWriteTicket(t *testing.T) {
 	sessionHandler.HandleError(err)
 
 	assert.Equal(t, 3, len(files))
+
+	teardown()
+	time.Sleep(100 * time.Millisecond)
 }
 
 func TestWriteMail(t *testing.T) {
 	setup()
-	defer teardown()
 
 	mailsDir := sessionHandler.GetAssetsDir() + "/mails"
 	files, err := ioutil.ReadDir(mailsDir)
@@ -69,11 +75,13 @@ func TestWriteMail(t *testing.T) {
 	sessionHandler.HandleError(err)
 
 	assert.Equal(t, 4, len(files))
+
+	teardown()
+	time.Sleep(100 * time.Millisecond)
 }
 
 func TestGetTicket(t *testing.T) {
 	setup()
-	defer teardown()
 
 	testTicket := *GetTicket(1)
 	assert.IsType(t, Ticket{}, testTicket)
@@ -83,11 +91,13 @@ func TestGetTicket(t *testing.T) {
 	assert.Equal(t, "Test 1", testTicket.Subject)
 	assert.Equal(t, "Test", testTicket.Entries[0].Content)
 	assert.Equal(t, "bob@dhbw.de", testTicket.Entries[0].Creator)
+
+	teardown()
+	time.Sleep(100 * time.Millisecond)
 }
 
 func TestNewId(t *testing.T) {
 	setup()
-	defer teardown()
 
 	id := newId("/tickets")
 	assert.Equal(t, 3, id)
@@ -95,16 +105,21 @@ func TestNewId(t *testing.T) {
 	NewTicket("Test", "Bob", "Test")
 	id = newId("/tickets")
 	assert.Equal(t, 4, id)
+
+	teardown()
+	time.Sleep(100 * time.Millisecond)
 }
 
 func TestNewTicket(t *testing.T) {
 	setup()
-	defer teardown()
 
 	NewTicket("Test", "Bob", "Test")
 	testTicket := *GetTicket(3)
 
 	assert.NotEmpty(t, testTicket)
+
+	teardown()
+	time.Sleep(100 * time.Millisecond)
 }
 
 func TestNewEntry(t *testing.T) {
@@ -116,7 +131,6 @@ func TestNewEntry(t *testing.T) {
 
 func TestAppendEntry(t *testing.T) {
 	setup()
-	defer teardown()
 
 	AppendEntry(1, "Chris", "Test", false)
 	AppendEntry(1, "Petra", "Test", false)
@@ -124,11 +138,13 @@ func TestAppendEntry(t *testing.T) {
 
 	testTicket := GetTicket(1)
 	assert.Equal(t, 4, len(testTicket.Entries))
+
+	teardown()
+	time.Sleep(100 * time.Millisecond)
 }
 
 func TestGetTicketsByEditorId(t *testing.T) {
 	setup()
-	defer teardown()
 
 	TakeTicket(2, 7)
 
@@ -137,29 +153,35 @@ func TestGetTicketsByEditorId(t *testing.T) {
 
 	orderedTickets = *GetTicketsByEditorId(7)
 	assert.Equal(t, 1, len(orderedTickets))
+
+	teardown()
+	time.Sleep(100 * time.Millisecond)
 }
 
 func TestTakeTicket(t *testing.T) {
 	setup()
-	defer teardown()
 
 	TakeTicket(1, 7)
 	testTicket := GetTicket(1)
 	assert.Equal(t, InProcess, testTicket.Status)
 	assert.Equal(t, 7, testTicket.EditorId)
+
+	teardown()
+	time.Sleep(100 * time.Millisecond)
 }
 
 func TestGetAllOpenTickets(t *testing.T) {
 	setup()
-	defer teardown()
 
 	openTickets := *GetAllOpenTickets()
 	assert.Equal(t, 2, len(openTickets))
+
+	teardown()
+	time.Sleep(100 * time.Millisecond)
 }
 
 func TestUnhandTicket(t *testing.T) {
 	setup()
-	defer teardown()
 
 	TakeTicket(1, 7)
 
@@ -168,30 +190,36 @@ func TestUnhandTicket(t *testing.T) {
 
 	assert.Equal(t, Open, testTicket.Status)
 	assert.Equal(t, 0, testTicket.EditorId)
+
+	teardown()
+	time.Sleep(100 * time.Millisecond)
 }
 
 func TestDelegateTicket(t *testing.T) {
 	setup()
-	defer teardown()
 
 	DelegateTicket(1, 4)
 	testTicket := GetTicket(1)
 	assert.Equal(t, InProcess, testTicket.Status)
 	assert.Equal(t, 4, testTicket.EditorId)
+
+	teardown()
+	time.Sleep(100 * time.Millisecond)
 }
 
 func TestMergeTickets(t *testing.T) {
 	setup()
-	defer teardown()
 
 	MergeTickets(1, 2)
 	testTicket := GetTicket(1)
 	assert.Equal(t, 2, len(testTicket.Entries))
+
+	teardown()
+	time.Sleep(100 * time.Millisecond)
 }
 
 func TestDeleteTicket(t *testing.T) {
 	setup()
-	defer teardown()
 
 	deleteTicket(1)
 
@@ -200,18 +228,22 @@ func TestDeleteTicket(t *testing.T) {
 	sessionHandler.HandleError(err)
 
 	assert.Equal(t, 1, len(files))
+
+	teardown()
+	time.Sleep(100 * time.Millisecond)
 }
 
 func TestGetAllTickets(t *testing.T) {
 	setup()
-	defer teardown()
 
 	assert.Equal(t, []Ticket{*GetTicket(1), *GetTicket(2)}, *GetAllTickets())
+
+	teardown()
+	time.Sleep(100 * time.Millisecond)
 }
 
 func TestGetAllMails(t *testing.T) {
 	setup()
-	defer teardown()
 
 	mails := *GetAllMails()
 
@@ -220,11 +252,14 @@ func TestGetAllMails(t *testing.T) {
 	assert.Equal(t, "testing@home.ru", mails[0].Email)
 	assert.Equal(t, "Unit Test 2", mails[1].Subject)
 	assert.Equal(t, "Test Test Test", mails[2].Content)
+
+	teardown()
+	time.Sleep(100 * time.Millisecond)
 }
 
 func TestDeleteMail(t *testing.T) {
 	setup()
-	defer teardown()
+
 	mails := *GetAllMails()
 	assert.Equal(t, 3, len(mails))
 
@@ -233,11 +268,13 @@ func TestDeleteMail(t *testing.T) {
 
 	mails = *GetAllMails()
 	assert.Equal(t, 2, len(mails))
+
+	teardown()
+	time.Sleep(100 * time.Millisecond)
 }
 
 func TestSetTicketToOpenIfClosed(t *testing.T) {
 	setup()
-	defer teardown()
 
 	assert.Equal(t, Open, (*GetTicket(1)).Status)
 	SetTicketToOpenIfClosed(1)
@@ -246,14 +283,19 @@ func TestSetTicketToOpenIfClosed(t *testing.T) {
 	CloseTicket(1)
 	SetTicketToOpenIfClosed(1)
 	assert.Equal(t, Open, (*GetTicket(1)).Status)
+
+	teardown()
+	time.Sleep(100 * time.Millisecond)
 }
 
 func TestCloseTicket(t *testing.T) {
 	setup()
-	defer teardown()
 
 	assert.Equal(t, Open, (*GetTicket(1)).Status)
 
 	CloseTicket(1)
 	assert.Equal(t, Closed, (*GetTicket(1)).Status)
+
+	teardown()
+	time.Sleep(100 * time.Millisecond)
 }

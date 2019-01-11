@@ -121,9 +121,9 @@ func BackupEnvironment() {
 	assetsDir := GetAssetsDir()
 
 	// Lösche alte Backups, sofern diese vorhanden sind.
-	if _, err := os.Stat(assetsDir + "rollback/backup"); os.IsNotExist(err) {
+	if _, err := os.Stat(assetsDir + "rollback/backup"); os.IsNotExist(err) == true {
 		err = os.Mkdir(assetsDir+"rollback/backup", 0744)
-		HandleError(err)
+		//HandleError(err)
 	} else {
 		err := os.RemoveAll(assetsDir + "rollback/backup")
 		HandleError(err)
