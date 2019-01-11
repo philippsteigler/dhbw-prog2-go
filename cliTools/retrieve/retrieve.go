@@ -23,6 +23,24 @@ import (
 //
 // GET Request zur Ausgabe aller ausstehenden Mails
 func main() {
+	response, httpGetErr := sendGetRequest()
+
+	// Überprüfung auf Fehler. Bei erfolgreichem Request werden die Mails ausgegeben (falls welche existieren)
+	if httpGetErr != nil {
+
+		fmt.Printf("The HTTP GET request to: https://localhost:4443/mails failed with error %s\n", httpGetErr)
+	} else {
+
+		resp, _ := ioutil.ReadAll(response.Body)
+		if string(resp) == "null" {
+			fmt.Println("No mails found.")
+		} else {
+			printMails(resp)
+		}
+	}
+}
+
+func sendGetRequest() (response *http.Response, httpGetErr error) {
 	// Beim senden des Requests an den Server trat folgender Fehler auf: x509: certificate signed by unknown authority
 	// Dieser Fehler trat auf, da es sich beim Zertifikat des Servers um ein self-signed Zertifikat handelt
 	// Entsprechend muss es dem CertPool hinzugefügt werden
@@ -53,21 +71,9 @@ func main() {
 
 	// GET Request an die entsprechende API
 	req, _ := http.NewRequest(http.MethodGet, "https://localhost:4443/mails", nil)
-	response, httpGetErr := client.Do(req)
+	response, httpGetErr = client.Do(req)
 
-	// Überprüfung auf Fehler. Bei erfolgreichem Request werden die Mails ausgegeben (falls welche existieren)
-	if httpGetErr != nil {
-
-		fmt.Printf("The HTTP GET request to: https://localhost:4443/mails failed with error %s\n", httpGetErr)
-	} else {
-
-		resp, _ := ioutil.ReadAll(response.Body)
-		if string(resp) == "null" {
-			fmt.Println("No mails found.")
-		} else {
-			printMails(resp)
-		}
-	}
+	return
 }
 
 // Funktion zur leserlichen Ausgabe der Mails

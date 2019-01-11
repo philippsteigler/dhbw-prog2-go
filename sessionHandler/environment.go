@@ -38,6 +38,8 @@ func GetAssetsDir() string {
 	// Fallunterscheidung für Aufruf über main.go oder *_test.go aus Unterverzeichnissen.
 	if filepath.Base(path) == "crew" {
 		return "./assets/"
+	} else if filepath.Base(path) == "retrieve" || filepath.Base(path) == "send" {
+		return "../../assets/"
 	} else {
 		return "../assets/"
 	}
