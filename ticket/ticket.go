@@ -11,6 +11,12 @@ import (
 	"time"
 )
 
+// Matrikelnummern:
+//
+// 3333958
+// 3880065
+// 8701350
+
 type Status string
 
 type Mail struct {
@@ -39,7 +45,7 @@ const (
 	Closed    Status = "geschlossen"
 )
 
-//Parst aus dem Dateinamen eines Tickets die entsprechende ID raus
+// Parst aus dem Dateinamen eines Tickets die entsprechende ID raus
 func parseFilename(filename string) int {
 	filename = strings.TrimSuffix(filename, ".json")
 	id, err := strconv.Atoi(filename)
@@ -47,8 +53,8 @@ func parseFilename(filename string) int {
 	return id
 }
 
-//Liest das gewünschte Ticket aus der JSON-Datei
-//und gibt eine Referenz auf das Ticket zurück
+// Liest das gewünschte Ticket aus der JSON-Datei
+// und gibt eine Referenz auf das Ticket zurück
 func readTicket(id int) *Ticket {
 	var readTicket Ticket
 	filename := sessionHandler.GetAssetsDir() + "tickets/" + strconv.Itoa(id) + ".json"
@@ -59,7 +65,7 @@ func readTicket(id int) *Ticket {
 	return &readTicket
 }
 
-//Schreibt ein Ticket in seine entsprechende JSON-Datei oder erzeugt diese
+// Schreibt ein Ticket in seine entsprechende JSON-Datei oder erzeugt diese
 func writeTicket(ticket *Ticket) {
 
 	filename := sessionHandler.GetAssetsDir() + "tickets/" + strconv.Itoa((*ticket).Id) + ".json"
@@ -71,7 +77,7 @@ func writeTicket(ticket *Ticket) {
 	sessionHandler.HandleError(err)
 }
 
-//Schreibt eine Mail in eine JSON-Datei
+// Schreibt eine Mail in eine JSON-Datei
 func writeMail(mail Mail) {
 	filename := sessionHandler.GetAssetsDir() + "mails/" + strconv.Itoa(newId("/mails")) + ".json"
 
@@ -82,12 +88,12 @@ func writeMail(mail Mail) {
 	sessionHandler.HandleError(err)
 }
 
-//Liefert eine Referenz auf das angegebene Ticket
+// Liefert eine Referenz auf das angegebene Ticket
 func GetTicket(id int) *Ticket {
 	return readTicket(id)
 }
 
-//Zur Erzeugung einer TicketID wird die höchste vergebene ID inkrementiert
+// Zur Erzeugung einer TicketID wird die höchste vergebene ID inkrementiert
 func newId(path string) int {
 	var ids []int
 
@@ -95,12 +101,12 @@ func newId(path string) int {
 	files, err := ioutil.ReadDir(ticketDir)
 	sessionHandler.HandleError(err)
 
-	//Falls keine Tickets existieren
+	// Falls keine Tickets existieren
 	if len(files) == 0 {
 		return 1
 	}
 
-	//Jede ID aus dem Dateinamen parsen und in ids speichern
+	// Jede ID aus dem Dateinamen parsen und in ids speichern
 	for _, file := range files {
 
 		indexOfFileExtension := strings.Index(file.Name(), ".")
@@ -109,40 +115,40 @@ func newId(path string) int {
 		ids = append(ids, fileId)
 	}
 
-	//ids sortieren (aufsteigend) und die höchste vergebene ID inkrementieren und zurückgeben
+	// ids sortieren (aufsteigend) und die höchste vergebene ID inkrementieren und zurückgeben
 	sort.Ints(ids)
 
 	return ids[len(ids)-1] + 1
 }
 
-//A-5:
-//Ticketerstellung, Erfassung der Eingabedaten
+// A-5:
+// Ticketerstellung, Erfassung der Eingabedaten
 func NewTicket(subject string, creator string, content string) {
 	newTicket := Ticket{Id: newId("/tickets"), Subject: subject, Status: Open, EditorId: 0, Entries: []Entry{NewEntry(creator, content)}}
 	writeTicket(&newTicket)
 }
 
-//Erstellt einen neuen Eintrag
+// Erstellt einen neuen Eintrag
 func NewEntry(creator string, content string) Entry {
 	date := time.Now().Local().Format("2006-01-02T15:04:05.0000")
 	return Entry{Date: date, Creator: creator, Content: content}
 }
 
-//Fügt einen neuen Eintrag einem bestehenden Ticket hinzu
-//Wenn mail true ist, wird eine E-Mail erzeugt und als JSON gespeichert
+// Fügt einen neuen Eintrag einem bestehenden Ticket hinzu
+// Wenn mail true ist, wird eine E-Mail erzeugt und als JSON gespeichert
 func AppendEntry(id int, creator, content string, mail bool) {
 	ticketToAppend := *GetTicket(id)
 	ticketToAppend.Entries = append(ticketToAppend.Entries, NewEntry(creator, content))
 	writeTicket(&ticketToAppend)
 	if mail {
-		//Email und Subject aus Ticket laden
+		// Email und Subject aus Ticket laden
 		storedTicket := readTicket(id)
 		subject := "Rueckmeldung bzgl.:" + storedTicket.Subject
 		writeMail(Mail{Email: storedTicket.Entries[0].Creator, Subject: subject, Content: content})
 	}
 }
 
-//Tickets nach einer bestimmten EditorID filtern und zurückgeben
+// Tickets nach einer bestimmten EditorID filtern und zurückgeben
 func GetTicketsByEditorId(editorId int) *[]Ticket {
 
 	var orderedTickets []Ticket
@@ -161,8 +167,8 @@ func GetTicketsByEditorId(editorId int) *[]Ticket {
 	return &orderedTickets
 }
 
-//A-8.2:
-//Bearbeitung eines Tickets, Ticket nehmen
+// A-8.2:
+// Bearbeitung eines Tickets, Ticket nehmen
 func TakeTicket(id int, editorId int) {
 	ticketToTake := GetTicket(id)
 	ticketToTake.Status = InProcess
@@ -170,8 +176,8 @@ func TakeTicket(id int, editorId int) {
 	writeTicket(ticketToTake)
 }
 
-//A-8.3
-//Bearbeitung eines Tickets, alle offenen Tickets einsehen
+// A-8.3
+// Bearbeitung eines Tickets, alle offenen Tickets einsehen
 func GetAllOpenTickets() *[]Ticket {
 	var orderedTickets []Ticket
 
@@ -190,8 +196,8 @@ func GetAllOpenTickets() *[]Ticket {
 
 }
 
-//A-8.4:
-//Bearbeitung eines Tickets, Tickets nach Übernahme wieder freigeben
+// A-8.4:
+// Bearbeitung eines Tickets, Tickets nach Übernahme wieder freigeben
 func UnhandTicket(id int) {
 	ticketToUnhand := GetTicket(id)
 	ticketToUnhand.Status = Open
@@ -199,8 +205,8 @@ func UnhandTicket(id int) {
 	writeTicket(ticketToUnhand)
 }
 
-//A-8.5:
-//Bearbeitung eines Tickets, Ticket jmd anderem zuteilen
+// A-8.5:
+// Bearbeitung eines Tickets, Ticket jmd anderem zuteilen
 func DelegateTicket(id int, editorId int) {
 	ticketToDelegate := GetTicket(id)
 	ticketToDelegate.Status = InProcess
@@ -208,15 +214,15 @@ func DelegateTicket(id int, editorId int) {
 	writeTicket(ticketToDelegate)
 }
 
-//A-12:
-//Zusammenführen von Tickets
-//Die ID's der Tickets, welche zusammengeführt werden, werden übergeben.
-//Das erste Argument ist das Ticket, in welches geschrieben wird, das Zweite das Ticket welches gelöcht wird.
+// A-12:
+// Zusammenführen von Tickets
+// Die ID's der Tickets, welche zusammengeführt werden, werden übergeben.
+// Das erste Argument ist das Ticket, in welches geschrieben wird, das Zweite das Ticket welches gelöcht wird.
 func MergeTickets(dest int, source int) {
 	destTicket := GetTicket(dest)
 	sourceTicket := GetTicket(source)
 
-	//Die Einträge des "sourceTickets" werden an die Einträge des "destTickets" gehangen
+	// Die Einträge des "sourceTickets" werden an die Einträge des "destTickets" gehangen
 	for _, entry := range sourceTicket.Entries {
 		destTicket.Entries = append(destTicket.Entries, entry)
 	}
@@ -225,14 +231,14 @@ func MergeTickets(dest int, source int) {
 	deleteTicket(source)
 }
 
-//Löscht die JSON-Datei des angegebenen Tickets
+// Löscht die JSON-Datei des angegebenen Tickets
 func deleteTicket(id int) {
 	filename := sessionHandler.GetAssetsDir() + "tickets/" + strconv.Itoa(id) + ".json"
 	err := os.Remove(filename)
 	sessionHandler.HandleError(err)
 }
 
-//Liefert alle Tickets zurück, die existieren
+// Liefert alle Tickets zurück, die existieren
 func GetAllTickets() *[]Ticket {
 	var orderedTickets []Ticket
 
@@ -246,7 +252,7 @@ func GetAllTickets() *[]Ticket {
 	return &orderedTickets
 }
 
-//Setzt geschlossene Tickets auf offen
+// Setzt geschlossene Tickets auf offen
 func SetTicketToOpenIfClosed(id int) {
 	ticketToOpen := GetTicket(id)
 	if ticketToOpen.Status == Closed {
@@ -255,7 +261,7 @@ func SetTicketToOpenIfClosed(id int) {
 	}
 }
 
-//Ticket schließen
+// Ticket schließen
 func CloseTicket(id int) {
 	ticketToClose := GetTicket(id)
 	ticketToClose.Status = Closed
@@ -263,7 +269,7 @@ func CloseTicket(id int) {
 	writeTicket(ticketToClose)
 }
 
-//Liefert alle eine Referenz auf alle Mails
+// Liefert alle eine Referenz auf alle Mails
 func GetAllMails() *[]Mail {
 	var orderedMails []Mail
 	var mail Mail
@@ -285,7 +291,7 @@ func GetAllMails() *[]Mail {
 	return &orderedMails
 }
 
-//Löscht eine Mail. Dazu wird eine Mail übergeben und mit allen abgeglichen. Wenn die übergebene Mail existiert, wird sie gelöscht
+// Löscht eine Mail. Dazu wird eine Mail übergeben und mit allen abgeglichen. Wenn die übergebene Mail existiert, wird sie gelöscht
 func DeleteMail(mail Mail) {
 	var storedMail Mail
 	files, err := ioutil.ReadDir(sessionHandler.GetAssetsDir() + "/mails")

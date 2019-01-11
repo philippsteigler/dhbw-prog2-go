@@ -8,6 +8,12 @@ import (
 	"strings"
 )
 
+// Matrikelnummern:
+//
+// 3333958
+// 3880065
+// 8701350
+
 // Kopiere eine Datei an eine andere Stelle.
 func copyFile(src string, dst string) {
 	data, err := ioutil.ReadFile(src)
@@ -58,7 +64,7 @@ func CheckEnvironment() {
 	}
 }
 
-//typeOfFiles entweder ticket oder mails
+// typeOfFiles entweder ticket oder mails
 func checkIfFilesExistAndBackup(typeOfFiles string) {
 	assetsDir := GetAssetsDir()
 	rollbackBackupPath := "rollback/backup/" + typeOfFiles
@@ -83,10 +89,11 @@ func checkIfFilesExistAndBackup(typeOfFiles string) {
 	}
 }
 
-//typeOfFiles entweder ticket oder mails
+// typeOfFiles entweder ticket oder mails
 func checkIfBackupExistAndLoadFiles(typeOfFiles string) {
 	assetsDir := GetAssetsDir()
 	rollbackBackupPath := "rollback/backup/" + typeOfFiles
+
 	// Überprüfe, ob das Backup Tickets/Mails enthält.
 	if _, err := os.Stat(assetsDir + rollbackBackupPath); os.IsNotExist(err) == false {
 		src := strings.Join([]string{assetsDir, rollbackBackupPath}, "")
@@ -189,10 +196,11 @@ func ResetData() {
 	CheckEnvironment()
 }
 
-//typeOfFiles entweder ticket oder mails
+// typeOfFiles entweder ticket oder mails
 func createDemoFiles(typeOfFile string) {
 	assetsDir := GetAssetsDir()
 	rollbackDemoPath := "rollback/demo/" + typeOfFile
+
 	// Erstelle Verzeichnis für Tickets/Mails, falls dieses nicht existiert.
 	if _, err := os.Stat(assetsDir + typeOfFile); os.IsNotExist(err) {
 		err = os.Mkdir(assetsDir+typeOfFile, 0744)

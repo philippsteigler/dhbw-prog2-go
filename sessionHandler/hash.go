@@ -8,6 +8,12 @@ import (
 	"time"
 )
 
+// Matrikelnummern:
+//
+// 3333958
+// 3880065
+// 8701350
+
 const letterBytes = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 func init() {

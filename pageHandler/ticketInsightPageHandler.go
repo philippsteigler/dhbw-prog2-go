@@ -9,6 +9,12 @@ import (
 	"strconv"
 )
 
+// Matrikelnummern:
+//
+// 3333958
+// 3880065
+// 8701350
+
 var ticketInsightTemplates *template.Template
 var ticketID int
 
@@ -59,7 +65,6 @@ func TicketInsightInit() {
 	if err != nil {
 		fmt.Println(err)
 	}
-
 }
 
 // A-8.2
@@ -67,9 +72,8 @@ func TicketInsightInit() {
 //
 // https://localhost:8000/ticketTake
 // Ticket übernehmen, Web Interaction
-//TODO: EditorID mit geben!!!!, Redirect überarbeiten
 // localhost:.../ticketTake
-//Funktion ticket nehmnen
+// Funktion ticket nehmnen
 func TicketTakeHandler(response http.ResponseWriter, request *http.Request) {
 
 	if sessionHandler.IsUserLoggedIn(request) {
@@ -86,9 +90,8 @@ func TicketTakeHandler(response http.ResponseWriter, request *http.Request) {
 	}
 }
 
-//TODO: Redirect überarbeiten
 // localhost:.../ticketSubmit
-//Funktion ticket abgeben
+// Funktion ticket abgeben
 
 // A-8.4
 // Bearbeiter sollen Tickets nach der Übernahme auch freigeben können, so das
@@ -116,9 +119,8 @@ func TicketSubmitHandler(response http.ResponseWriter, request *http.Request) {
 //
 // https://localhost:8000/ticketDelegate
 // Ticket delegieren, Web Interaction
-//TODO: EditorId mitgben; redirect überarbeiten
 // localhost:.../ticketDelegate
-//Funktion ticket Delegieren
+// Funktion ticket Delegieren
 func TicketDelegateHandler(response http.ResponseWriter, request *http.Request) {
 	if sessionHandler.IsUserLoggedIn(request) {
 		eID := request.FormValue("select")
@@ -141,7 +143,6 @@ func TicketDelegateHandler(response http.ResponseWriter, request *http.Request) 
 //
 // Ticket Eintrag hinzufügen, Web Interaction
 func TicketAppendEntry(w http.ResponseWriter, r *http.Request) {
-
 	if sessionHandler.IsUserLoggedIn(r) {
 		id := r.FormValue("TicketID")
 		intId, err := strconv.Atoi(id)

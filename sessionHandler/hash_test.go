@@ -5,6 +5,12 @@ import (
 	"testing"
 )
 
+// Matrikelnummern:
+//
+// 3333958
+// 3880065
+// 8701350
+
 func TestGenerateSalt(t *testing.T) {
 	salt := generateSalt()
 	assert.Len(t, salt, 16, "Length should be 16 Byte.")

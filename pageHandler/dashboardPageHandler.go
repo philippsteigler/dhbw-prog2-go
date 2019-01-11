@@ -8,6 +8,12 @@ import (
 	"net/http"
 )
 
+// Matrikelnummern:
+//
+// 3333958
+// 3880065
+// 8701350
+
 var dashboardViewTemplates *template.Template
 
 // A-8.1:
@@ -17,7 +23,6 @@ var dashboardViewTemplates *template.Template
 // Der Nutzer sieht seine Tickets und kann die Liste der offenen einsehen
 func DashboardViewPageHandler(response http.ResponseWriter, request *http.Request) {
 	if sessionHandler.IsUserLoggedIn(request) {
-
 		pTickets := *ticket.GetTicketsByEditorId(sessionHandler.GetSessionUser(request).ID)
 
 		dashboardViewTemplates.ExecuteTemplate(response, "outer", sessionHandler.GetSessionUser(request).Username)

@@ -8,6 +8,12 @@ import (
 	"strconv"
 )
 
+// Matrikelnummern:
+//
+// 3333958
+// 3880065
+// 8701350
+
 type UserAccounts struct {
 	Users []User `json:"users"`
 }
@@ -165,6 +171,7 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 // Registrieren und speichern eines neuen Benutzers in users.json.
 // Dabei wird der Hashwert des Passworts mit einem persönlichen Salt-Wert verschleiert.
 // Der Salt-Wert wird für spätere Abgleiche beider Hashwerte benötigt und folglich gespeichert.
+/*
 func RegistrationHandler(w http.ResponseWriter, r *http.Request) {
 	hash, salt := HashString(r.FormValue("password"))
 
@@ -183,3 +190,4 @@ func RegistrationHandler(w http.ResponseWriter, r *http.Request) {
 
 	http.Redirect(w, r, "/", 302)
 }
+*/

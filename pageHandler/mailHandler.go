@@ -9,7 +9,13 @@ import (
 	"strings"
 )
 
-//Hilfsfunktion zum überprüfen der Mails
+// Matrikelnummern:
+//
+// 3333958
+// 3880065
+// 8701350
+
+// Hilfsfunktion zum überprüfen der Mails
 func validateMail(mail ticket.Mail) error {
 	if mail.Email == "" {
 		return fmt.Errorf("Email is missing.")
@@ -23,50 +29,50 @@ func validateMail(mail ticket.Mail) error {
 	return nil
 }
 
-//A-6:
-//Email Empfang über eine REST-API
+// A-6:
+// Email Empfang über eine REST-API
 func CreateNewTicket(w http.ResponseWriter, r *http.Request) {
 
-	//Nur POST Requests werden bearbeitet
+	// Nur POST Requests werden bearbeitet
 	if r.Method == http.MethodPost {
 		var newMail ticket.Mail
 
-		//Request wird decodiert
+		// Request wird decodiert
 		decoder := json.NewDecoder(r.Body)
 		err := decoder.Decode(&newMail)
 		sessionHandler.HandleError(err)
 
-		//Mail wird überprüft
+		// Mail wird überprüft
 		validateMail(newMail)
 
-		//Überprüfung, ob sich die Mail auf ein existierendes Ticket bezieht
+		// Überprüfung, ob sich die Mail auf ein existierendes Ticket bezieht
 		ticketExist, id := refersToExistingTicket(newMail.Subject, newMail.Email)
 
 		if !ticketExist {
-			//wenn nicht, wird ein neues Ticket erzeugt
+			// wenn nicht, wird ein neues Ticket erzeugt
 			ticket.NewTicket(newMail.Subject, newMail.Email, newMail.Content)
 		} else {
-			//sonst wird ein neuer Eintrag an das bestehende Ticket angefügt
+			// sonst wird ein neuer Eintrag an das bestehende Ticket angefügt
 			ticket.AppendEntry(id, newMail.Email, newMail.Content, false)
 			ticket.SetTicketToOpenIfClosed(id)
 		}
 	}
 }
 
-//Eine Mail bezieht sich auf ein existierendes Ticket,
-//wenn der Betreff in folgender Form ist: "RE: <Betreff des Tickets auf das sich bezogen wird>"
-//sowie die Email des Senders mit der Email des Erstellers des Tickets übereinstimmt
-//"RE:" am Anfang des Betreffs ist verpflichtend (Groß-/Kleinschreibung ist egal)
+// Eine Mail bezieht sich auf ein existierendes Ticket,
+// wenn der Betreff in folgender Form ist: "RE: <Betreff des Tickets auf das sich bezogen wird>"
+// sowie die Email des Senders mit der Email des Erstellers des Tickets übereinstimmt
+// "RE:" am Anfang des Betreffs ist verpflichtend (Groß-/Kleinschreibung ist egal)
 func refersToExistingTicket(subject, email string) (bool, int) {
 
-	//Groß- und Kleinschreibung wird ignoriert
+	// Groß- und Kleinschreibung wird ignoriert
 	if strings.ToLower(subject[:3]) != "re:" {
 		return false, 0
 	} else {
-		//Alle Tickets werden geladen
+		// Alle Tickets werden geladen
 		tickets := *ticket.GetAllTickets()
 
-		//Betreff und Emailadresse werden mit jedem Ticket abgeglichen
+		// Betreff und Emailadresse werden mit jedem Ticket abgeglichen
 		for _, t := range tickets {
 			if strings.ToLower(t.Subject) == strings.ToLower(parseSubject(subject)) && t.Entries[0].Creator == email {
 				return true, t.Id
@@ -76,17 +82,16 @@ func refersToExistingTicket(subject, email string) (bool, int) {
 	return false, 0
 }
 
-//"RE:" sowie führende und abschließende Leerzeichen werden aus dem Betreff entfernt entfernt
+// "RE:" sowie führende und abschließende Leerzeichen werden aus dem Betreff entfernt entfernt
 func parseSubject(subject string) string {
 	return strings.TrimSpace(subject[3:])
 }
 
-//A-7:
-//Email Versand über eine REST-API
-
+// A-7:
+// Email Versand über eine REST-API
 func Mails(w http.ResponseWriter, r *http.Request) {
 
-	//Überprüfung ob ein GET oder POST Request auf die .../mails URL vorliegt
+	// Überprüfung ob ein GET oder POST Request auf die .../mails URL vorliegt
 	if r.Method == http.MethodGet {
 		retrieveMails(w)
 
@@ -95,31 +100,31 @@ func Mails(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-//A-7.1: Funktion zum Abfrufen von Mails
+// A-7.1: Funktion zum Abfrufen von Mails
 func retrieveMails(w http.ResponseWriter) {
 
-	//Alle zu versendenden Mails abrufen
+	// Alle zu versendenden Mails abrufen
 	mails := *ticket.GetAllMails()
 
-	//Als JSON codieren
+	// Als JSON codieren
 	jsonMails, err := json.Marshal(mails)
 	sessionHandler.HandleError(err)
 
-	//Mails als JSON zurückgeben
+	// Mails als JSON zurückgeben
 	w.Write(jsonMails)
 }
 
-//A-7.2: Funktion zum Mitteilen, welche Mails versand wurden
+// A-7.2: Funktion zum Mitteilen, welche Mails versand wurden
 func sentMails(r *http.Request) {
 
-	//Gesendete Mails werden als JSON mit einem Array aus Mails erwartet
+	// Gesendete Mails werden als JSON mit einem Array aus Mails erwartet
 	var mails []ticket.Mail
 
 	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(&mails)
 	sessionHandler.HandleError(err)
 
-	//Jede Mail wird geprüft und anschließend gelöscht
+	// Jede Mail wird geprüft und anschließend gelöscht
 	for _, mail := range mails {
 		validateMail(mail)
 		ticket.DeleteMail(mail)

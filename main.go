@@ -9,6 +9,12 @@ import (
 	"strconv"
 )
 
+// Matrikelnummern:
+//
+// 3333958
+// 3880065
+// 8701350
+
 // A-3.1:
 // Die Web-Seite soll nur per HTTPS erreichbar sein.
 //
@@ -37,7 +43,7 @@ import (
 // Der Port muss sich über ein Flag festlegen lassen.
 //
 // Der Anwender kann beim Starten über die Kommandozeile mit -port=X den Port des Servers bestimmen.
-// Der Default-Wert ist Port :8000.
+// Der Default-Wert ist Port :4443.
 //
 //
 // A-11.3:
@@ -46,7 +52,7 @@ import (
 //
 // Self-signed Zertifikate sind demo vorhanden und unter ./assets/certificates gespeichert.
 func main() {
-	port := flag.Int("port", 8000, "Port for webserver.")
+	port := flag.Int("port", 4443, "Port for webserver.")
 	reset := flag.Bool("reset", false, "Delete all ticket and user rollback.")
 	demo := flag.Bool("demo", false, "Install example rollback for tickets and users.")
 	flag.Parse()
@@ -88,7 +94,7 @@ func main() {
 	mux.Handle("/mails", http.HandlerFunc(pageHandler.Mails))
 
 	if *port < 0 || *port > 65535 {
-		*port = 8000
+		*port = 4443
 		log.Printf("Port should be in range of 0..65535")
 	}
 

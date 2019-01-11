@@ -7,6 +7,12 @@ import (
 	"testing"
 )
 
+// Matrikelnummern:
+//
+// 3333958
+// 3880065
+// 8701350
+
 func TestDashboardViewInit(t *testing.T) {
 	assert.Empty(t, dashboardViewTemplates, "dashboardViewTemplate should be empty")
 	DashboardViewInit()

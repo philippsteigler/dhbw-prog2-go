@@ -8,6 +8,12 @@ import (
 	"net/http"
 )
 
+// Matrikelnummern:
+//
+// 3333958
+// 3880065
+// 8701350
+
 type Handler interface {
 	ServeHTTP(http.Response, *http.Request)
 }

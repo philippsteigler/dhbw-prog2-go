@@ -8,7 +8,11 @@ import (
 	"net/http"
 )
 
-//TODO: Selektor für die Ticket Anzeige
+// Matrikelnummern:
+//
+// 3333958
+// 3880065
+// 8701350
 
 var ticketsViewTemplates *template.Template
 
@@ -16,10 +20,9 @@ var ticketsViewTemplates *template.Template
 // Die Bearbeitung der Tickets soll ausschließlich ¨uber eine WEB-Seite erfolgen.
 //
 // https://localhost:8000/ticketsView
-//anzeigen der Tickets des Users
+// anzeigen der Tickets des Users
 func TicketsViewPageHandler(response http.ResponseWriter, request *http.Request) {
 	if sessionHandler.IsUserLoggedIn(request) {
-
 		pTickets := *ticket.GetAllOpenTickets()
 
 		ticketsViewTemplates.ExecuteTemplate(response, "outer", sessionHandler.GetSessionUser(request).Username)
@@ -43,5 +46,4 @@ func TicketsViewInit() {
 	if err != nil {
 		fmt.Println(err)
 	}
-
 }
